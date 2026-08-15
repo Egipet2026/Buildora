@@ -30,6 +30,25 @@ environment variables required.
 Codespaces builds the container, installs dependencies and starts the dev
 server on its own — the preview opens when port 3000 comes up.
 
+### Other hosts
+
+The app is a Next.js server — it needs a Node runtime, not a static file host.
+Anything in this table works; the repository already carries the configuration
+each one looks for.
+
+| Host | Free tier | Config in repo | Notes |
+| --- | --- | --- | --- |
+| **Netlify** | Yes | `netlify.toml` | Closest equivalent to Vercel. Server actions and middleware run on the official Next.js plugin. |
+| **Render** | Yes | `render.yaml` | Blueprint deploy, no manual setup. Free instances sleep when idle and take ~30s to wake. |
+| **Railway** | Trial credit | `Dockerfile` | Detects the Dockerfile automatically. |
+| **Fly.io** | Yes | `Dockerfile` | `fly launch` reads it. Card required even on the free allowance. |
+| **Koyeb / Northflank** | Yes | `Dockerfile` | Both deploy a container straight from GitHub. |
+| **Google Cloud Run** | Generous | `Dockerfile` | Scales to zero; pay per request. |
+| **Any VPS** | — | `Dockerfile` | `docker build -t bizhub . && docker run -p 3000:3000 bizhub`. Also works with Coolify or Dokploy. |
+
+**GitHub Pages will not work.** It serves static files only, and this app uses
+server actions and middleware for offers, messaging and moderation.
+
 ### Run it locally
 
 Requires Node.js 20 or newer.

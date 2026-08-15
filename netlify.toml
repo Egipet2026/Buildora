@@ -1,0 +1,11 @@
+# Netlify runs Next.js — including server actions and middleware — through the
+# official plugin. No other configuration is required.
+[build]
+  command = "npm run build"
+  publish = ".next"
+
+[build.environment]
+  NODE_VERSION = "22"
+
+[[plugins]]
+  package = "@netlify/plugin-nextjs"

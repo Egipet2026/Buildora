@@ -1,0 +1,14 @@
+# Render blueprint — https://render.com/docs/blueprint-spec
+# Deploys straight from the repository with no manual configuration.
+services:
+  - type: web
+    name: bizhub
+    runtime: node
+    plan: free
+    buildCommand: npm ci && npm run build
+    startCommand: npm run start
+    envVars:
+      - key: NODE_VERSION
+        value: "22"
+      # Add NEXT_PUBLIC_SUPABASE_URL and NEXT_PUBLIC_SUPABASE_ANON_KEY here
+      # to switch off demo mode. Without them the app serves seeded data.
