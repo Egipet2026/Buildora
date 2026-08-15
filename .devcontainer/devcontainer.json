@@ -1,0 +1,29 @@
+{
+  "name": "BizHub",
+  "image": "mcr.microsoft.com/devcontainers/typescript-node:22",
+
+  // Installs dependencies once the container is created, then starts the dev
+  // server automatically so the forwarded port is live on first open.
+  "postCreateCommand": "npm install",
+  "postAttachCommand": {
+    "server": "npm run dev"
+  },
+
+  "forwardPorts": [3000],
+  "portsAttributes": {
+    "3000": {
+      "label": "BizHub",
+      "onAutoForward": "openPreview"
+    }
+  },
+
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "dbaeumer.vscode-eslint",
+        "esbenp.prettier-vscode",
+        "bradlc.vscode-tailwindcss"
+      ]
+    }
+  }
+}

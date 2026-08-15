@@ -10,16 +10,40 @@ Built with Next.js 15 (App Router), TypeScript, Tailwind CSS v4 and Supabase.
 
 ---
 
-## Run it
+## Open it in a browser
+
+Three ways, fastest first. All of them run the app in **demo mode** — seeded
+data, an account already signed in, no configuration needed.
+
+### Deploy a public URL — one click
+
+[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https%3A%2F%2Fgithub.com%2FEgipet2026%2FBuildora%2Ftree%2Fclaude%2Fbizhub-marketplace-mvp-0jqrze&project-name=bizhub&repository-name=bizhub)
+
+Sign in to Vercel with GitHub, press Deploy, and in a few minutes you have a
+permanent address like `bizhub-xxx.vercel.app` that anyone can open. No
+environment variables required.
+
+### Run it in the browser — no installation
+
+[![Open in GitHub Codespaces](https://github.com/codespaces/badge.svg)](https://codespaces.new/Egipet2026/Buildora?ref=claude/bizhub-marketplace-mvp-0jqrze)
+
+Codespaces builds the container, installs dependencies and starts the dev
+server on its own — the preview opens when port 3000 comes up.
+
+### Run it locally
+
+Requires Node.js 20 or newer.
 
 ```bash
+git clone -b claude/bizhub-marketplace-mvp-0jqrze https://github.com/Egipet2026/Buildora.git
+cd Buildora
 npm install
 npm run dev          # http://localhost:3000
 ```
 
-That is the whole setup. With no environment variables the app runs in **demo
-mode**: a seeded dataset of businesses, patents, services, partners, offers,
-conversations and moderation queues, with a demo account already signed in.
+With no environment variables the app runs in **demo mode**: a seeded dataset
+of businesses, patents, services, partners, offers, conversations and
+moderation queues, with a demo account already signed in.
 Every authenticated surface — buyer dashboard, seller dashboard, admin,
 messaging, negotiations — is browsable immediately, and writes are applied to an
 in-memory store so the flows behave like the real thing. A restart resets the
