@@ -17,7 +17,7 @@ data, an account already signed in, no configuration needed.
 
 ### Deploy a public URL — one click
 
-[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https%3A%2F%2Fgithub.com%2FEgipet2026%2FBuildora%2Ftree%2Fclaude%2Fbizhub-marketplace-mvp-0jqrze&project-name=bizhub&repository-name=bizhub)
+[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https%3A%2F%2Fgithub.com%2FEgipet2026%2FBuildora&project-name=bizhub&repository-name=bizhub)
 
 Sign in to Vercel with GitHub, press Deploy, and in a few minutes you have a
 permanent address like `bizhub-xxx.vercel.app` that anyone can open. No
@@ -25,10 +25,15 @@ environment variables required.
 
 ### Run it in the browser — no installation
 
-[![Open in GitHub Codespaces](https://github.com/codespaces/badge.svg)](https://codespaces.new/Egipet2026/Buildora?ref=claude/bizhub-marketplace-mvp-0jqrze)
+[![Open in GitHub Codespaces](https://github.com/codespaces/badge.svg)](https://codespaces.new/Egipet2026/Buildora)
 
 Codespaces builds the container, installs dependencies and starts the dev
 server on its own — the preview opens when port 3000 comes up.
+
+### Other one-click hosts
+
+[![Deploy to Netlify](https://www.netlify.com/img/deploy/button.svg)](https://app.netlify.com/start/deploy?repository=https://github.com/Egipet2026/Buildora)
+[![Deploy to Render](https://render.com/images/deploy-to-render-button.svg)](https://render.com/deploy?repo=https://github.com/Egipet2026/Buildora)
 
 ### Other hosts
 
@@ -54,7 +59,7 @@ server actions and middleware for offers, messaging and moderation.
 Requires Node.js 20 or newer.
 
 ```bash
-git clone -b claude/bizhub-marketplace-mvp-0jqrze https://github.com/Egipet2026/Buildora.git
+git clone https://github.com/Egipet2026/Buildora.git
 cd Buildora
 npm install
 npm run dev          # http://localhost:3000
