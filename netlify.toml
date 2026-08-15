@@ -1,11 +1,8 @@
-# Netlify runs Next.js — including server actions and middleware — through the
-# official plugin. No other configuration is required.
+# Netlify detects Next.js and installs its OpenNext adapter automatically —
+# server actions run as functions, middleware as edge functions. Nothing else
+# needs configuring here; the adapter chooses the publish directory itself.
 [build]
   command = "npm run build"
-  publish = ".next"
 
 [build.environment]
   NODE_VERSION = "22"
-
-[[plugins]]
-  package = "@netlify/plugin-nextjs"
