@@ -76,9 +76,12 @@ data.
 ### Connecting a real database
 
 1. Create a Supabase project.
-2. Run the files in `supabase/migrations/` in order (`supabase db push`, or
-   paste them into the SQL editor). They create the schema, the row-level
-   security policies, the storage buckets and the sign-up trigger.
+2. Open **SQL Editor** in the project, paste the whole of
+   [`supabase/setup.sql`](supabase/setup.sql) and press Run. That one file is
+   every migration joined in order — schema, row-level security, storage
+   buckets and the sign-up trigger. (The individual files in
+   `supabase/migrations/` are still there for `supabase db push`, and are what
+   you need when upgrading a project that already has Bizora tables.)
 3. Copy `.env.example` to `.env.local` and fill in:
 
    ```
