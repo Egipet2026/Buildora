@@ -5,7 +5,7 @@ import { getBusinessProfiles } from "@/lib/data";
 export const metadata = {
   title: "Business Profiles",
   description:
-    "Company profiles on BizHub — what they build, who is on the team, and what they are looking for.",
+    "Company profiles on Bizora — what they build, who is on the team, and what they are looking for.",
 };
 
 export default async function BusinessProfilesPage() {

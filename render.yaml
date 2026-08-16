@@ -2,7 +2,7 @@
 # Deploys straight from the repository with no manual configuration.
 services:
   - type: web
-    name: bizhub
+    name: bizora
     runtime: node
     plan: free
     buildCommand: npm ci && npm run build

@@ -6,7 +6,7 @@ import { calculateFees, formatMoney } from "@/lib/money";
 export const metadata = {
   title: "Pricing & Fees",
   description:
-    "BizHub charges a commission on successful transactions. Listing is free. Featured placement, boosts, verification and subscriptions are optional.",
+    "Bizora charges a commission on successful transactions. Listing is free. Featured placement, boosts, verification and subscriptions are optional.",
 };
 
 const EXAMPLE_PRICES = [500_000, 2_000_000, 5_000_000, 42_000_000];
@@ -64,7 +64,7 @@ export default async function PricingPage() {
       <PageHeader
         eyebrow="Pricing"
         title={`${s.commission_bps / 100}% commission. Everything else is optional.`}
-        description="Listing on BizHub is free. The platform earns when you do — a commission on completed transactions — plus optional visibility and tooling."
+        description="Listing on Bizora is free. The platform earns when you do — a commission on completed transactions — plus optional visibility and tooling."
       >
         <Link href="/sell" className="btn btn-brand">
           Create a listing
@@ -129,7 +129,7 @@ export default async function PricingPage() {
 
         <div className="mt-6">
           <Notice tone="gold" title="Payments in this MVP">
-            BizHub records transactions and shows the commission split, but does
+            Bizora records transactions and shows the commission split, but does
             not take payment, hold funds or transfer ownership. Holding money on
             behalf of others is a regulated activity — real payments and escrow
             will be enabled through an appropriate marketplace payment provider,

@@ -13,7 +13,7 @@ export default async function NewBusinessProfilePage() {
       <PageHeader
         eyebrow="Business builder"
         title="Create your business profile"
-        description="A profile is how other people on BizHub find you — as a partner, a client, a supplier or a buyer."
+        description="A profile is how other people on Bizora find you — as a partner, a client, a supplier or a buyer."
       />
 
       <div className="shell py-10">
@@ -62,7 +62,7 @@ export default async function NewBusinessProfilePage() {
 
             <Notice tone="gold" title="Looking for investors?">
               That option is not offered. Advertising an investment opportunity
-              is a regulated activity in most jurisdictions, and BizHub will not
+              is a regulated activity in most jurisdictions, and Bizora will not
               host it until it can do so lawfully everywhere it operates. Use
               “Partners” for people who will work with you.
             </Notice>

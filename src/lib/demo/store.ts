@@ -1,8 +1,16 @@
 import type {
+  BusinessGoal,
+  BusinessMetric,
   BusinessMilestone,
   BusinessProduct,
   BusinessProfile,
   Conversation,
+  Follow,
+  FounderProfile,
+  OpportunityAlert,
+  Post,
+  Review,
+  WatchItem,
   Favorite,
   Listing,
   Message,
@@ -21,10 +29,16 @@ import type {
   OtpChallenge,
 } from "../auth/types";
 import {
+  DEMO_ALERTS,
   DEMO_BUSINESS_PRODUCTS,
   DEMO_BUSINESS_PROFILES,
   DEMO_CONVERSATIONS,
+  DEMO_FOUNDERS,
+  DEMO_GOALS,
+  DEMO_METRICS,
   DEMO_MILESTONES,
+  DEMO_POSTS,
+  DEMO_REVIEWS,
   DEMO_FAVORITES,
   DEMO_LISTINGS,
   DEMO_MESSAGES,
@@ -61,6 +75,14 @@ export interface DemoStore {
   businessProfiles: BusinessProfile[];
   businessProducts: BusinessProduct[];
   milestones: BusinessMilestone[];
+  goals: BusinessGoal[];
+  metrics: BusinessMetric[];
+  watchlist: WatchItem[];
+  alerts: OpportunityAlert[];
+  reviews: Review[];
+  founders: FounderProfile[];
+  follows: Follow[];
+  posts: Post[];
   settings: PlatformSettings;
 
   // --- credentials, only used when Supabase is not configured -------------
@@ -69,7 +91,7 @@ export interface DemoStore {
   sessions: DemoSession[];
 }
 
-const GLOBAL_KEY = Symbol.for("bizhub.demo.store");
+const GLOBAL_KEY = Symbol.for("bizora.demo.store");
 
 function build(): DemoStore {
   // Structured clone keeps the frozen seed arrays pristine.
@@ -87,6 +109,14 @@ function build(): DemoStore {
     businessProfiles: structuredClone(DEMO_BUSINESS_PROFILES),
     businessProducts: structuredClone(DEMO_BUSINESS_PRODUCTS),
     milestones: structuredClone(DEMO_MILESTONES),
+    goals: structuredClone(DEMO_GOALS),
+    metrics: structuredClone(DEMO_METRICS),
+    watchlist: [],
+    alerts: structuredClone(DEMO_ALERTS),
+    reviews: structuredClone(DEMO_REVIEWS),
+    founders: structuredClone(DEMO_FOUNDERS),
+    follows: [],
+    posts: structuredClone(DEMO_POSTS),
     settings: { ...DEFAULT_SETTINGS },
     accounts: [],
     challenges: [],

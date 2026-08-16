@@ -215,7 +215,7 @@ export function OfferThreadCard({
           <p className="mt-1.5 text-[0.8125rem] leading-relaxed text-[var(--color-ink-2)]">
             Documents marked “after an accepted offer” are now available on the
             listing. Agree the remaining terms in writing — an accepted offer on
-            BizHub is not a contract of sale.
+            Bizora is not a contract of sale.
           </p>
           <Link href="/messages" className="btn btn-outline btn-sm mt-3">
             Continue in messages

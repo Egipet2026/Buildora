@@ -207,7 +207,7 @@ function CredentialsStep({
           </>
         ) : (
           <>
-            New to BizHub?{" "}
+            New to Bizora?{" "}
             <Link href="/register" className="font-medium text-[var(--color-brand)] hover:underline">
               Create an account
             </Link>

@@ -4,6 +4,8 @@ import type { Metadata } from "next";
 import { Cover, KeyValue, Notice, SectionHead, Stat } from "@/components/ui";
 import { ListingGrid, priceLabel } from "@/components/listing-card";
 import { FavoriteButton } from "@/components/favorite-button";
+import { WatchButton } from "@/components/watch-button";
+import { Stars } from "@/components/reputation";
 import {
   BuyNowButton,
   ContactButton,
@@ -14,9 +16,11 @@ import {
   getCurrentUser,
   getFavoriteIds,
   getListing,
+  getMemberReputation,
   getOffers,
   getSettings,
   getSimilarListings,
+  getWatchedIds,
 } from "@/lib/data";
 import {
   formatDate,
@@ -55,12 +59,15 @@ export default async function ListingPage({
   if (!listing) notFound();
 
   const me = await getCurrentUser();
-  const [savedIds, similar, settings, offers] = await Promise.all([
-    me ? getFavoriteIds(me.id) : Promise.resolve([]),
-    getSimilarListings(listing, 3),
-    getSettings(),
-    getOffers(),
-  ]);
+  const [savedIds, similar, settings, offers, watchedIds, reputation] =
+    await Promise.all([
+      me ? getFavoriteIds(me.id) : Promise.resolve([]),
+      getSimilarListings(listing, 3),
+      getSettings(),
+      getOffers(),
+      me ? getWatchedIds(me.id) : Promise.resolve([]),
+      getMemberReputation(listing.owner_id),
+    ]);
 
   const isOwner = me?.id === listing.owner_id;
   const isAdmin = me?.role === "admin";
@@ -268,7 +275,7 @@ export default async function ListingPage({
 
                 <p className="mt-3 text-[0.75rem] leading-relaxed text-[var(--color-ink-3)]">
                   Figures are provided by the seller and have not been audited
-                  by BizHub. Ask for source documents before relying on them.
+                  by Bizora. Ask for source documents before relying on them.
                 </p>
               </div>
             ) : null}
@@ -442,6 +449,12 @@ export default async function ListingPage({
                       redirectTo={`/listing/${listing.id}`}
                       variant="full"
                     />
+                    {me ? (
+                      <WatchButton
+                        listingId={listing.id}
+                        watching={watchedIds.includes(listing.id)}
+                      />
+                    ) : null}
                   </>
                 )}
               </div>
@@ -468,7 +481,7 @@ export default async function ListingPage({
                     {listing.owner.is_verified ? (
                       <span
                         className="badge badge-verified"
-                        title="Identity and details confirmed by BizHub"
+                        title="Identity and details confirmed by Bizora"
                       >
                         ✓
                       </span>
@@ -492,16 +505,25 @@ export default async function ListingPage({
               >
                 View seller profile
               </Link>
+              {reputation && reputation.rating.count ? (
+                <p className="mt-3 flex items-center justify-center gap-2 text-[0.75rem] text-[var(--color-ink-2)]">
+                  <Stars rating={reputation.rating.average} />
+                  {reputation.rating.average.toFixed(1)} ·{" "}
+                  {reputation.rating.count}{" "}
+                  {reputation.rating.count === 1 ? "review" : "reviews"} · Trust{" "}
+                  {reputation.trust.score}
+                </p>
+              ) : null}
 
               <p className="mt-3 text-[0.75rem] leading-relaxed text-[var(--color-ink-3)]">
                 Contact details are never published. Message the seller through
-                BizHub so the conversation is recorded.
+                Bizora so the conversation is recorded.
               </p>
             </div>
 
             <div className="mt-5">
               <Notice tone="neutral">
-                BizHub is a venue for buyers and sellers to find each other. It
+                Bizora is a venue for buyers and sellers to find each other. It
                 does not guarantee that this business is profitable, that this
                 technology is valuable, or that this seller is reliable. Do your
                 own due diligence and take independent advice.

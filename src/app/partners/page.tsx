@@ -22,7 +22,7 @@ export default async function PartnersPage({
       basePath="/partners"
       notice={
         <Notice tone="gold" title="Partnership is not investment">
-          These listings are for working partnerships. BizHub does not host
+          These listings are for working partnerships. Bizora does not host
           offers of securities, shares or investment opportunities, and nothing
           here should be treated as one. Where a partnership involves capital,
           equity or profit-sharing, both sides should take independent legal and

@@ -45,8 +45,8 @@ export default async function SearchPage({
     <>
       <PageHeader
         eyebrow="Search"
-        title={raw ? `Results for “${raw}”` : "Search BizHub"}
-        description="Describe what you want in plain language. BizHub turns it into filters — marketplace, category, price range and more — and you can adjust them afterwards."
+        title={raw ? `Results for “${raw}”` : "Search Bizora"}
+        description="Describe what you want in plain language. Bizora turns it into filters — marketplace, category, price range and more — and you can adjust them afterwards."
       />
 
       <div className="shell py-10">

@@ -1,8 +1,14 @@
 import type {
+  BusinessGoal,
+  BusinessMetric,
   BusinessMilestone,
   BusinessProduct,
   BusinessProfile,
   Conversation,
+  FounderProfile,
+  OpportunityAlert,
+  Post,
+  Review,
   Listing,
   Message,
   Notification,
@@ -30,7 +36,7 @@ export const DEMO_PROFILES: Profile[] = [
     id: "u-admin",
     full_name: "Ana Petrova",
     avatar_url: null,
-    headline: "BizHub platform administrator",
+    headline: "Bizora platform administrator",
     bio: "Reviews listings, verification requests and reports.",
     country: "Bulgaria",
     role: "admin",
@@ -1604,6 +1610,235 @@ export const DEMO_MILESTONES: BusinessMilestone[] = [
     position: 5,
     created_at: days(20),
     completed_at: null,
+  },
+];
+
+/* -------------------------------------------------------- goals & metrics */
+
+export const DEMO_GOALS: BusinessGoal[] = [
+  {
+    id: "g-1",
+    business_id: "bp-orbit",
+    kind: "revenue",
+    label: "Monthly recurring revenue",
+    target: 10_000_00,
+    current: 4_000_00,
+    unit: "EUR",
+    due_on: ahead(180),
+    created_at: days(60),
+  },
+  {
+    id: "g-2",
+    business_id: "bp-orbit",
+    kind: "customers",
+    label: "Paying operators",
+    target: 40,
+    current: 17,
+    unit: "customers",
+    due_on: ahead(180),
+    created_at: days(60),
+  },
+  {
+    id: "g-3",
+    business_id: "bp-orbit",
+    kind: "products",
+    label: "Products on the storefront",
+    target: 5,
+    current: 3,
+    unit: "products",
+    due_on: null,
+    created_at: days(40),
+  },
+  {
+    id: "g-4",
+    business_id: "bp-orbit",
+    kind: "team",
+    label: "People on the team",
+    target: 5,
+    current: 2,
+    unit: "people",
+    due_on: ahead(365),
+    created_at: days(30),
+  },
+];
+
+/** Six months of self-reported figures, so the charts have something to draw. */
+export const DEMO_METRICS: BusinessMetric[] = (() => {
+  const base = [
+    { revenue: 21_00_00, expenses: 18_50_00, customers: 8 },
+    { revenue: 24_80_00, expenses: 19_20_00, customers: 10 },
+    { revenue: 27_50_00, expenses: 19_80_00, customers: 12 },
+    { revenue: 31_20_00, expenses: 21_40_00, customers: 13 },
+    { revenue: 35_60_00, expenses: 22_10_00, customers: 15 },
+    { revenue: 40_00_00, expenses: 23_60_00, customers: 17 },
+  ];
+  const today = new Date(now);
+  return base.map((row, i) => {
+    const d = new Date(today.getFullYear(), today.getMonth() - (5 - i), 1);
+    const month = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}`;
+    return {
+      id: `bm-${month}`,
+      business_id: "bp-orbit",
+      month,
+      revenue_cents: row.revenue,
+      expenses_cents: row.expenses,
+      customers: row.customers,
+      created_at: d.toISOString(),
+    };
+  });
+})();
+
+/* ------------------------------------------------------------- reviews */
+
+export const DEMO_REVIEWS: Review[] = [
+  {
+    id: "r-1",
+    subject_type: "seller",
+    subject_id: "u-marek",
+    author_id: "u-diego",
+    transaction_id: "t-1",
+    rating: 5,
+    title: "Straight answers, complete paperwork",
+    body: "Handed over twelve months of statements without being asked twice, and stayed available through the transfer. The figures matched what my accountant found.",
+    is_hidden: false,
+    created_at: days(50),
+  },
+  {
+    id: "r-2",
+    subject_type: "seller",
+    subject_id: "u-ivan",
+    author_id: "u-demo",
+    transaction_id: "t-2",
+    rating: 4,
+    title: "Good asset, slow to reply",
+    body: "The code was exactly as described and the licence was clean. Communication took a few days each time, which made the handover longer than it needed to be.",
+    is_hidden: false,
+    created_at: days(16),
+  },
+  {
+    id: "r-3",
+    subject_type: "expert",
+    subject_id: "u-amara",
+    author_id: "u-demo",
+    transaction_id: "t-4",
+    rating: 5,
+    title: "Delivered ahead of the deadline",
+    body: "Scoped the work honestly, told me which half of my brief was not worth paying for, and delivered the rest early.",
+    is_hidden: false,
+    created_at: days(4),
+  },
+];
+
+/* ---------------------------------------------------------- co-founders */
+
+export const DEMO_FOUNDERS: FounderProfile[] = [
+  {
+    id: "f-1",
+    user_id: "u-amara",
+    headline: "Growth marketer looking for a technical co-founder",
+    skills: ["Marketing", "SEO", "Content", "Analytics"],
+    experience:
+      "Eight years running growth for two B2B SaaS companies, both taken from nothing to seven figures of recurring revenue.",
+    industry: "SaaS",
+    location: "Nigeria",
+    hours_per_week: 25,
+    building:
+      "A scheduling tool for clinics in markets where appointments are still booked by phone.",
+    contributes:
+      "Demand: I can get the first hundred clinics through the door, and I will do the sales calls myself.",
+    seeking: ["Engineering", "Product"],
+    is_open: true,
+    created_at: days(12),
+  },
+  {
+    id: "f-2",
+    user_id: "u-lukas",
+    headline: "Backend engineer, want someone commercial",
+    skills: ["Go", "Postgres", "Infrastructure", "AI"],
+    experience:
+      "Twelve years building payment and logistics infrastructure. Comfortable being the only engineer for the first year.",
+    industry: "Logistics",
+    location: "Germany",
+    hours_per_week: 40,
+    building:
+      "Route optimisation that small hauliers can actually afford, sold per vehicle rather than per seat.",
+    contributes:
+      "The whole product, and the money to run it for eighteen months.",
+    seeking: ["Sales", "Business development"],
+    is_open: true,
+    created_at: days(6),
+  },
+  {
+    id: "f-3",
+    user_id: "u-sofia",
+    headline: "Materials scientist commercialising filtration IP",
+    skills: ["R&D", "Materials science", "Patents", "Manufacturing"],
+    experience:
+      "Fifteen years in water treatment research, three granted patents, one licensing deal already signed.",
+    industry: "Energy",
+    location: "Sweden",
+    hours_per_week: 20,
+    building:
+      "Turning the filtration patents into a product municipalities can buy off the shelf.",
+    contributes: "The technology, the patents and the lab relationships.",
+    seeking: ["Operations", "Finance"],
+    is_open: true,
+    created_at: days(21),
+  },
+];
+
+/* ------------------------------------------------------------- alerts */
+
+export const DEMO_ALERTS: OpportunityAlert[] = [
+  {
+    id: "al-1",
+    user_id: "u-demo",
+    label: "SaaS under €20,000",
+    kinds: ["business", "digital_asset"],
+    max_price_cents: 20_000_00,
+    min_price_cents: null,
+    country: null,
+    query: "saas",
+    verified_only: false,
+    is_active: true,
+    notified_listing_ids: [],
+    last_checked_at: null,
+    created_at: days(14),
+  },
+];
+
+/* -------------------------------------------------------------- posts */
+
+export const DEMO_POSTS: Post[] = [
+  {
+    id: "po-1",
+    author_id: "u-demo",
+    business_id: "bp-orbit",
+    kind: "milestone",
+    body: "Seventeen operators now run their morning dispatch on Orbit. Two years ago this was a spreadsheet I maintained by hand for one customer.",
+    link: "/business-profiles/orbit-labs",
+    link_label: "Orbit Labs",
+    created_at: days(3),
+  },
+  {
+    id: "po-2",
+    author_id: "u-sofia",
+    business_id: "bp-verde",
+    kind: "opportunity",
+    body: "We are licensing the VW-200 filtration patent non-exclusively for the first time. Municipalities and industrial integrators welcome — technical review before any agreement.",
+    link: "/patents",
+    link_label: "Patents & Technologies",
+    created_at: days(7),
+  },
+  {
+    id: "po-3",
+    author_id: "u-amara",
+    business_id: null,
+    kind: "update",
+    body: "Finished a three-month growth engagement for a B2B SaaS in Lagos: 4× on qualified demos, no ad spend increase. Writing up what worked, happy to share the approach.",
+    link: null,
+    link_label: null,
+    created_at: days(2),
   },
 ];
 

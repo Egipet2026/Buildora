@@ -4,9 +4,8 @@ import { useRouter } from "next/navigation";
 import { useActionState, useEffect, useState } from "react";
 import { FormMessage, SubmitButton } from "./dialog";
 import { Field, Notice } from "./ui";
-import {
-  createListingAction,
-} from "@/lib/actions";
+import { createListingAction } from "@/lib/actions";
+import { ListingAssistant } from "./listing-assistant";
 import { IDLE } from "@/lib/action-state";
 import { COUNTRIES, MARKETPLACES } from "@/lib/taxonomy";
 import type { ListingKind } from "@/lib/types";
@@ -65,6 +64,9 @@ export function ListingForm({ initialKind }: { initialKind?: ListingKind }) {
   const router = useRouter();
   const [state, action, pending] = useActionState(createListingAction, IDLE);
   const [kind, setKind] = useState<ListingKind>(initialKind ?? "business");
+  // The three copy fields are controlled so the drafting assistant can fill
+  // them; everything else on this form stays uncontrolled.
+  const [copy, setCopy] = useState({ title: "", summary: "", description: "" });
 
   useEffect(() => {
     if (state.ok && state.redirectTo) router.push(state.redirectTo);
@@ -125,6 +127,20 @@ export function ListingForm({ initialKind }: { initialKind?: ListingKind }) {
           </select>
         </Field>
 
+        {/* Drafting help sits above the fields it fills, and only ever writes
+            into them — nothing it produces is submitted unread. */}
+        <ListingAssistant
+          kind={kind}
+          title={copy.title}
+          onApply={(draft) =>
+            setCopy({
+              title: draft.title,
+              summary: draft.summary,
+              description: draft.description,
+            })
+          }
+        />
+
         <Field
           label="Title"
           htmlFor="title"
@@ -138,6 +154,8 @@ export function ListingForm({ initialKind }: { initialKind?: ListingKind }) {
             className="input"
             maxLength={140}
             placeholder="e.g. Inboxly — B2B email deliverability SaaS"
+            value={copy.title}
+            onChange={(e) => setCopy({ ...copy, title: e.target.value })}
             required
           />
         </Field>
@@ -155,6 +173,8 @@ export function ListingForm({ initialKind }: { initialKind?: ListingKind }) {
             className="input"
             maxLength={220}
             placeholder="e.g. Bootstrapped SaaS with 412 paying teams and 94% gross margin."
+            value={copy.summary}
+            onChange={(e) => setCopy({ ...copy, summary: e.target.value })}
             required
           />
         </Field>
@@ -170,6 +190,8 @@ export function ListingForm({ initialKind }: { initialKind?: ListingKind }) {
             id="description"
             name="description"
             className="textarea min-h-48"
+            value={copy.description}
+            onChange={(e) => setCopy({ ...copy, description: e.target.value })}
             required
           />
         </Field>
@@ -414,7 +436,7 @@ export function ListingForm({ initialKind }: { initialKind?: ListingKind }) {
           <Notice tone="gold" title="Publishing rules for IP listings">
             You may only list intellectual property you own or are authorised to
             offer. Do not describe an unexamined or pending application as a
-            granted patent, and do not imply BizHub has assessed validity,
+            granted patent, and do not imply Bizora has assessed validity,
             enforceability or freedom to operate. Listings that misstate legal
             status are removed.
           </Notice>
@@ -513,7 +535,7 @@ export function ListingForm({ initialKind }: { initialKind?: ListingKind }) {
           <Notice tone="gold">
             A partner listing is a search for someone to work with. Do not use
             it to offer shares, securities or an investment return — that is a
-            regulated activity and is not permitted on BizHub.
+            regulated activity and is not permitted on Bizora.
           </Notice>
         </Fieldset>
       ) : null}
@@ -571,7 +593,7 @@ export function ListingForm({ initialKind }: { initialKind?: ListingKind }) {
             I confirm that I own, or am authorised to sell or license,
             everything in this listing; that the information I have given is
             accurate to the best of my knowledge; and that I will provide
-            supporting evidence on request. I understand that BizHub does not
+            supporting evidence on request. I understand that Bizora does not
             guarantee a sale, does not endorse my listing, and may remove it if
             it breaches the{" "}
             <a href="/legal/marketplace-rules" className="underline">

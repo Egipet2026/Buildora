@@ -5,13 +5,13 @@ import "./globals.css";
 
 export const metadata: Metadata = {
   title: {
-    default: "BizHub — Buy a Business. Build a Business. Sell a Business.",
-    template: "%s · BizHub",
+    default: "Bizora — Buy a Business. Build a Business. Sell a Business.",
+    template: "%s · Bizora",
   },
   description:
     "Everything you need to start, buy, build and grow a business — businesses, patents and technologies, SaaS and digital assets, partners, experts and suppliers.",
   openGraph: {
-    title: "BizHub",
+    title: "Bizora",
     description:
       "Everything you need to start, buy, build and grow a business.",
     type: "website",

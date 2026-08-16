@@ -1,4 +1,4 @@
-# BizHub
+# Bizora
 
 **Buy a Business. Build a Business. Sell a Business.**
 
@@ -17,10 +17,10 @@ data, an account already signed in, no configuration needed.
 
 ### Deploy a public URL — one click
 
-[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https%3A%2F%2Fgithub.com%2FEgipet2026%2FBuildora&project-name=bizhub&repository-name=bizhub)
+[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https%3A%2F%2Fgithub.com%2FEgipet2026%2FBuildora&project-name=bizora&repository-name=bizora)
 
 Sign in to Vercel with GitHub, press Deploy, and in a few minutes you have a
-permanent address like `bizhub-xxx.vercel.app` that anyone can open. No
+permanent address like `bizora-xxx.vercel.app` that anyone can open. No
 environment variables required.
 
 ### Run it in the browser — no installation
@@ -49,7 +49,7 @@ each one looks for.
 | **Fly.io** | Yes | `Dockerfile` | `fly launch` reads it. Card required even on the free allowance. |
 | **Koyeb / Northflank** | Yes | `Dockerfile` | Both deploy a container straight from GitHub. |
 | **Google Cloud Run** | Generous | `Dockerfile` | Scales to zero; pay per request. |
-| **Any VPS** | — | `Dockerfile` | `docker build -t bizhub . && docker run -p 3000:3000 bizhub`. Also works with Coolify or Dokploy. |
+| **Any VPS** | — | `Dockerfile` | `docker build -t bizora . && docker run -p 3000:3000 bizora`. Also works with Coolify or Dokploy. |
 
 **GitHub Pages will not work.** It serves static files only, and this app uses
 server actions and middleware for offers, messaging and moderation.
@@ -111,9 +111,20 @@ If you use Supabase for auth, Supabase sends the email code itself, and phone
 sign-up needs an SMS provider configured under Authentication → Providers →
 Phone.
 
-Optionally set `ANTHROPIC_API_KEY` to enable the live business-plan generator on
-`/start-a-business`. Without it the planner falls back to a deterministic
-template.
+### The AI features
+
+Set `ANTHROPIC_API_KEY` to enable them. Three surfaces use it:
+
+| Surface | Without a key |
+| --- | --- |
+| `/start-a-business` — business plan, name, competitors, risks | Falls back to a deterministic template |
+| `/market-research` — indicative market overview | Falls back to a research *method*, not a fabricated overview |
+| “Improve with AI” on a listing | Unavailable — the seller writes it themselves |
+
+All three are labelled as indicative wherever they appear. The listing
+assistant is constrained to rewrite only what the seller supplied: it must not
+add revenue figures, customer counts or claims of any kind, because that text
+is published under a real person's name and they are responsible for it.
 
 ---
 
@@ -143,6 +154,20 @@ template.
 | Featured & Boost placement | ✅ |
 | 10% commission calculation, shown before every transaction | ✅ |
 | Mock checkout — records the deal and the split, moves no money | ✅ |
+| **BizMatch** — ranked matches with the reasoning shown for every score | ✅ |
+| **Opportunities** — one feed of everything newly listed, with type filters | ✅ |
+| **Watchlist** with price history, and price-drop notifications | ✅ |
+| **Opportunity alerts** — standing searches that fire the moment a listing is approved | ✅ |
+| **Reviews & ratings** — one per completed deal, both directions | ✅ |
+| **Bizora Trust Score** — verification, deals, reviews, age, upheld reports | ✅ |
+| **Find a co-founder** — matched on complementary skills, not similar ones | ✅ |
+| **Network** — follow founders, post updates, milestones and opportunities | ✅ |
+| **Business calculators** — profit, break-even, ROI, indicative valuation | ✅ |
+| **Goals** with progress bars, and a monthly business dashboard with charts | ✅ |
+| **Starter checklists** by business type, feeding the build plan | ✅ |
+| **Market research** — indicative overview of a market, clearly labelled | ✅ |
+| **AI listing assistant** — drafts a listing from your notes, adds no facts | ✅ |
+| **Recommended for you** — from what you saved and watched, or nothing at all | ✅ |
 
 ### Deliberately not built
 
@@ -173,7 +198,13 @@ src/
     admin/                 Administration
     messages/              Conversations
     members/               Member directory and public member pages
-    workspace/             The owner's business: storefront and build plan
+    workspace/             The owner's business: storefront, plan, goals, charts
+    bizmatch/              Ranked matching against what you tell it
+    opportunities/         One feed of everything newly listed
+    co-founders/           Complementary-skill matching
+    network/               Professional feed
+    tools/                 Business calculators
+    market-research/       Indicative market overview
     legal/                 Placeholder legal documents
   components/              UI, listing cards, filters, dialogs, forms
   lib/
@@ -234,7 +265,7 @@ admin dashboard.
 
 ## Legal position
 
-BizHub is a venue. It does not guarantee that a business is profitable, that a
+Bizora is a venue. It does not guarantee that a business is profitable, that a
 patent is valid or valuable, that a transaction will succeed, or that a seller
 is reliable. Verification confirms information a member has supplied, to the
 extent the platform can lawfully check it — it is never an endorsement.

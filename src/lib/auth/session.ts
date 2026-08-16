@@ -12,7 +12,7 @@ import { newToken } from "./crypto";
  * store, so the cookie cannot be edited into someone else's identity.
  */
 
-export const SESSION_COOKIE = "bizhub_session";
+export const SESSION_COOKIE = "bizora_session";
 /** Written on sign-out so the seeded demo identity does not come straight back. */
 export const GUEST_VALUE = "guest";
 

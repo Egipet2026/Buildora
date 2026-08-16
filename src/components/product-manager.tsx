@@ -292,7 +292,7 @@ function ProductDialog({
         </SubmitButton>
 
         <p className="text-[0.6875rem] leading-relaxed text-[var(--color-ink-3)]">
-          BizHub does not take payment for storefront products. Buyers enquire
+          Bizora does not take payment for storefront products. Buyers enquire
           through your inbox and you agree terms directly with them.
         </p>
       </form>

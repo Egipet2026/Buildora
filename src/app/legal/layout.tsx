@@ -37,7 +37,7 @@ export default function LegalLayout({
             <Notice tone="gold" title="Placeholder document">
               This page is a plain-language placeholder written for the MVP. It
               has not been drafted or reviewed by a qualified legal
-              professional, and it is not legal advice. Before BizHub operates
+              professional, and it is not legal advice. Before Bizora operates
               commercially, every page in this section must be reviewed and
               replaced by a lawyer qualified in each market the platform serves.
             </Notice>

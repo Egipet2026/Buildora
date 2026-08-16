@@ -65,7 +65,7 @@ export default async function ConversationPage({
                 ) : null}
               </p>
               <p className="truncate text-[0.75rem] text-[var(--color-ink-3)]">
-                {view.other.headline ?? "BizHub member"}
+                {view.other.headline ?? "Bizora member"}
               </p>
             </div>
           </header>
@@ -174,7 +174,7 @@ export default async function ConversationPage({
           </div>
 
           <Notice tone="neutral" title="Stay safe">
-            BizHub never asks for your password or payment details in a message.
+            Bizora never asks for your password or payment details in a message.
             Be wary of anyone pushing you to move the conversation off-platform,
             to pay a deposit before due diligence, or to act urgently.
           </Notice>

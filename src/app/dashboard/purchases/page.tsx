@@ -93,7 +93,7 @@ export default async function PurchasesPage() {
       </div>
 
       <Notice tone="gold" title="These are test transactions">
-        BizHub records the agreed amount and the commission split so both sides
+        Bizora records the agreed amount and the commission split so both sides
         have the same numbers. It does not take payment, hold funds in escrow or
         transfer ownership — arrange the actual transfer with your own advisers.
       </Notice>

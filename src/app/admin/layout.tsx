@@ -19,7 +19,7 @@ export default async function AdminLayout({
         <div className="mx-auto max-w-lg">
           <Notice tone="danger" title="Administrator access required">
             This area is restricted to platform administrators. If you believe
-            you should have access, contact the BizHub team.
+            you should have access, contact the Bizora team.
           </Notice>
         </div>
       </div>

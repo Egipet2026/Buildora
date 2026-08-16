@@ -7,6 +7,8 @@ import {
   getFavoriteIds,
   getNotifications,
   getOfferThreads,
+  getReviewableTransactions,
+  getWatchedIds,
 } from "@/lib/data";
 
 export default async function DashboardLayout({
@@ -17,10 +19,12 @@ export default async function DashboardLayout({
   const me = await getCurrentUser();
   if (!me) redirect("/login");
 
-  const [saved, offers, notifications] = await Promise.all([
+  const [saved, offers, notifications, watching, reviewable] = await Promise.all([
     getFavoriteIds(me.id),
     getOfferThreads(me.id, "buyer"),
     getNotifications(me.id),
+    getWatchedIds(me.id),
+    getReviewableTransactions(me.id),
   ]);
 
   const openOffers = offers.filter((t) => t.latest.status === "pending").length;
@@ -48,8 +52,19 @@ export default async function DashboardLayout({
           items={[
             { href: "/dashboard", label: "Overview" },
             { href: "/dashboard/saved", label: "Saved", count: saved.length },
+            {
+              href: "/dashboard/watchlist",
+              label: "Watchlist",
+              count: watching.length,
+            },
+            { href: "/dashboard/alerts", label: "Alerts" },
             { href: "/dashboard/offers", label: "Offers", count: openOffers },
             { href: "/dashboard/purchases", label: "Purchases" },
+            {
+              href: "/dashboard/reviews",
+              label: "Reviews",
+              count: reviewable.length,
+            },
             {
               href: "/dashboard/notifications",
               label: "Notifications",

@@ -25,7 +25,7 @@ export default async function BusinessesPage({
         <Notice tone="gold" title="Before you make an offer">
           Revenue and profit figures are supplied by the seller. Ask for bank
           statements, merchant reports and filed accounts, and have a
-          professional review them. A Verified badge means BizHub confirmed
+          professional review them. A Verified badge means Bizora confirmed
           specific details the seller evidenced — it is not an audit and not an
           opinion on whether the business is a good buy.
         </Notice>

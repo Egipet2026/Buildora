@@ -5,7 +5,7 @@ import { getListings, getProfiles } from "@/lib/data";
 export const metadata = {
   title: "Members",
   description:
-    "Find founders, sellers, investors-ready businesses and specialists on BizHub, and message them directly.",
+    "Find founders, sellers, investors-ready businesses and specialists on Bizora, and message them directly.",
 };
 
 export default async function MembersPage({
@@ -93,7 +93,7 @@ export default async function MembersPage({
                     ) : null}
                   </p>
                   <p className="mt-0.5 line-clamp-2 text-[0.8125rem] leading-relaxed text-[var(--color-ink-3)]">
-                    {member.headline ?? "BizHub member"}
+                    {member.headline ?? "Bizora member"}
                   </p>
                   <p className="mt-2 text-[0.75rem] text-[var(--color-ink-3)]">
                     {member.country ?? "—"} ·{" "}

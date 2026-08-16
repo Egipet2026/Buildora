@@ -10,7 +10,7 @@ import type { SearchParams } from "@/components/browse";
 export const metadata = {
   title: "Sell a Business",
   description:
-    "List your business, patent, technology, digital asset or service on BizHub. Free to list — commission only on a completed transaction.",
+    "List your business, patent, technology, digital asset or service on Bizora. Free to list — commission only on a completed transaction.",
 };
 
 export default async function SellPage({
@@ -29,7 +29,7 @@ export default async function SellPage({
   return (
     <>
       <PageHeader
-        eyebrow="Sell on BizHub"
+        eyebrow="Sell on Bizora"
         title="Create a listing"
         description="Free to list. You pay a commission only when a transaction completes — nothing up front, nothing if it does not sell."
       >

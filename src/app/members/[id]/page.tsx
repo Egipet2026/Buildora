@@ -4,13 +4,21 @@ import type { Metadata } from "next";
 import { ListingGrid } from "@/components/listing-card";
 import { ReportButton } from "@/components/listing-actions";
 import { MessageMemberButton } from "@/components/message-member";
+import {
+  RatingSummaryCard,
+  ReviewList,
+  Stars,
+  TrustScoreCard,
+} from "@/components/reputation";
 import { Cover, EmptyState, Notice, SectionHead } from "@/components/ui";
 import {
   getCurrentUser,
   getFavoriteIds,
   getListings,
+  getMemberReputation,
   getMyBusiness,
   getProfile,
+  getProfiles,
 } from "@/lib/data";
 import { formatDate } from "@/lib/money";
 
@@ -23,7 +31,7 @@ export async function generateMetadata({
   if (!profile) return { title: "Member not found" };
   return {
     title: profile.full_name,
-    description: profile.headline ?? `${profile.full_name} on BizHub`,
+    description: profile.headline ?? `${profile.full_name} on Bizora`,
   };
 }
 
@@ -39,11 +47,14 @@ export default async function MemberPage({
   const me = await getCurrentUser();
   const isMe = me?.id === member.id;
 
-  const [business, listings, savedIds] = await Promise.all([
+  const [business, listings, savedIds, reputation, profiles] = await Promise.all([
     getMyBusiness(member.id),
     getListings({ ownerId: member.id, limit: 12 }),
     me ? getFavoriteIds(me.id) : Promise.resolve([]),
+    getMemberReputation(member.id),
+    getProfiles(),
   ]);
+  const authors = new Map(profiles.map((p) => [p.id, p]));
 
   return (
     <div className="bg-[var(--color-canvas)]">
@@ -71,6 +82,16 @@ export default async function MemberPage({
               {member.headline ? (
                 <p className="mt-1.5 text-[0.9375rem] text-[var(--color-ink-2)]">
                   {member.headline}
+                </p>
+              ) : null}
+              {reputation && reputation.rating.count ? (
+                <p className="mt-2 flex items-center gap-2 text-[0.8125rem]">
+                  <Stars rating={reputation.rating.average} />
+                  <span className="text-[var(--color-ink-2)]">
+                    {reputation.rating.average.toFixed(1)} from{" "}
+                    {reputation.rating.count}{" "}
+                    {reputation.rating.count === 1 ? "review" : "reviews"}
+                  </span>
                 </p>
               ) : null}
               <p className="mt-3 text-[0.8125rem] text-[var(--color-ink-3)]">
@@ -111,6 +132,16 @@ export default async function MemberPage({
                 <p className="leading-relaxed text-[var(--color-ink-2)]">
                   {member.bio}
                 </p>
+              </div>
+            ) : null}
+
+            {reputation?.reviews.length ? (
+              <div>
+                <SectionHead
+                  title="Reviews"
+                  description="Left by the other side of a completed deal. Bizora does not accept reviews from anyone who has not transacted."
+                />
+                <ReviewList reviews={reputation.reviews} authors={authors} />
               </div>
             ) : null}
 
@@ -165,6 +196,9 @@ export default async function MemberPage({
               </div>
             ) : null}
 
+            {reputation ? <TrustScoreCard trust={reputation.trust} /> : null}
+            {reputation ? <RatingSummaryCard summary={reputation.rating} /> : null}
+
             <div className="card p-5">
               <p className="eyebrow mb-3">Member</p>
               <dl className="space-y-2 text-[0.8125rem]">
@@ -197,7 +231,7 @@ export default async function MemberPage({
             </div>
 
             <Notice tone="neutral" title="What a badge means">
-              A Verified badge confirms details this member evidenced to BizHub.
+              A Verified badge confirms details this member evidenced to Bizora.
               It is not an audit, a credit check, or an opinion on whether they
               are worth dealing with. Do your own checks before you commit.
             </Notice>

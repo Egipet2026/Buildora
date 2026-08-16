@@ -46,7 +46,7 @@ export function MessageMemberButton({
         open={open}
         onClose={() => setOpen(false)}
         title={`Message ${memberName}`}
-        description="They see your name and your BizHub profile — never your email address or phone number."
+        description="They see your name and your Bizora profile — never your email address or phone number."
       >
         <form action={action} className="space-y-4">
           <input type="hidden" name="memberId" value={memberId} />
@@ -76,7 +76,7 @@ export function MessageMemberButton({
           <SubmitButton pending={pending}>Send message</SubmitButton>
 
           <p className="text-[0.6875rem] leading-relaxed text-[var(--color-ink-3)]">
-            Keep the conversation on BizHub. Never share passwords, one-time
+            Keep the conversation on Bizora. Never share passwords, one-time
             codes or bank details, and be wary of anyone pushing you to pay
             before you have done your own checks.
           </p>

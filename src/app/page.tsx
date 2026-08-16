@@ -2,7 +2,9 @@ import Link from "next/link";
 import { GlobalSearch } from "@/components/global-search";
 import { ListingGrid } from "@/components/listing-card";
 import { MarketplaceStrip } from "@/components/site-header";
+import { MatchCard } from "@/components/match-card";
 import { Notice, Section, SectionHead } from "@/components/ui";
+import { recommendFor } from "@/lib/match/recommend";
 import {
   getCurrentUser,
   getFavoriteIds,
@@ -41,6 +43,11 @@ export default async function HomePage() {
     getListings({ kind: "service", sort: "popular", limit: 3 }),
     getListings({ kind: "digital_asset", sort: "popular", limit: 3 }),
   ]);
+
+  // Recommendations are built from what this member has actually saved and
+  // watched. With no history there is nothing honest to personalise on, so the
+  // strip simply does not appear rather than pretending to know them.
+  const recommended = await recommendFor(me?.id ?? null, savedIds);
 
   const totalListings = Object.values(counts).reduce((a, b) => a + b, 0);
   const settled = transactions.filter(
@@ -111,6 +118,25 @@ export default async function HomePage() {
       </section>
 
       <MarketplaceStrip />
+
+      {/* --------------------------------------------------- recommended */}
+      {recommended.length ? (
+        <Section className="border-b border-[var(--color-line)] bg-[var(--color-surface)]">
+          <div className="shell">
+            <SectionHead
+              eyebrow="Recommended for you"
+              title="Based on what you have saved"
+              description="Drawn from the listings you saved and are watching — the categories, the price range and the countries. Bizora does not rank these by quality, and nobody pays to be here."
+              action={{ href: "/bizmatch", label: "Refine with BizMatch" }}
+            />
+            <div className="space-y-4">
+              {recommended.map((match) => (
+                <MatchCard key={match.listing.id} match={match} />
+              ))}
+            </div>
+          </div>
+        </Section>
+      ) : null}
 
       {/* ------------------------------------------------------ categories */}
       <Section className="bg-[var(--color-canvas)]">
@@ -258,7 +284,7 @@ export default async function HomePage() {
       <Section className="border-t border-[var(--color-line)] bg-[var(--color-surface)]">
         <div className="shell">
           <SectionHead
-            eyebrow="How BizHub works"
+            eyebrow="How Bizora works"
             title="From “I want to start a business” to a business"
             description="Three paths through the same platform. Most people end up using all three."
           />

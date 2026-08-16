@@ -9,12 +9,35 @@ import { isDemoMode } from "@/lib/supabase/config";
 import { GlobalSearch } from "./global-search";
 import { SignOutButton } from "./sign-out-button";
 
+/**
+ * The main navigation.
+ *
+ * Ordered by what people come here to do — browse, then find, then build. The
+ * last two are shown only where there is room; the rest of the platform is one
+ * tap away in the menu on every screen.
+ */
 const PRIMARY = [
-  { href: "/businesses", label: "Buy a Business" },
-  { href: "/marketplace", label: "Marketplace" },
-  { href: "/patents", label: "Patents & Tech" },
-  { href: "/services", label: "Experts" },
-  { href: "/partners", label: "Partners" },
+  { href: "/marketplace", label: "Marketplace", always: true },
+  { href: "/businesses", label: "Businesses", always: true },
+  { href: "/patents", label: "Patents & Tech", always: true },
+  { href: "/services", label: "Services", always: true },
+  { href: "/partners", label: "Partners", always: false },
+  { href: "/opportunities", label: "Opportunities", always: false },
+  { href: "/start-a-business", label: "Start a Business", always: false },
+  { href: "/bizmatch", label: "BizMatch", always: true },
+];
+
+/** Everything the menu offers beyond the primary bar. */
+const MENU_EXTRA = [
+  { href: "/opportunities", label: "Opportunities" },
+  { href: "/start-a-business", label: "Start a Business" },
+  { href: "/bizmatch", label: "BizMatch" },
+  { href: "/co-founders", label: "Find a Co-Founder" },
+  { href: "/network", label: "Network" },
+  { href: "/tools", label: "Calculators" },
+  { href: "/digital-assets", label: "Digital Assets" },
+  { href: "/business-profiles", label: "Business Profiles" },
+  { href: "/members", label: "Members" },
 ];
 
 export async function SiteHeader() {
@@ -43,7 +66,7 @@ export async function SiteHeader() {
             >
               B
             </span>
-            <span className="display text-lg">BizHub</span>
+            <span className="display text-lg">Bizora</span>
           </Link>
 
           <nav className="ml-2 hidden items-center gap-0.5 lg:flex">
@@ -51,7 +74,9 @@ export async function SiteHeader() {
               <Link
                 key={item.href}
                 href={item.href}
-                className="whitespace-nowrap rounded-lg px-3 py-2 text-[0.875rem] font-medium text-[var(--color-ink-2)] transition-colors hover:bg-[var(--color-surface-2)] hover:text-[var(--color-ink)]"
+                className={`whitespace-nowrap rounded-lg px-3 py-2 text-[0.875rem] font-medium text-[var(--color-ink-2)] transition-colors hover:bg-[var(--color-surface-2)] hover:text-[var(--color-ink)] ${
+                  item.always ? "" : "hidden xl:inline-block"
+                }`}
               >
                 {item.label}
               </Link>
@@ -113,13 +138,25 @@ export async function SiteHeader() {
             )}
 
             {/* No-JS mobile menu: a native disclosure, no client bundle. */}
-            <details className="group relative lg:hidden">
+            <details className="group relative">
               <summary className="flex h-9 w-9 cursor-pointer list-none items-center justify-center rounded-lg border border-[var(--color-line-2)] [&::-webkit-details-marker]:hidden">
                 <span aria-hidden>☰</span>
                 <span className="sr-only">Open menu</span>
               </summary>
-              <div className="card absolute right-0 top-11 w-64 p-2 shadow-xl">
-                {PRIMARY.map((item) => (
+              <div className="card absolute right-0 top-11 max-h-[80vh] w-64 overflow-y-auto p-2 shadow-xl">
+                <div className="lg:hidden">
+                  {PRIMARY.map((item) => (
+                    <Link
+                      key={item.href}
+                      href={item.href}
+                      className="block rounded-lg px-3 py-2.5 text-sm font-medium hover:bg-[var(--color-surface-2)]"
+                    >
+                      {item.label}
+                    </Link>
+                  ))}
+                </div>
+                <div className="my-2 hairline" />
+                {MENU_EXTRA.map((item) => (
                   <Link
                     key={item.href}
                     href={item.href}
@@ -128,31 +165,6 @@ export async function SiteHeader() {
                     {item.label}
                   </Link>
                 ))}
-                <div className="my-2 hairline" />
-                <Link
-                  href="/start-a-business"
-                  className="block rounded-lg px-3 py-2.5 text-sm font-medium hover:bg-[var(--color-surface-2)]"
-                >
-                  Start a Business
-                </Link>
-                <Link
-                  href="/digital-assets"
-                  className="block rounded-lg px-3 py-2.5 text-sm font-medium hover:bg-[var(--color-surface-2)]"
-                >
-                  Digital Assets
-                </Link>
-                <Link
-                  href="/business-profiles"
-                  className="block rounded-lg px-3 py-2.5 text-sm font-medium hover:bg-[var(--color-surface-2)]"
-                >
-                  Business Profiles
-                </Link>
-                <Link
-                  href="/members"
-                  className="block rounded-lg px-3 py-2.5 text-sm font-medium hover:bg-[var(--color-surface-2)]"
-                >
-                  Members
-                </Link>
                 <div className="my-2 hairline" />
                 {me ? (
                   <>
@@ -173,6 +185,12 @@ export async function SiteHeader() {
                       className="block rounded-lg px-3 py-2.5 text-sm font-medium hover:bg-[var(--color-surface-2)]"
                     >
                       My business
+                    </Link>
+                    <Link
+                      href="/dashboard/watchlist"
+                      className="block rounded-lg px-3 py-2.5 text-sm font-medium hover:bg-[var(--color-surface-2)]"
+                    >
+                      Watchlist &amp; alerts
                     </Link>
                     <Link
                       href="/messages"

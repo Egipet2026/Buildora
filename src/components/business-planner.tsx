@@ -2,13 +2,17 @@
 
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useActionState, useEffect } from "react";
+import { useActionState, useEffect, useState } from "react";
 import { FormMessage, SubmitButton } from "./dialog";
 import { Field, Notice } from "./ui";
 import { generateBusinessPlanAction } from "@/lib/actions";
-import { adoptPlanStepsAction } from "@/lib/workspace/actions";
+import {
+  adoptPlanStepsAction,
+  createBusinessFromPlanAction,
+} from "@/lib/workspace/actions";
 import { IDLE, type PlanState } from "@/lib/action-state";
 import { COUNTRIES } from "@/lib/taxonomy";
+import type { BusinessPlan } from "@/lib/types";
 
 const EXAMPLES = [
   "I want to build a food delivery business for office workers in Sofia.",
@@ -106,7 +110,7 @@ export function BusinessPlanner() {
               qualified professional in your country.
               {plan.generated_offline ? (
                 <span className="mt-2 block">
-                  Generated from BizHub&apos;s built-in template — no model
+                  Generated from Bizora&apos;s built-in template — no model
                   provider is configured, so this plan is generic rather than
                   tailored to your wording.
                 </span>
@@ -114,15 +118,36 @@ export function BusinessPlanner() {
             </Notice>
 
             <div className="card p-6 lg:p-8">
-              <p className="eyebrow mb-2">Business idea</p>
-              <p className="text-lg leading-relaxed">{plan.idea}</p>
+              {plan.business_name ? (
+                <>
+                  <p className="eyebrow mb-2">Suggested name</p>
+                  <p className="display text-2xl">{plan.business_name}</p>
+                  <p className="mt-3 leading-relaxed text-[var(--color-ink-2)]">
+                    {plan.business_description}
+                  </p>
+                  <p className="mt-4 hairline pt-4 text-[0.75rem] leading-relaxed text-[var(--color-ink-3)]">
+                    A suggestion, nothing more. Check the name is free in your
+                    country&apos;s company register and as a trade mark before
+                    you use it — Bizora has not checked either.
+                  </p>
+                </>
+              ) : (
+                <>
+                  <p className="eyebrow mb-2">Business idea</p>
+                  <p className="text-lg leading-relaxed">{plan.idea}</p>
+                </>
+              )}
             </div>
 
             <div className="grid gap-5 md:grid-cols-2">
               <PlanList title="Target customers" items={plan.target_customers} />
+              <PlanList title="Products and services" items={plan.products_services} />
               <PlanList title="Required resources" items={plan.required_resources} />
+              <PlanList title="Skills you'll need" items={plan.required_skills} />
               <PlanList title="Roles you'll need" items={plan.required_roles} />
               <PlanList title="Marketing ideas" items={plan.marketing_ideas} />
+              <PlanList title="Possible competitors" items={plan.possible_competitors} />
+              <PlanList title="Possible risks" items={plan.possible_risks} tone="gold" />
             </div>
 
             <div className="card p-6 lg:p-8">
@@ -163,13 +188,15 @@ export function BusinessPlanner() {
               </dl>
             </div>
 
+            <CreateBusiness plan={plan} />
+
             <AdoptSteps steps={plan.first_steps} />
 
             <div className="card bg-[var(--color-surface-2)] p-6 lg:p-8">
               <h3 className="display text-xl">Now find what you need</h3>
               <p className="mt-2 text-[0.9375rem] leading-relaxed text-[var(--color-ink-2)]">
                 A plan is not a business. These are the parts of it you can
-                source on BizHub today.
+                source on Bizora today.
               </p>
               <div className="mt-5 grid gap-2.5 sm:grid-cols-2">
                 {[
@@ -207,7 +234,7 @@ export function BusinessPlanner() {
             </span>
             <h2 className="display mt-4 text-xl">Your plan appears here</h2>
             <p className="mt-2 max-w-sm text-[0.875rem] leading-relaxed text-[var(--color-ink-3)]">
-              Describe your idea and BizHub drafts an indicative plan: who your
+              Describe your idea and Bizora drafts an indicative plan: who your
               customers are, how the business could make money, what it might
               cost, who you need, and what to do in the first week.
             </p>
@@ -215,6 +242,135 @@ export function BusinessPlanner() {
         )}
       </div>
     </div>
+  );
+}
+
+/**
+ * Turns the plan into a real business profile on Bizora.
+ *
+ * Everything is pre-filled but editable, and the button says plainly what it
+ * creates — a member should never find a public page appearing under their
+ * name that they did not read first.
+ */
+function CreateBusiness({ plan }: { plan: BusinessPlan }) {
+  const [state, action, pending] = useActionState(
+    createBusinessFromPlanAction,
+    IDLE,
+  );
+  const router = useRouter();
+  const [open, setOpen] = useState(false);
+
+  useEffect(() => {
+    if (state.ok && state.redirectTo) {
+      router.push(state.redirectTo);
+      router.refresh();
+    }
+  }, [state, router]);
+
+  if (!open) {
+    return (
+      <div className="card bg-[var(--color-surface-2)] p-6 lg:p-8">
+        <h3 className="display text-xl">Make it real</h3>
+        <p className="mt-2 max-w-2xl leading-relaxed text-[var(--color-ink-2)]">
+          Create the business on Bizora and this plan stops being a document:
+          you get a public storefront you can put products on, a build plan
+          seeded with these first steps, goals to track and a dashboard to
+          record what actually happens.
+        </p>
+        <button
+          type="button"
+          className="btn btn-brand btn-lg mt-5"
+          onClick={() => setOpen(true)}
+        >
+          Create Business
+        </button>
+        {state.message && !state.ok ? (
+          <p className="mt-3 text-[0.8125rem] text-[var(--color-danger)]">
+            {state.message}
+          </p>
+        ) : null}
+      </div>
+    );
+  }
+
+  return (
+    <form action={action} className="card space-y-5 p-6 lg:p-8">
+      <h3 className="display text-xl">Create your business</h3>
+
+      <Field label="Business name" htmlFor="cb-name" error={state.errors?.name} required>
+        <input
+          id="cb-name"
+          name="name"
+          className="input"
+          defaultValue={plan.business_name}
+          placeholder="Your business name"
+          required
+        />
+      </Field>
+
+      <Field
+        label="Description"
+        htmlFor="cb-description"
+        error={state.errors?.description}
+        hint="This appears on your public page. Edit it into your own words."
+        required
+      >
+        <textarea
+          id="cb-description"
+          name="description"
+          className="textarea min-h-28"
+          defaultValue={plan.business_description || plan.idea}
+          required
+        />
+      </Field>
+
+      <div className="grid gap-5 sm:grid-cols-2">
+        <Field label="Industry" htmlFor="cb-industry">
+          <input
+            id="cb-industry"
+            name="industry"
+            className="input"
+            placeholder="e.g. Speciality food"
+          />
+        </Field>
+        <Field label="Country" htmlFor="cb-country">
+          <select id="cb-country" name="country" className="select" defaultValue="">
+            <option value="">Not set</option>
+            {COUNTRIES.map((c) => (
+              <option key={c} value={c}>
+                {c}
+              </option>
+            ))}
+          </select>
+        </Field>
+      </div>
+
+      {/* The plan travels with the form so the new business starts populated. */}
+      {plan.products_services?.map((p) => (
+        <input key={p} type="hidden" name="product" value={p} />
+      ))}
+      {plan.first_steps?.map((s) => (
+        <input key={s} type="hidden" name="step" value={s} />
+      ))}
+      <input type="hidden" name="goals" value={plan.revenue_model} />
+
+      <FormMessage state={state} />
+
+      <div className="flex flex-wrap gap-2.5">
+        <SubmitButton pending={pending} className="btn btn-brand btn-lg flex-1">
+          Create Business
+        </SubmitButton>
+        <button type="button" className="btn btn-ghost" onClick={() => setOpen(false)}>
+          Not yet
+        </button>
+      </div>
+
+      <p className="text-[0.75rem] leading-relaxed text-[var(--color-ink-3)]">
+        This creates a public page on Bizora under your account. It does not
+        register a company, reserve a name, or create any legal entity —
+        registration happens with your national authority, not here.
+      </p>
+    </form>
   );
 }
 
@@ -290,7 +446,15 @@ function AdoptSteps({ steps }: { steps: string[] }) {
   );
 }
 
-function PlanList({ title, items }: { title: string; items: string[] }) {
+function PlanList({
+  title,
+  items,
+  tone = "accent",
+}: {
+  title: string;
+  items: string[];
+  tone?: "accent" | "gold";
+}) {
   if (!items?.length) return null;
   return (
     <div className="card p-6">
@@ -298,7 +462,13 @@ function PlanList({ title, items }: { title: string; items: string[] }) {
       <ul className="space-y-2.5">
         {items.map((item) => (
           <li key={item} className="flex gap-2.5">
-            <span className="mt-1.5 h-1 w-1 shrink-0 rounded-full bg-[var(--color-ink-3)]" />
+            <span
+              className={`mt-1.5 h-1 w-1 shrink-0 rounded-full ${
+                tone === "gold"
+                  ? "bg-[var(--color-gold)]"
+                  : "bg-[var(--color-ink-3)]"
+              }`}
+            />
             <span className="text-[0.875rem] leading-relaxed text-[var(--color-ink-2)]">
               {item}
             </span>

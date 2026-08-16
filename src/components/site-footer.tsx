@@ -14,8 +14,19 @@ const COLUMNS = [
     links: [
       { href: "/workspace", label: "My Business" },
       { href: "/start-a-business", label: "Start a Business" },
-      { href: "/business-profiles", label: "Business Profiles" },
+      { href: "/bizmatch", label: "BizMatch" },
+      { href: "/co-founders", label: "Find a Co-Founder" },
+      { href: "/tools", label: "Calculators" },
+      { href: "/market-research", label: "Market Research" },
+    ],
+  },
+  {
+    title: "Discover",
+    links: [
+      { href: "/opportunities", label: "Opportunities" },
+      { href: "/network", label: "Network" },
       { href: "/members", label: "Members" },
+      { href: "/business-profiles", label: "Business Profiles" },
       { href: "/partners", label: "Find a Partner" },
       { href: "/pricing", label: "Pricing & Fees" },
     ],
@@ -45,7 +56,7 @@ export function SiteFooter() {
   return (
     <footer className="mt-auto border-t border-[var(--color-line)] bg-[var(--color-surface)]">
       <div className="shell py-14">
-        <div className="grid gap-10 md:grid-cols-2 lg:grid-cols-6">
+        <div className="grid gap-10 md:grid-cols-2 lg:grid-cols-7">
           <div className="lg:col-span-2">
             <Link href="/" className="flex items-center gap-2">
               <span
@@ -54,7 +65,7 @@ export function SiteFooter() {
               >
                 B
               </span>
-              <span className="display text-lg">BizHub</span>
+              <span className="display text-lg">Bizora</span>
             </Link>
             <p className="mt-4 max-w-xs text-[0.875rem] leading-relaxed text-[var(--color-ink-3)]">
               Buy a business. Build a business. Sell a business. Everything you
@@ -83,7 +94,7 @@ export function SiteFooter() {
 
         <div className="mt-12 hairline pt-6">
           <p className="text-[0.75rem] leading-relaxed text-[var(--color-ink-3)]">
-            BizHub is a marketplace that connects buyers and sellers. It does
+            Bizora is a marketplace that connects buyers and sellers. It does
             not guarantee that any business is profitable, that any patent or
             technology is valuable, that any transaction will be successful, or
             that any seller is reliable. Verification confirms information a
@@ -93,7 +104,7 @@ export function SiteFooter() {
             before entering any transaction.
           </p>
           <p className="mt-4 text-[0.75rem] text-[var(--color-ink-3)]">
-            © {new Date().getFullYear()} BizHub. Demonstration project — the
+            © {new Date().getFullYear()} Bizora. Demonstration project — the
             legal pages are placeholders pending review by a qualified
             professional.
           </p>

@@ -84,7 +84,7 @@ export async function BrowsePage({
             {listings.length ? (
               <div className="mt-8">
                 <Notice tone="neutral">
-                  Listings are submitted by their sellers. BizHub reviews them
+                  Listings are submitted by their sellers. Bizora reviews them
                   before publication but does not independently confirm every
                   claim. Verify financials, ownership and rights yourself before
                   committing to anything.

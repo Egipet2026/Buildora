@@ -31,7 +31,7 @@ export default async function WorkspaceLayout({
         <PageHeader
           eyebrow="Your business"
           title="Build your business here"
-          description="Create the business first. Then add what you sell, publish a storefront, and work through your build plan — all inside BizHub."
+          description="Create the business first. Then add what you sell, publish a storefront, and work through your build plan — all inside Bizora."
         />
         <div className="shell py-10">
           <div className="card p-8 text-center lg:p-12">
@@ -42,7 +42,7 @@ export default async function WorkspaceLayout({
               You have not set up a business yet
             </h2>
             <p className="mx-auto mt-3 max-w-lg text-[0.9375rem] leading-relaxed text-[var(--color-ink-2)]">
-              A business on BizHub is a working thing, not a description. It
+              A business on Bizora is a working thing, not a description. It
               gets a public storefront with real products and prices, a build
               plan you tick off, and a direct line to partners, suppliers and
               customers already on the platform.
@@ -60,8 +60,8 @@ export default async function WorkspaceLayout({
           <div className="mt-8">
             <Notice tone="neutral" title="What you can do here afterwards">
               Publish products and services with prices and stock, keep a build
-              plan you can tick off, take enquiries in your BizHub inbox, and
-              list the business for sale later if you choose to. BizHub does not
+              plan you can tick off, take enquiries in your Bizora inbox, and
+              list the business for sale later if you choose to. Bizora does not
               process payments for storefront products — buyers contact you and
               you agree terms directly.
             </Notice>
@@ -110,6 +110,8 @@ export default async function WorkspaceLayout({
               label: "Build plan",
               count: openSteps,
             },
+            { href: "/workspace/goals", label: "Goals" },
+            { href: "/workspace/metrics", label: "Dashboard" },
           ]}
         />
         <div className="py-8">{children}</div>

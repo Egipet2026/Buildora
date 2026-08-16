@@ -55,7 +55,7 @@ export function MessageComposer({
         <p className="field-error">{state.errors.body}</p>
       ) : null}
       <p className="mt-2 text-[0.6875rem] text-[var(--color-ink-3)]">
-        Keep negotiations on BizHub. Never share bank details, passwords or
+        Keep negotiations on Bizora. Never share bank details, passwords or
         one-time codes in a message.
       </p>
     </form>

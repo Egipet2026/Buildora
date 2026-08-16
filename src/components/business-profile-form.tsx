@@ -137,7 +137,7 @@ export function BusinessProfileForm() {
         </div>
         <p className="field-hint">
           Investors are deliberately not an option here. Seeking investment is a
-          regulated activity in most markets, and BizHub does not host it until
+          regulated activity in most markets, and Bizora does not host it until
           it can do so lawfully in every market it serves.
         </p>
       </fieldset>

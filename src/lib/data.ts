@@ -8,11 +8,22 @@ import { DEMO_CURRENT_USER_ID } from "./demo/seed";
 import { readDemoSession } from "./auth/session";
 import { applyFilters, isFeaturedNow, type ListingFilters } from "./filters";
 import { DEFAULT_SETTINGS } from "./money";
+import { summariseRatings, trustScore } from "./reputation";
 import type {
+  BusinessGoal,
+  BusinessMetric,
   BusinessMilestone,
   BusinessProduct,
   BusinessProfile,
   Conversation,
+  Follow,
+  FollowTarget,
+  FounderProfile,
+  OpportunityAlert,
+  Post,
+  Review,
+  ReviewSubject,
+  WatchItem,
   Listing,
   ListingKind,
   ListingStatus,
@@ -745,4 +756,198 @@ export async function getSellerStats(userId: string): Promise<SellerStats> {
     revenueCents: mySales.reduce((n, t) => n + t.net_cents, 0),
     feesCents: mySales.reduce((n, t) => n + t.fee_cents, 0),
   };
+}
+
+/* ==========================================================================
+   Ecosystem modules
+   --------------------------------------------------------------------------
+   Reviews, trust, watchlists, alerts, co-founder profiles, goals, metrics and
+   the network feed. Each is self-contained so it can grow — or be removed —
+   without touching the marketplace itself.
+   ======================================================================== */
+
+const table = async <T>(name: string, order = "created_at"): Promise<T[]> => {
+  const supabase = await getServerSupabase();
+  if (!supabase) return [];
+  const { data } = await supabase
+    .from(name)
+    .select("*")
+    .order(order, { ascending: false })
+    .limit(MAX_ROWS);
+  return (data as T[]) ?? [];
+};
+
+// ------------------------------------------------------------------ reviews
+
+export const getReviews = cache(async (): Promise<Review[]> => {
+  if (isDemoMode) return demoStore().reviews;
+  return table<Review>("reviews");
+});
+
+export async function getReviewsFor(
+  subjectType: ReviewSubject,
+  subjectId: string,
+): Promise<Review[]> {
+  const all = await getReviews();
+  return all.filter(
+    (r) => r.subject_type === subjectType && r.subject_id === subjectId && !r.is_hidden,
+  );
+}
+
+/** Every review about a member, whichever role they were reviewed in. */
+export async function getReviewsAboutMember(userId: string): Promise<Review[]> {
+  const all = await getReviews();
+  return all.filter((r) => r.subject_id === userId && !r.is_hidden);
+}
+
+export async function getMemberReputation(userId: string) {
+  const [profile, transactions, reviews, reports] = await Promise.all([
+    getProfile(userId),
+    getTransactions(),
+    getReviewsAboutMember(userId),
+    getReports(),
+  ]);
+  if (!profile) return null;
+
+  return {
+    rating: summariseRatings(reviews),
+    reviews,
+    trust: trustScore({
+      profile,
+      transactions: transactions.filter(
+        (t) => t.buyer_id === userId || t.seller_id === userId,
+      ),
+      reviews,
+      reports: reports.filter(
+        (r) => r.target_type === "user" && r.target_id === userId,
+      ),
+    }),
+  };
+}
+
+/**
+ * Deals this member can still review.
+ *
+ * A review has to point at a transaction, and each transaction is worth one
+ * review — that pairing is what stops the review section being filled with
+ * feedback from people who never dealt with anyone.
+ */
+export async function getReviewableTransactions(userId: string): Promise<
+  { transaction: Transaction; counterparty: Profile; role: "buyer" | "seller" }[]
+> {
+  const [transactions, reviews, profiles] = await Promise.all([
+    getTransactions(),
+    getReviews(),
+    getProfiles(),
+  ]);
+  const byId = new Map(profiles.map((p) => [p.id, p]));
+  const written = new Set(
+    reviews.filter((r) => r.author_id === userId).map((r) => r.transaction_id),
+  );
+
+  return transactions
+    .filter(
+      (t) =>
+        (t.status === "released" || t.status === "paid") &&
+        (t.buyer_id === userId || t.seller_id === userId) &&
+        !written.has(t.id),
+    )
+    .flatMap((t) => {
+      const role = t.buyer_id === userId ? "buyer" : "seller";
+      const other = byId.get(role === "buyer" ? t.seller_id : t.buyer_id);
+      return other ? [{ transaction: t, counterparty: other, role } as const] : [];
+    });
+}
+
+// ---------------------------------------------------------------- watchlist
+
+export async function getWatchlist(userId: string): Promise<
+  { item: WatchItem; listing: ListingWithOwner }[]
+> {
+  const items = isDemoMode
+    ? demoStore().watchlist.filter((w) => w.user_id === userId)
+    : (await table<WatchItem>("watchlist")).filter((w) => w.user_id === userId);
+
+  if (!items.length) return [];
+
+  const listings = await getListings({
+    statuses: ["active", "pending", "sold", "draft"],
+    limit: MAX_ROWS,
+  });
+  const byId = new Map(listings.map((l) => [l.id, l]));
+
+  return items.flatMap((item) => {
+    const listing = byId.get(item.listing_id);
+    return listing ? [{ item, listing }] : [];
+  });
+}
+
+export async function getWatchedIds(userId: string): Promise<string[]> {
+  const rows = isDemoMode
+    ? demoStore().watchlist
+    : await table<WatchItem>("watchlist");
+  return rows.filter((w) => w.user_id === userId).map((w) => w.listing_id);
+}
+
+// ------------------------------------------------------------------- alerts
+
+export async function getAlerts(userId: string): Promise<OpportunityAlert[]> {
+  const rows = isDemoMode
+    ? demoStore().alerts
+    : await table<OpportunityAlert>("opportunity_alerts");
+  return rows.filter((a) => a.user_id === userId);
+}
+
+// -------------------------------------------------------------- co-founders
+
+export const getFounderProfiles = cache(async (): Promise<FounderProfile[]> => {
+  if (isDemoMode) return demoStore().founders;
+  return table<FounderProfile>("founder_profiles");
+});
+
+export async function getFounderProfile(
+  userId: string,
+): Promise<FounderProfile | null> {
+  const all = await getFounderProfiles();
+  return all.find((f) => f.user_id === userId) ?? null;
+}
+
+// --------------------------------------------------------- goals & metrics
+
+export async function getGoals(businessId: string): Promise<BusinessGoal[]> {
+  const rows = isDemoMode
+    ? demoStore().goals
+    : await table<BusinessGoal>("business_goals");
+  return rows.filter((g) => g.business_id === businessId);
+}
+
+export async function getMetrics(businessId: string): Promise<BusinessMetric[]> {
+  const rows = isDemoMode
+    ? demoStore().metrics
+    : await table<BusinessMetric>("business_metrics");
+  return rows
+    .filter((m) => m.business_id === businessId)
+    .sort((a, b) => a.month.localeCompare(b.month));
+}
+
+// ------------------------------------------------------------------ network
+
+export const getPosts = cache(async (): Promise<Post[]> => {
+  if (isDemoMode) return demoStore().posts;
+  return table<Post>("posts");
+});
+
+export async function getFollows(userId: string): Promise<Follow[]> {
+  const rows = isDemoMode ? demoStore().follows : await table<Follow>("follows");
+  return rows.filter((f) => f.follower_id === userId);
+}
+
+export async function getFollowerCount(
+  targetType: FollowTarget,
+  targetId: string,
+): Promise<number> {
+  const rows = isDemoMode ? demoStore().follows : await table<Follow>("follows");
+  return rows.filter(
+    (f) => f.target_type === targetType && f.target_id === targetId,
+  ).length;
 }

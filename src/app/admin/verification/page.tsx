@@ -44,7 +44,7 @@ export default async function AdminVerificationPage() {
         checked and against which source. For patents, confirm the number,
         jurisdiction, legal status and recorded proprietor against the public
         register — never assess validity, enforceability or commercial value.
-        Where BizHub cannot lawfully verify something, reject rather than assume.
+        Where Bizora cannot lawfully verify something, reject rather than assume.
       </Notice>
 
       {rows.map(({ request, user, listing }) => (

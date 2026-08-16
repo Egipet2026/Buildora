@@ -15,7 +15,15 @@ import {
   requireAdmin,
 } from "./data";
 import { calculateFees } from "./money";
-import type { ActionState, PlanState } from "./action-state";
+import { runAlertsForListing, runPriceDropAlerts } from "./ecosystem/watch";
+import { generateResearch } from "./ai/research";
+import { draftListing } from "./ai/listing-assistant";
+import type {
+  ActionState,
+  ListingDraftState,
+  PlanState,
+  ResearchState,
+} from "./action-state";
 import { MARKETPLACE_BY_KIND } from "./taxonomy";
 import {
   businessPlanSchema,
@@ -910,6 +918,57 @@ export async function mockCheckoutAction(
 }
 
 /** Buys a Featured slot or a Boost for one of the seller's own listings. */
+/**
+ * Changes a listing's asking price.
+ *
+ * A drop is the one listing change other people have asked to hear about, so
+ * this is where watchlist notifications are raised.
+ */
+export async function updateListingPriceAction(
+  _prev: ActionState,
+  formData: FormData,
+): Promise<ActionState> {
+  const { me, error } = await currentUserOrFail();
+  if (error) return error;
+
+  const listingId = String(formData.get("listingId") ?? "");
+  const listing = await getListing(listingId);
+  if (!listing) return fail("That listing no longer exists.");
+  if (listing.owner_id !== me!.id) return fail("That is not your listing.");
+
+  const raw = String(formData.get("price") ?? "").replace(/[\s,€]/g, "");
+  if (!/^\d+(\.\d{1,2})?$/.test(raw))
+    return fail("Enter a valid amount.", { price: "Numbers only" });
+
+  const next = Math.round(parseFloat(raw) * 100);
+  const previous = listing.price_cents;
+  if (next === previous) return { ok: true, message: "Price unchanged." };
+
+  if (isDemoMode) {
+    const row = demoStore().listings.find((l) => l.id === listingId);
+    if (row) row.price_cents = next;
+  } else {
+    const supabase = await getServerSupabase();
+    const { error: dbError } = await supabase!
+      .from("listings")
+      .update({ price_cents: next })
+      .eq("id", listingId);
+    if (dbError) return fail(dbError.message);
+  }
+
+  const told = await runPriceDropAlerts({ ...listing, price_cents: next }, previous);
+
+  revalidatePath(`/listing/${listingId}`);
+  revalidatePath("/seller/listings");
+  return {
+    ok: true,
+    message:
+      told > 0
+        ? `Price updated. ${told} ${told === 1 ? "person watching this was" : "people watching this were"} notified.`
+        : "Price updated.",
+  };
+}
+
 export async function promoteListingAction(
   _prev: ActionState,
   formData: FormData,
@@ -1007,6 +1066,12 @@ export async function adminModerateListingAction(
       .update(patch)
       .eq("id", listingId);
     if (dbError) return fail(dbError.message);
+  }
+
+  // Approving is the moment a listing becomes visible, so it is also the
+  // moment anyone with a matching standing search should hear about it.
+  if (decision === "approve") {
+    await runAlertsForListing({ ...listing, ...patch } as Listing);
   }
 
   if (decision === "approve" || decision === "reject") {
@@ -1202,6 +1267,71 @@ export async function adminSettingsAction(
 }
 
 // ------------------------------------------------------- business profiles
+
+/* ------------------------------------------------------------- AI tools */
+
+/**
+ * Market research, generated on request.
+ *
+ * Deliberately never cached or stored: it is one model's summary at one
+ * moment, and keeping it around invites people to treat it as a source.
+ */
+export async function generateResearchAction(
+  _prev: ResearchState,
+  formData: FormData,
+): Promise<ResearchState> {
+  const industry = String(formData.get("industry") ?? "").trim();
+  const country = String(formData.get("country") ?? "").trim();
+  const customer = String(formData.get("customer") ?? "").trim();
+  const product = String(formData.get("product") ?? "").trim();
+
+  if (industry.length < 2)
+    return fail("Name the industry you want to look at.", {
+      industry: "Enter an industry",
+    });
+
+  const research = await generateResearch({
+    industry,
+    country: country || "any market",
+    customer: customer || "not specified",
+    product: product || "not specified",
+  });
+
+  return { ok: true, research };
+}
+
+/**
+ * Rewrites a seller's rough notes into listing copy they then edit.
+ *
+ * The result is never published from here — it is handed back to the form so
+ * the seller reads and approves every word under their own name.
+ */
+export async function draftListingAction(
+  _prev: ListingDraftState,
+  formData: FormData,
+): Promise<ListingDraftState> {
+  const { error } = await currentUserOrFail();
+  if (error) return error;
+
+  const notes = String(formData.get("notes") ?? "").trim();
+  if (notes.length < 30)
+    return fail("Tell the assistant more about what you are selling.", {
+      notes: "At least a couple of sentences",
+    });
+
+  const draft = await draftListing({
+    kind: (String(formData.get("kind") ?? "business") as ListingKind),
+    title: String(formData.get("title") ?? "").trim() || undefined,
+    notes,
+  });
+
+  if (!draft)
+    return fail(
+      "The drafting assistant is not available on this deployment — set ANTHROPIC_API_KEY to enable it. You can still write the listing yourself.",
+    );
+
+  return { ok: true, draft };
+}
 
 export async function createBusinessProfileAction(
   _prev: ActionState,

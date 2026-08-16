@@ -14,6 +14,8 @@ import type { BusinessPlan } from "../types";
  */
 
 const planSchema = z.object({
+  business_name: z.string(),
+  business_description: z.string(),
   idea: z.string(),
   target_customers: z.array(z.string()),
   business_model: z.string(),
@@ -24,7 +26,11 @@ const planSchema = z.object({
   required_roles: z.array(z.string()),
   marketing_ideas: z.array(z.string()),
   revenue_model: z.string(),
+  products_services: z.array(z.string()),
+  required_skills: z.array(z.string()),
   first_steps: z.array(z.string()),
+  possible_competitors: z.array(z.string()),
+  possible_risks: z.array(z.string()),
 });
 
 /**
@@ -37,6 +43,8 @@ const PLAN_JSON_SCHEMA = {
   type: "object",
   additionalProperties: false,
   required: [
+    "business_name",
+    "business_description",
     "idea",
     "target_customers",
     "business_model",
@@ -45,9 +53,23 @@ const PLAN_JSON_SCHEMA = {
     "required_roles",
     "marketing_ideas",
     "revenue_model",
+    "products_services",
+    "required_skills",
     "first_steps",
+    "possible_competitors",
+    "possible_risks",
   ],
   properties: {
+    business_name: {
+      type: "string",
+      description:
+        "A short, plausible trading name. Avoid names likely to belong to a real company already.",
+    },
+    business_description: {
+      type: "string",
+      description:
+        "Two or three sentences describing the business, suitable for a public profile.",
+    },
     idea: {
       type: "string",
       description: "The idea restated in one clear sentence.",
@@ -78,15 +100,37 @@ const PLAN_JSON_SCHEMA = {
     required_roles: { type: "array", items: { type: "string" } },
     marketing_ideas: { type: "array", items: { type: "string" } },
     revenue_model: { type: "string" },
+    products_services: {
+      type: "array",
+      items: { type: "string" },
+      description: "3–6 specific things this business would actually sell.",
+    },
+    required_skills: {
+      type: "array",
+      items: { type: "string" },
+      description: "Skills the founder needs or must hire in.",
+    },
     first_steps: {
       type: "array",
       items: { type: "string" },
       description: "5–7 concrete actions, in the order to do them.",
     },
+    possible_competitors: {
+      type: "array",
+      items: { type: "string" },
+      description:
+        "Types of competitor and, where genuinely well known, named ones. Never invent a company.",
+    },
+    possible_risks: {
+      type: "array",
+      items: { type: "string" },
+      description:
+        "4–6 specific ways this business could fail, with what would signal each one early.",
+    },
   },
 } as const;
 
-const SYSTEM = `You help founders turn a rough idea into a first structured business plan on BizHub, an international business marketplace.
+const SYSTEM = `You help founders turn a rough idea into a first structured business plan on Bizora, an international business marketplace.
 
 Write for someone who has never started a business before. Be concrete and specific to their idea — never generic filler.
 
@@ -159,6 +203,8 @@ function offlinePlan(input: PlanInput): BusinessPlan {
   const market = input.country?.trim() || "your target market";
 
   return {
+    business_name: "",
+    business_description: idea,
     idea,
     target_customers: [
       "The narrowest group who feel this problem most sharply today",
@@ -196,6 +242,28 @@ function offlinePlan(input: PlanInput): BusinessPlan {
     ],
     revenue_model:
       "Work backwards from a target monthly figure: how many customers at what price gets you there, and how many conversations produce one customer? If the arithmetic only works at an implausible volume, change the price or the model.",
+    products_services: [
+      "The smallest paid offer you could deliver within 30 days",
+      "A higher-priced version for customers who need more",
+      "A recurring element, if the problem recurs",
+    ],
+    required_skills: [
+      "Talking to customers and closing the first sales",
+      "Building or sourcing whatever you are selling",
+      "Basic bookkeeping and knowing when to call an accountant",
+    ],
+    possible_competitors: [
+      "Established companies already serving this market",
+      "Cheaper, worse alternatives your customers tolerate today",
+      "Doing nothing — often the hardest competitor to beat",
+    ],
+    possible_risks: [
+      "Nobody will pay: watch for warm words and no orders",
+      "You cannot reach customers affordably: watch acquisition cost against price",
+      "One customer becomes most of your revenue",
+      "Regulation you have not checked applies to you",
+      "You run out of money before the model works",
+    ],
     first_steps: [
       "Write the problem in one sentence and name exactly who has it",
       "Interview 10 people in that group — do not pitch, only listen",
