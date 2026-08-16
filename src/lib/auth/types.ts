@@ -37,10 +37,14 @@ export interface OtpChallenge {
   lastSentAt: string;
   consumedAt: string | null;
   /**
-   * Demo mode has no mail or SMS provider, so the code is surfaced in the UI
-   * instead of being delivered. Never populated when Supabase is configured.
+   * The plaintext code, kept so it can be shown on screen when — and only
+   * when — no provider is configured to deliver it.
    */
   demoCode: string;
+  /** Whether a provider actually accepted the message. */
+  delivered: boolean;
+  /** Why delivery failed, for the server log. Never shown to the member. */
+  deliveryError: string | null;
 }
 
 export interface DemoSession {

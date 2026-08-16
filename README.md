@@ -89,12 +89,27 @@ data.
 4. Restart. Authentication, the database, storage and realtime messaging
    activate automatically — no code changes.
 
-**Confirmation codes.** Sign-up and sign-in take an email address *or* a phone
-number plus a password, then a six-digit code. Supabase sends the email code
-itself, but **phone sign-up needs an SMS provider** — configure one under
-Authentication → Providers → Phone (Twilio, MessageBird, Vonage or Textlocal),
-otherwise phone registration fails at the code step. In demo mode there is no
-provider at all, so the code is shown on screen and labelled as such.
+### Sending the confirmation code
+
+Sign-up and sign-in take an email address *or* a phone number plus a password,
+then a six-digit code. **That code has to be sent by somebody** — an email API,
+an SMTP server or an SMS gateway — and that needs an account. Set one of these
+and the code is delivered for real, with no code changes:
+
+| Channel | Variables | Notes |
+| --- | --- | --- |
+| Email | `RESEND_API_KEY`, `EMAIL_FROM` | Simplest. Free tier covers development. The From domain must be verified in Resend. |
+| Email | `SMTP_HOST`, `SMTP_PORT`, `SMTP_USER`, `SMTP_PASSWORD`, `EMAIL_FROM` | Any SMTP server — Gmail, Fastmail, Postmark, your own. |
+| SMS | `TWILIO_ACCOUNT_SID`, `TWILIO_AUTH_TOKEN`, and `TWILIO_FROM` *or* `TWILIO_MESSAGING_SERVICE_SID` | Required for phone sign-up. |
+
+**With none of them set the code cannot be sent at all**, so it is shown on
+screen and labelled as undelivered. That is the only situation in which the
+code is ever displayed: once a provider is configured, a delivery failure tells
+the member to request a new code rather than revealing it.
+
+If you use Supabase for auth, Supabase sends the email code itself, and phone
+sign-up needs an SMS provider configured under Authentication → Providers →
+Phone.
 
 Optionally set `ANTHROPIC_API_KEY` to enable the live business-plan generator on
 `/start-a-business`. Without it the planner falls back to a deterministic

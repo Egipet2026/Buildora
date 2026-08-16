@@ -24,6 +24,7 @@ import {
   normalisePhone,
   type AuthChannel,
 } from "./identity";
+import { canDeliver, deliverCode } from "./delivery";
 import { endDemoSession, startDemoSession } from "./session";
 import type { AuthState } from "./state";
 import {
@@ -121,9 +122,53 @@ async function issueDemoChallenge(
     lastSentAt: new Date().toISOString(),
     consumedAt: null,
     demoCode: code,
+    delivered: false,
+    deliveryError: null,
   };
   store.challenges.push(challenge);
+
+  // Send it for real when a provider is configured. `delivered` decides
+  // whether the UI may fall back to showing the code on screen.
+  const result = await deliverCode(channel, destination, code);
+  challenge.delivered = result.delivered;
+  challenge.deliveryError = result.error ?? null;
+  if (result.error) {
+    console.error(
+      `[auth] code delivery to ${channel} failed via ${result.provider ?? "no provider"}: ${result.error}`,
+    );
+  }
+
   return challenge;
+}
+
+/**
+ * What the member is told, and whether they get to see the code.
+ *
+ * The code is only ever put on screen when there is genuinely no provider to
+ * send it with — never as a convenience once one is configured.
+ */
+function deliveryState(
+  channel: AuthChannel,
+  challenge: OtpChallenge,
+): { message: string; demoCode?: string } {
+  if (challenge.delivered) {
+    return {
+      message: `We sent a 6-digit code to your ${channelNoun(channel)}.`,
+    };
+  }
+
+  if (canDeliver(channel)) {
+    // A provider exists but refused. Showing the code would be a security
+    // hole, so the member is told to try again instead.
+    return {
+      message: `We could not send the code to your ${channelNoun(channel)} just now. Request a new one in a moment.`,
+    };
+  }
+
+  return {
+    message: `No ${channel === "email" ? "email" : "SMS"} provider is configured, so the code is shown below instead of being sent.`,
+    demoCode: challenge.demoCode,
+  };
 }
 
 function findDemoAccount(destination: string): DemoAccount | undefined {
@@ -232,7 +277,7 @@ export async function registerAction(
     "signup",
   );
 
-  return { ...pending, demoCode: challenge.demoCode };
+  return { ...pending, ...deliveryState(channel, challenge) };
 }
 
 /* ---------------------------------------------------------------- login */
@@ -301,9 +346,8 @@ export async function loginAction(
       destination,
       maskedDestination: maskDestination(channel, destination),
       purpose: "signup",
-      demoCode: challenge.demoCode,
       resendAvailableAt: Date.now() + RESEND_COOLDOWN_MS,
-      message: `Confirm your ${channelNoun(channel)} to finish signing in.`,
+      ...deliveryState(channel, challenge),
     };
   }
 
@@ -404,7 +448,7 @@ export async function verifyCodeAction(
     }
     return stay(
       `That code is not right. ${left} ${left === 1 ? "attempt" : "attempts"} left.`,
-      { demoCode: challenge.demoCode },
+      { demoCode: challenge.delivered ? undefined : challenge.demoCode },
     );
   }
 
@@ -427,7 +471,7 @@ export async function verifyCodeAction(
 function liveDemoCode(destination: string): string | undefined {
   if (!isDemoMode) return undefined;
   return demoStore().challenges.find(
-    (c) => c.destination === destination && !c.consumedAt,
+    (c) => c.destination === destination && !c.consumedAt && !c.delivered,
   )?.demoCode;
 }
 
@@ -460,7 +504,10 @@ async function resendCode(
     if (since < RESEND_COOLDOWN_MS) {
       const wait = Math.ceil((RESEND_COOLDOWN_MS - since) / 1000);
       return stay(`Wait ${wait}s before requesting another code.`, {
-        demoCode: previous.consumedAt ? undefined : previous.demoCode,
+        demoCode:
+          previous.consumedAt || previous.delivered
+            ? undefined
+            : previous.demoCode,
         resendAvailableAt:
           new Date(previous.lastSentAt).getTime() + RESEND_COOLDOWN_MS,
       });
@@ -480,8 +527,9 @@ async function resendCode(
     destination,
     purpose,
   );
-  return stay("A new code is on its way.", {
-    demoCode: challenge.demoCode,
+  const state = deliveryState(channel, challenge);
+  return stay(challenge.delivered ? "A new code is on its way." : state.message, {
+    demoCode: state.demoCode,
     resendAvailableAt: Date.now() + RESEND_COOLDOWN_MS,
   });
 }

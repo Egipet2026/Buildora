@@ -279,10 +279,18 @@ function VerifyStep({
       </div>
 
       {demoCode ? (
-        <Notice tone="brand" title="Demo mode — nothing was actually sent">
-          There is no mail or SMS provider configured, so the code appears here
-          instead of arriving in your inbox. Your code is{" "}
+        <Notice tone="brand" title="Nothing was actually sent">
+          This deployment has no {channel === "email" ? "email" : "SMS"} provider
+          configured, so the code is shown here instead of being delivered. Your
+          code is{" "}
           <strong className="font-mono text-base tracking-widest">{demoCode}</strong>.
+          <span className="mt-2 block text-[0.75rem]">
+            To send it for real, set{" "}
+            <code className="font-mono">
+              {channel === "email" ? "RESEND_API_KEY" : "TWILIO_ACCOUNT_SID"}
+            </code>{" "}
+            in the environment — see the README.
+          </span>
         </Notice>
       ) : null}
 
