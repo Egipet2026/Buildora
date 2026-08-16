@@ -89,29 +89,28 @@ export async function SiteHeader() {
                     <span className="absolute right-0.5 top-0.5 h-2 w-2 rounded-full bg-[var(--color-danger)]" />
                   ) : null}
                 </Link>
-                <Link href="/dashboard" className="btn btn-ghost btn-sm hidden md:inline-flex">
-                  Dashboard
-                </Link>
                 <SignOutButton
                   className="btn btn-ghost btn-sm hidden md:inline-flex"
                   label="Sign out"
                 />
+                {/* Listings are created from your own profile, not from the
+                    browse pages — those stay filters and listings only. */}
+                <Link href="/dashboard" className="btn btn-primary btn-sm shrink-0">
+                  <span className="hidden sm:inline">My profile</span>
+                  <span className="sm:hidden">Profile</span>
+                </Link>
               </>
             ) : (
               <>
                 <Link href="/login" className="btn btn-ghost btn-sm hidden sm:inline-flex">
                   Sign in
                 </Link>
-                <Link href="/register" className="btn btn-outline btn-sm hidden md:inline-flex">
-                  Create account
+                <Link href="/register" className="btn btn-primary btn-sm shrink-0">
+                  <span className="hidden sm:inline">Create account</span>
+                  <span className="sm:hidden">Join</span>
                 </Link>
               </>
             )}
-
-            <Link href="/sell" className="btn btn-primary btn-sm shrink-0">
-              <span className="hidden sm:inline">Sell a business</span>
-              <span className="sm:hidden">Sell</span>
-            </Link>
 
             {/* No-JS mobile menu: a native disclosure, no client bundle. */}
             <details className="group relative lg:hidden">
@@ -148,6 +147,12 @@ export async function SiteHeader() {
                 >
                   Business Profiles
                 </Link>
+                <Link
+                  href="/members"
+                  className="block rounded-lg px-3 py-2.5 text-sm font-medium hover:bg-[var(--color-surface-2)]"
+                >
+                  Members
+                </Link>
                 <div className="my-2 hairline" />
                 {me ? (
                   <>
@@ -162,6 +167,12 @@ export async function SiteHeader() {
                       className="block rounded-lg px-3 py-2.5 text-sm font-medium hover:bg-[var(--color-surface-2)]"
                     >
                       Seller dashboard
+                    </Link>
+                    <Link
+                      href="/workspace"
+                      className="block rounded-lg px-3 py-2.5 text-sm font-medium hover:bg-[var(--color-surface-2)]"
+                    >
+                      My business
                     </Link>
                     <Link
                       href="/messages"

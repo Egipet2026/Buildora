@@ -112,11 +112,14 @@ template.
 | Patent & technology marketplace, purchase / exclusive / non-exclusive licence | ✅ |
 | Digital assets, services, partners, ideas, products, AI tools, marketing | ✅ |
 | Business profiles (“looking for partners / developers / suppliers…”) | ✅ |
+| Business workspace: a real storefront with priced products, stock and drafts | ✅ |
+| Build plan — an editable checklist the AI planner can seed but does not own | ✅ |
+| Member directory and public member pages | ✅ |
 | Listing creation with moderation queue | ✅ |
 | Listing detail: financials, rights, documents, seller, similar listings | ✅ |
 | Plain-language search (“a SaaS business under €20,000”) + structured filters | ✅ |
 | Offers, counter-offers, accept / decline, full negotiation history | ✅ |
-| Messaging with unread counts, realtime updates, report user | ✅ |
+| Messaging: listing threads **and** direct member-to-member, live updates | ✅ |
 | Favourites | ✅ |
 | Buyer dashboard: saved, offers, purchases, notifications | ✅ |
 | Seller dashboard: listings, offers, analytics, promotions, verification | ✅ |
@@ -138,7 +141,8 @@ for the same reason.
 both sides see identical numbers, but takes no payment and holds no funds.
 Holding money on behalf of others is regulated. The data model already carries
 the fee split per transaction, so enabling payouts later is a payment-provider
-integration rather than a schema change.
+integration rather than a schema change. Storefront products are quoted and
+enquired about, not checked out — the same reason.
 
 ---
 
@@ -153,6 +157,8 @@ src/
     seller/                Seller dashboard
     admin/                 Administration
     messages/              Conversations
+    members/               Member directory and public member pages
+    workspace/             The owner's business: storefront and build plan
     legal/                 Placeholder legal documents
   components/              UI, listing cards, filters, dialogs, forms
   lib/

@@ -290,6 +290,51 @@ export interface BusinessProfile {
   created_at: string;
 }
 
+/**
+ * A product or service the business actually sells, published on its own
+ * storefront. This is what makes a business profile a working shop rather than
+ * a description of one: prices, stock and availability that the owner keeps
+ * up to date from their workspace.
+ */
+export interface BusinessProduct {
+  id: string;
+  business_id: string;
+  owner_id: string;
+  name: string;
+  description: string;
+  /** Null means the price is on request. */
+  price_cents: number | null;
+  currency: string;
+  unit: string | null;
+  sku: string | null;
+  /** Null means made to order — no stock is tracked. */
+  stock: number | null;
+  image_url: string | null;
+  status: ProductStatus;
+  created_at: string;
+}
+
+export type ProductStatus = "draft" | "published" | "out_of_stock";
+
+export type MilestoneStage = "validate" | "set_up" | "launch" | "grow";
+
+/**
+ * One step in the business's build plan. The AI planner can seed these, but
+ * they are ordinary editable records afterwards — the plan is a working
+ * checklist the owner owns, not a document the model hands back.
+ */
+export interface BusinessMilestone {
+  id: string;
+  business_id: string;
+  title: string;
+  detail: string | null;
+  stage: MilestoneStage;
+  is_done: boolean;
+  position: number;
+  created_at: string;
+  completed_at: string | null;
+}
+
 export interface BusinessPlan {
   idea: string;
   target_customers: string[];

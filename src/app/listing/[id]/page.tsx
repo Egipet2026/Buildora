@@ -459,7 +459,12 @@ export default async function ListingPage({
                 />
                 <div className="min-w-0">
                   <p className="flex items-center gap-2 font-semibold">
-                    {listing.owner.full_name}
+                    <Link
+                      href={`/members/${listing.owner.id}`}
+                      className="hover:text-[var(--color-brand)]"
+                    >
+                      {listing.owner.full_name}
+                    </Link>
                     {listing.owner.is_verified ? (
                       <span
                         className="badge badge-verified"
@@ -481,7 +486,14 @@ export default async function ListingPage({
                 </div>
               </div>
 
-              <p className="mt-4 text-[0.75rem] leading-relaxed text-[var(--color-ink-3)]">
+              <Link
+                href={`/members/${listing.owner.id}`}
+                className="btn btn-outline btn-sm mt-4 w-full"
+              >
+                View seller profile
+              </Link>
+
+              <p className="mt-3 text-[0.75rem] leading-relaxed text-[var(--color-ink-3)]">
                 Contact details are never published. Message the seller through
                 BizHub so the conversation is recorded.
               </p>

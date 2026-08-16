@@ -9,6 +9,8 @@ import { readDemoSession } from "./auth/session";
 import { applyFilters, isFeaturedNow, type ListingFilters } from "./filters";
 import { DEFAULT_SETTINGS } from "./money";
 import type {
+  BusinessMilestone,
+  BusinessProduct,
   BusinessProfile,
   Conversation,
   Listing,
@@ -578,6 +580,88 @@ export async function getBusinessProfile(
   return (
     all.find((b) => b.id === idOrSlug) ?? all.find((b) => b.slug === idOrSlug) ?? null
   );
+}
+
+/** The business this member runs, if they have created one. */
+export async function getMyBusiness(
+  ownerId: string,
+): Promise<BusinessProfile | null> {
+  const all = await getBusinessProfiles();
+  return all.find((b) => b.owner_id === ownerId) ?? null;
+}
+
+// ------------------------------------------------------ storefront products
+
+/**
+ * Products a business sells.
+ *
+ * `includeDrafts` is only ever true for the owner's own workspace — every
+ * public surface calls this without it, so an unpublished product cannot leak
+ * through a page that forgot to filter.
+ */
+export async function getBusinessProducts(
+  businessId: string,
+  { includeDrafts = false }: { includeDrafts?: boolean } = {},
+): Promise<BusinessProduct[]> {
+  let rows: BusinessProduct[];
+
+  if (isDemoMode) {
+    rows = demoStore().businessProducts.filter(
+      (p) => p.business_id === businessId,
+    );
+  } else {
+    const supabase = await getServerSupabase();
+    if (!supabase) return [];
+    const { data } = await supabase
+      .from("business_products")
+      .select("*")
+      .eq("business_id", businessId)
+      .order("created_at", { ascending: false })
+      .limit(MAX_ROWS);
+    rows = (data as BusinessProduct[]) ?? [];
+  }
+
+  const visible = includeDrafts ? rows : rows.filter((p) => p.status !== "draft");
+  return [...visible].sort((a, b) => b.created_at.localeCompare(a.created_at));
+}
+
+export async function getBusinessProduct(
+  id: string,
+): Promise<BusinessProduct | null> {
+  if (isDemoMode) {
+    return demoStore().businessProducts.find((p) => p.id === id) ?? null;
+  }
+  const supabase = await getServerSupabase();
+  if (!supabase) return null;
+  const { data } = await supabase
+    .from("business_products")
+    .select("*")
+    .eq("id", id)
+    .maybeSingle();
+  return (data as BusinessProduct) ?? null;
+}
+
+// -------------------------------------------------------- build milestones
+
+export async function getMilestones(
+  businessId: string,
+): Promise<BusinessMilestone[]> {
+  let rows: BusinessMilestone[];
+
+  if (isDemoMode) {
+    rows = demoStore().milestones.filter((m) => m.business_id === businessId);
+  } else {
+    const supabase = await getServerSupabase();
+    if (!supabase) return [];
+    const { data } = await supabase
+      .from("business_milestones")
+      .select("*")
+      .eq("business_id", businessId)
+      .limit(MAX_ROWS);
+    rows = (data as BusinessMilestone[]) ?? [];
+  }
+
+  return [...rows].sort((a, b) => a.position - b.position);
 }
 
 // ------------------------------------------------------------- admin stats

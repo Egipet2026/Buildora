@@ -1,13 +1,13 @@
 "use client";
 
 import Link from "next/link";
-import { useActionState } from "react";
+import { useRouter } from "next/navigation";
+import { useActionState, useEffect } from "react";
 import { FormMessage, SubmitButton } from "./dialog";
 import { Field, Notice } from "./ui";
-import {
-  generateBusinessPlanAction,
-} from "@/lib/actions";
-import { type PlanState } from "@/lib/action-state";
+import { generateBusinessPlanAction } from "@/lib/actions";
+import { adoptPlanStepsAction } from "@/lib/workspace/actions";
+import { IDLE, type PlanState } from "@/lib/action-state";
 import { COUNTRIES } from "@/lib/taxonomy";
 
 const EXAMPLES = [
@@ -16,12 +16,12 @@ const EXAMPLES = [
   "A subscription box for speciality coffee sourced directly from farms.",
 ];
 
-const IDLE: PlanState = { ok: false };
+const PLAN_IDLE: PlanState = { ok: false };
 
 export function BusinessPlanner() {
   const [state, action, pending] = useActionState(
     generateBusinessPlanAction,
-    IDLE,
+    PLAN_IDLE,
   );
   const plan = state.plan;
 
@@ -139,47 +139,31 @@ export function BusinessPlanner() {
               </p>
             </div>
 
+            {/* Deliberately not a <table>: the shared table style carries a
+                640px minimum, which on a phone turns two short columns into a
+                sideways scroll. These rows wrap instead. */}
             <div className="card overflow-hidden">
               <div className="border-b border-[var(--color-line)] px-6 py-4 lg:px-8">
                 <p className="eyebrow">Possible costs</p>
               </div>
-              <div className="table-wrap">
-                <table className="data-table">
-                  <thead>
-                    <tr>
-                      <th>Item</th>
-                      <th>Rough estimate</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {plan.possible_costs.map((cost) => (
-                      <tr key={cost.label}>
-                        <td className="font-medium text-[var(--color-ink)]">
-                          {cost.label}
-                        </td>
-                        <td>{cost.estimate}</td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
+              <dl className="divide-y divide-[var(--color-line)]">
+                {plan.possible_costs.map((cost) => (
+                  <div
+                    key={cost.label}
+                    className="px-6 py-3.5 sm:flex sm:items-baseline sm:justify-between sm:gap-6 lg:px-8"
+                  >
+                    <dt className="min-w-0 text-[0.875rem] font-medium text-[var(--color-ink)]">
+                      {cost.label}
+                    </dt>
+                    <dd className="mt-0.5 text-[0.875rem] text-[var(--color-ink-2)] sm:mt-0 sm:shrink-0 sm:text-right">
+                      {cost.estimate}
+                    </dd>
+                  </div>
+                ))}
+              </dl>
             </div>
 
-            <div className="card p-6 lg:p-8">
-              <p className="eyebrow mb-4">First steps</p>
-              <ol className="space-y-3.5">
-                {plan.first_steps.map((step, i) => (
-                  <li key={step} className="flex gap-3.5">
-                    <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-[var(--color-ink)] text-[0.6875rem] font-bold text-white">
-                      {i + 1}
-                    </span>
-                    <span className="leading-relaxed text-[var(--color-ink-2)]">
-                      {step}
-                    </span>
-                  </li>
-                ))}
-              </ol>
-            </div>
+            <AdoptSteps steps={plan.first_steps} />
 
             <div className="card bg-[var(--color-surface-2)] p-6 lg:p-8">
               <h3 className="display text-xl">Now find what you need</h3>
@@ -231,6 +215,78 @@ export function BusinessPlanner() {
         )}
       </div>
     </div>
+  );
+}
+
+/**
+ * The generated first steps, with the option to keep them.
+ *
+ * Adopting turns each step into an ordinary milestone the member owns and can
+ * edit or delete — the model drafts the checklist, it does not hold it.
+ */
+function AdoptSteps({ steps }: { steps: string[] }) {
+  const [state, action, pending] = useActionState(adoptPlanStepsAction, IDLE);
+  const router = useRouter();
+
+  useEffect(() => {
+    if (state.ok && state.redirectTo) {
+      router.push(state.redirectTo);
+      router.refresh();
+    }
+  }, [state, router]);
+
+  if (!steps?.length) return null;
+
+  return (
+    <form action={action} className="card p-6 lg:p-8">
+      <div className="flex flex-wrap items-start justify-between gap-4">
+        <div>
+          <p className="eyebrow">First steps</p>
+          <p className="mt-1.5 text-[0.8125rem] leading-relaxed text-[var(--color-ink-3)]">
+            Untick anything you disagree with, then keep the rest as a working
+            checklist in your business.
+          </p>
+        </div>
+      </div>
+
+      <ol className="mt-5 space-y-3.5">
+        {steps.map((step, i) => (
+          <li key={step} className="flex items-start gap-3.5">
+            <input
+              type="checkbox"
+              name="step"
+              value={step}
+              defaultChecked
+              id={`step-${i}`}
+              className="mt-1 h-4 w-4 shrink-0 accent-[var(--color-brand)]"
+            />
+            <label
+              htmlFor={`step-${i}`}
+              className="leading-relaxed text-[var(--color-ink-2)]"
+            >
+              <span className="mr-2 font-semibold text-[var(--color-ink)]">
+                {i + 1}.
+              </span>
+              {step}
+            </label>
+          </li>
+        ))}
+      </ol>
+
+      <div className="mt-6 space-y-3">
+        <FormMessage state={state} />
+        <SubmitButton pending={pending} className="btn btn-brand w-full">
+          Add these steps to my build plan
+        </SubmitButton>
+        <p className="text-center text-[0.75rem] text-[var(--color-ink-3)]">
+          No business set up yet?{" "}
+          <Link href="/business-profiles/new" className="underline">
+            Create one first
+          </Link>{" "}
+          — it takes a minute.
+        </p>
+      </div>
+    </form>
   );
 }
 

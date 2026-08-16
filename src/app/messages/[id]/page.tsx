@@ -3,6 +3,7 @@ import { notFound, redirect } from "next/navigation";
 import {
   MessageComposer,
   RealtimeMessages,
+  ScrollToLatest,
 } from "@/components/message-composer";
 import { ReportButton } from "@/components/listing-actions";
 import { Cover, Notice } from "@/components/ui";
@@ -51,7 +52,12 @@ export default async function ConversationPage({
             />
             <div className="min-w-0">
               <p className="truncate font-semibold">
-                {view.other.full_name}
+                <Link
+                  href={`/members/${view.other.id}`}
+                  className="hover:text-[var(--color-brand)]"
+                >
+                  {view.other.full_name}
+                </Link>
                 {view.other.is_verified ? (
                   <span className="ml-1.5 text-[var(--color-accent)]" title="Verified">
                     ✓
@@ -65,6 +71,11 @@ export default async function ConversationPage({
           </header>
 
           <div className="flex max-h-[60vh] min-h-80 flex-col gap-4 overflow-y-auto p-5">
+            {messages.length === 0 ? (
+              <p className="m-auto max-w-xs text-center text-[0.875rem] text-[var(--color-ink-3)]">
+                No messages yet. Say hello.
+              </p>
+            ) : null}
             {messages.map((message) => {
               const mine = message.sender_id === me.id;
               return (
@@ -94,6 +105,7 @@ export default async function ConversationPage({
                 </div>
               );
             })}
+            <ScrollToLatest count={messages.length} />
           </div>
 
           <MessageComposer conversationId={id} />
@@ -146,6 +158,12 @@ export default async function ConversationPage({
                 <dd>{view.other.is_verified ? "Yes" : "No"}</dd>
               </div>
             </dl>
+            <Link
+              href={`/members/${view.other.id}`}
+              className="btn btn-outline btn-sm mt-4 w-full"
+            >
+              View their profile
+            </Link>
             <div className="mt-4 hairline pt-4">
               <ReportButton
                 targetType="user"

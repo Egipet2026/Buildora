@@ -62,16 +62,50 @@ export function MessageComposer({
   );
 }
 
+/** How often the demo fallback checks for the other side's messages. */
+const POLL_MS = 4000;
+
 /**
- * Subscribes to inserts on this conversation and refreshes the server
- * component tree so new messages appear without a reload. No-op in demo mode.
+ * Keeps an open conversation live.
+ *
+ * With Supabase configured this is a realtime subscription on inserts. Without
+ * it there is nothing to subscribe to, so it falls back to polling the server
+ * component tree — only while the tab is actually visible, so a forgotten tab
+ * costs nothing.
  */
 export function RealtimeMessages({ conversationId }: { conversationId: string }) {
   const router = useRouter();
 
   useEffect(() => {
     const supabase = getBrowserSupabase();
-    if (!supabase) return;
+
+    if (!supabase) {
+      let timer: ReturnType<typeof setInterval> | undefined;
+
+      const start = () => {
+        if (timer) return;
+        timer = setInterval(() => router.refresh(), POLL_MS);
+      };
+      const stop = () => {
+        if (timer) clearInterval(timer);
+        timer = undefined;
+      };
+      const onVisibility = () => {
+        if (document.visibilityState === "visible") {
+          router.refresh();
+          start();
+        } else {
+          stop();
+        }
+      };
+
+      onVisibility();
+      document.addEventListener("visibilitychange", onVisibility);
+      return () => {
+        stop();
+        document.removeEventListener("visibilitychange", onVisibility);
+      };
+    }
 
     const channel = supabase
       .channel(`messages:${conversationId}`)
@@ -93,4 +127,20 @@ export function RealtimeMessages({ conversationId }: { conversationId: string })
   }, [conversationId, router]);
 
   return null;
+}
+
+/**
+ * Pins the thread to the newest message.
+ *
+ * `count` changes whenever a message arrives, which is what re-runs the
+ * effect — the server component above owns the list itself.
+ */
+export function ScrollToLatest({ count }: { count: number }) {
+  const ref = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    ref.current?.scrollIntoView({ block: "end" });
+  }, [count]);
+
+  return <div ref={ref} aria-hidden />;
 }

@@ -1,4 +1,6 @@
 import type {
+  BusinessMilestone,
+  BusinessProduct,
   BusinessProfile,
   Conversation,
   Favorite,
@@ -19,8 +21,10 @@ import type {
   OtpChallenge,
 } from "../auth/types";
 import {
+  DEMO_BUSINESS_PRODUCTS,
   DEMO_BUSINESS_PROFILES,
   DEMO_CONVERSATIONS,
+  DEMO_MILESTONES,
   DEMO_FAVORITES,
   DEMO_LISTINGS,
   DEMO_MESSAGES,
@@ -55,6 +59,8 @@ export interface DemoStore {
   reports: Report[];
   verifications: VerificationRequest[];
   businessProfiles: BusinessProfile[];
+  businessProducts: BusinessProduct[];
+  milestones: BusinessMilestone[];
   settings: PlatformSettings;
 
   // --- credentials, only used when Supabase is not configured -------------
@@ -79,6 +85,8 @@ function build(): DemoStore {
     reports: structuredClone(DEMO_REPORTS),
     verifications: structuredClone(DEMO_VERIFICATIONS),
     businessProfiles: structuredClone(DEMO_BUSINESS_PROFILES),
+    businessProducts: structuredClone(DEMO_BUSINESS_PRODUCTS),
+    milestones: structuredClone(DEMO_MILESTONES),
     settings: { ...DEFAULT_SETTINGS },
     accounts: [],
     challenges: [],

@@ -119,6 +119,49 @@ export const startConversationSchema = z.object({
   body: z.string().trim().min(10, "Write a short message").max(6000),
 });
 
+/** Messaging a member directly, with no listing behind the conversation. */
+export const directConversationSchema = z.object({
+  memberId: z.string().min(1),
+  body: z.string().trim().min(10, "Write a short message").max(6000),
+});
+
+export const productSchema = z.object({
+  id: z.string().default(""),
+  name: z.string().trim().min(2, "Give the product a name").max(140),
+  description: z
+    .string()
+    .trim()
+    .min(20, "Describe what the buyer gets")
+    .max(4000),
+  /** Blank means "price on request" — a real state for B2B, not an error. */
+  price: z
+    .string()
+    .trim()
+    .transform((v) => v.replace(/[\s,€]/g, ""))
+    .refine((v) => v === "" || /^\d+(\.\d{1,2})?$/.test(v), {
+      message: "Enter a valid amount, or leave it blank for price on request",
+    })
+    .transform((v) => (v === "" ? null : Math.round(parseFloat(v) * 100))),
+  currency: z.string().trim().length(3).default("EUR"),
+  unit: z.string().trim().max(40).default(""),
+  sku: z.string().trim().max(60).default(""),
+  /** Blank means made to order, so no stock is tracked. */
+  stock: z
+    .string()
+    .trim()
+    .refine((v) => v === "" || /^\d{1,7}$/.test(v), {
+      message: "Enter a whole number, or leave it blank for made to order",
+    })
+    .transform((v) => (v === "" ? null : Number(v))),
+  status: z.enum(["draft", "published", "out_of_stock"]).default("draft"),
+});
+
+export const milestoneSchema = z.object({
+  title: z.string().trim().min(3, "Describe the step").max(180),
+  detail: z.string().trim().max(1000).default(""),
+  stage: z.enum(["validate", "set_up", "launch", "grow"]).default("validate"),
+});
+
 export const businessProfileSchema = z.object({
   name: z.string().trim().min(2, "Enter your business name").max(120),
   description: z.string().trim().min(40, "Describe what your business does").max(4000),

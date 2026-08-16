@@ -10,6 +10,7 @@ import {
   getCurrentUser,
   getListing,
   getOffers,
+  getProfile,
   getSettings,
   requireAdmin,
 } from "./data";
@@ -19,6 +20,7 @@ import { MARKETPLACE_BY_KIND } from "./taxonomy";
 import {
   businessPlanSchema,
   businessProfileSchema,
+  directConversationSchema,
   fieldErrors,
   listingSchema,
   messageSchema,
@@ -527,6 +529,119 @@ export async function startConversationAction(
 
   await insertNotification({
     user_id: listing.owner_id,
+    type: "message_received",
+    title: `New message from ${me!.full_name}`,
+    body: parsed.data.body.slice(0, 140),
+    link: `/messages/${conversationId}`,
+  });
+
+  revalidatePath("/messages");
+  return {
+    ok: true,
+    message: "Message sent.",
+    redirectTo: `/messages/${conversationId}`,
+  };
+}
+
+/**
+ * Messages a member directly, with no listing behind it.
+ *
+ * Conversations carry a null listing here, so the same inbox, read receipts
+ * and reporting apply — a direct chat is not a second, weaker channel.
+ */
+export async function startDirectConversationAction(
+  _prev: ActionState,
+  formData: FormData,
+): Promise<ActionState> {
+  const { me, error } = await currentUserOrFail();
+  if (error) return error;
+
+  const parsed = directConversationSchema.safeParse(
+    Object.fromEntries(formData),
+  );
+  if (!parsed.success)
+    return fail("Please fix the highlighted fields.", fieldErrors(parsed.error));
+
+  const other = await getProfile(parsed.data.memberId);
+  if (!other) return fail("That member no longer exists.");
+  if (other.id === me!.id) return fail("That is your own account.");
+  if (other.is_blocked) return fail("That member cannot receive messages.");
+
+  const now = new Date().toISOString();
+  let conversationId: string;
+
+  if (isDemoMode) {
+    const store = demoStore();
+    let convo = store.conversations.find(
+      (c) =>
+        c.listing_id === null &&
+        ((c.buyer_id === me!.id && c.seller_id === other.id) ||
+          (c.buyer_id === other.id && c.seller_id === me!.id)),
+    );
+    if (!convo) {
+      convo = {
+        id: demoId("c"),
+        listing_id: null,
+        buyer_id: me!.id,
+        seller_id: other.id,
+        last_message_at: now,
+      };
+      store.conversations.unshift(convo);
+    }
+    conversationId = convo.id;
+    store.messages.push({
+      id: demoId("m"),
+      conversation_id: convo.id,
+      sender_id: me!.id,
+      body: parsed.data.body,
+      attachments: [],
+      read_at: null,
+      created_at: now,
+    });
+    convo.last_message_at = now;
+  } else {
+    const supabase = await getServerSupabase();
+    const { data: existing } = await supabase!
+      .from("conversations")
+      .select("id")
+      .is("listing_id", null)
+      .or(
+        `and(buyer_id.eq.${me!.id},seller_id.eq.${other.id}),and(buyer_id.eq.${other.id},seller_id.eq.${me!.id})`,
+      )
+      .maybeSingle();
+
+    if (existing) {
+      conversationId = (existing as { id: string }).id;
+    } else {
+      const { data, error: dbError } = await supabase!
+        .from("conversations")
+        .insert({
+          listing_id: null,
+          buyer_id: me!.id,
+          seller_id: other.id,
+          last_message_at: now,
+        })
+        .select("id")
+        .single();
+      if (dbError) return fail(dbError.message);
+      conversationId = (data as { id: string }).id;
+    }
+
+    const { error: msgError } = await supabase!.from("messages").insert({
+      conversation_id: conversationId,
+      sender_id: me!.id,
+      body: parsed.data.body,
+      attachments: [],
+    });
+    if (msgError) return fail(msgError.message);
+    await supabase!
+      .from("conversations")
+      .update({ last_message_at: now })
+      .eq("id", conversationId);
+  }
+
+  await insertNotification({
+    user_id: other.id,
     type: "message_received",
     title: `New message from ${me!.full_name}`,
     body: parsed.data.body.slice(0, 140),

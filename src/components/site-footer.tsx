@@ -12,10 +12,11 @@ const COLUMNS = [
   {
     title: "Build",
     links: [
+      { href: "/workspace", label: "My Business" },
       { href: "/start-a-business", label: "Start a Business" },
       { href: "/business-profiles", label: "Business Profiles" },
+      { href: "/members", label: "Members" },
       { href: "/partners", label: "Find a Partner" },
-      { href: "/ideas", label: "Business Ideas" },
       { href: "/pricing", label: "Pricing & Fees" },
     ],
   },

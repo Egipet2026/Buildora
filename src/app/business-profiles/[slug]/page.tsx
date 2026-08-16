@@ -3,14 +3,16 @@ import { notFound } from "next/navigation";
 import type { Metadata } from "next";
 import { ListingGrid } from "@/components/listing-card";
 import { Cover, KeyValue, Notice, SectionHead } from "@/components/ui";
+import { MessageMemberButton } from "@/components/message-member";
 import {
+  getBusinessProducts,
   getBusinessProfile,
   getCurrentUser,
   getFavoriteIds,
   getListings,
   getProfile,
 } from "@/lib/data";
-import { formatDate } from "@/lib/money";
+import { formatDate, formatMoney } from "@/lib/money";
 
 export async function generateMetadata({
   params,
@@ -32,11 +34,13 @@ export default async function BusinessProfilePage({
   if (!profile) notFound();
 
   const me = await getCurrentUser();
-  const [owner, listings, savedIds] = await Promise.all([
+  const [owner, listings, savedIds, products] = await Promise.all([
     getProfile(profile.owner_id),
     getListings({ ownerId: profile.owner_id, limit: 3 }),
     me ? getFavoriteIds(me.id) : Promise.resolve([]),
+    getBusinessProducts(profile.id),
   ]);
+  const isOwner = me?.id === profile.owner_id;
 
   return (
     <div className="bg-[var(--color-canvas)]">
@@ -76,7 +80,89 @@ export default async function BusinessProfilePage({
               </div>
             ) : null}
 
-            {profile.products.length ? (
+            {/* The storefront: real items the owner keeps up to date from
+                their workspace, not a list of names. */}
+            {products.length ? (
+              <div id="storefront" className="card overflow-hidden">
+                <div className="flex flex-wrap items-end justify-between gap-3 border-b border-[var(--color-line)] p-6 lg:p-8">
+                  <div>
+                    <h2 className="display text-xl">What they sell</h2>
+                    <p className="mt-1.5 text-[0.8125rem] text-[var(--color-ink-3)]">
+                      {products.length} {products.length === 1 ? "item" : "items"} ·
+                      prices set by the business
+                    </p>
+                  </div>
+                  {isOwner ? (
+                    <Link href="/workspace/products" className="btn btn-outline btn-sm">
+                      Edit these
+                    </Link>
+                  ) : null}
+                </div>
+
+                <div className="divide-y divide-[var(--color-line)]">
+                  {products.map((product) => (
+                    <div key={product.id} className="p-6 lg:p-8">
+                      <div className="flex flex-wrap items-start justify-between gap-x-6 gap-y-2">
+                        <h3 className="text-[1.0625rem] font-semibold">
+                          {product.name}
+                        </h3>
+                        <p className="display shrink-0 text-lg">
+                          {product.price_cents === null
+                            ? "On request"
+                            : formatMoney(product.price_cents, product.currency)}
+                          {product.unit ? (
+                            <span className="ml-1.5 text-[0.75rem] font-normal text-[var(--color-ink-3)]">
+                              {product.unit}
+                            </span>
+                          ) : null}
+                        </p>
+                      </div>
+
+                      <p className="mt-2.5 leading-relaxed text-[var(--color-ink-2)]">
+                        {product.description}
+                      </p>
+
+                      <div className="mt-3.5 flex flex-wrap items-center gap-2">
+                        {product.status === "out_of_stock" ? (
+                          <span className="badge badge-gold">Out of stock</span>
+                        ) : product.stock !== null ? (
+                          <span className="badge">{product.stock} in stock</span>
+                        ) : (
+                          <span className="badge">Made to order</span>
+                        )}
+                        {product.sku ? (
+                          <span className="text-[0.75rem] text-[var(--color-ink-3)]">
+                            {product.sku}
+                          </span>
+                        ) : null}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+
+                <div className="border-t border-[var(--color-line)] bg-[var(--color-surface-2)] p-6 lg:p-8">
+                  {me && owner && !isOwner ? (
+                    <MessageMemberButton
+                      memberId={owner.id}
+                      memberName={profile.name}
+                      label="Enquire about these"
+                      className="btn btn-brand w-full"
+                      placeholder={`Hello — I am interested in what ${profile.name} offers. Could you tell me more about…`}
+                    />
+                  ) : !me ? (
+                    <Link href="/login" className="btn btn-brand w-full">
+                      Sign in to enquire
+                    </Link>
+                  ) : null}
+                  <p className="mt-3 text-center text-[0.75rem] leading-relaxed text-[var(--color-ink-3)]">
+                    BizHub does not process payment for these items. You agree
+                    terms directly with the business.
+                  </p>
+                </div>
+              </div>
+            ) : null}
+
+            {!products.length && profile.products.length ? (
               <div className="card p-6 lg:p-8">
                 <h2 className="display mb-4 text-xl">Products</h2>
                 <ul className="space-y-2.5">
@@ -91,10 +177,18 @@ export default async function BusinessProfilePage({
                     </li>
                   ))}
                 </ul>
+                {isOwner ? (
+                  <Link href="/workspace/products" className="btn btn-outline btn-sm mt-5">
+                    Turn these into a real storefront
+                  </Link>
+                ) : null}
               </div>
             ) : null}
 
-            {profile.services.length ? (
+            {/* The self-declared services list is the fallback for a business
+                that has not built a storefront yet; once it has, the priced
+                items above are the better answer to the same question. */}
+            {!products.length && profile.services.length ? (
               <div className="card p-6 lg:p-8">
                 <h2 className="display mb-4 text-xl">Services</h2>
                 <ul className="space-y-2.5">
@@ -165,12 +259,32 @@ export default async function BusinessProfilePage({
             <div className="card p-6">
               <p className="eyebrow mb-3">Get in touch</p>
               <p className="text-[0.8125rem] leading-relaxed text-[var(--color-ink-3)]">
-                Reach this business through one of their listings so the
-                conversation stays on the platform and both sides keep a record.
+                Messages stay on BizHub, so both sides keep a record. Your email
+                address and phone number are never shown.
               </p>
-              <Link href="/marketplace" className="btn btn-outline mt-4 w-full">
-                Browse their listings
-              </Link>
+              {owner && me && !isOwner ? (
+                <MessageMemberButton
+                  memberId={owner.id}
+                  memberName={profile.name}
+                  className="btn btn-brand mt-4 w-full"
+                />
+              ) : !me ? (
+                <Link href="/login" className="btn btn-brand mt-4 w-full">
+                  Sign in to message
+                </Link>
+              ) : (
+                <Link href="/workspace" className="btn btn-outline mt-4 w-full">
+                  Open your workspace
+                </Link>
+              )}
+              {owner ? (
+                <Link
+                  href={`/members/${owner.id}`}
+                  className="btn btn-outline btn-sm mt-2.5 w-full"
+                >
+                  View owner profile
+                </Link>
+              ) : null}
             </div>
 
             <Notice tone="neutral">

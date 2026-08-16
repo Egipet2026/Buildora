@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { redirect } from "next/navigation";
 import { TabNav } from "@/components/tab-nav";
 import { PageHeader } from "@/components/ui";
@@ -28,10 +29,19 @@ export default async function DashboardLayout({
   return (
     <>
       <PageHeader
-        eyebrow="Buyer dashboard"
+        eyebrow="Your profile"
         title={`Welcome back, ${me.full_name.split(" ")[0]}`}
-        description="Everything you are tracking as a buyer — saved listings, live negotiations, purchases and alerts."
-      />
+        description="Everything you are tracking as a buyer — saved listings, live negotiations, purchases and alerts. Selling or building something starts here too."
+      >
+        {/* The browse pages are for browsing. Publishing anything — a listing
+            or a business — happens from your own profile. */}
+        <Link href="/sell" className="btn btn-primary">
+          Post a listing
+        </Link>
+        <Link href="/workspace" className="btn btn-outline">
+          My business
+        </Link>
+      </PageHeader>
 
       <div className="shell py-8">
         <TabNav
