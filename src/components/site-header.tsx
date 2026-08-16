@@ -49,11 +49,13 @@ export async function SiteHeader() {
 
   return (
     <>
+      {/* Written for a visitor, not for whoever deployed the site. The one
+          fact a visitor genuinely needs is that what they create here will not
+          be kept — anything else belongs in the README. */}
       {isDemoMode ? (
-        <div className="bg-[var(--color-ink)] px-4 py-2 text-center text-[0.75rem] text-white/85">
-          <span className="font-semibold text-white">Demo mode</span> — sample
-          data, signed in as {me?.full_name ?? "a guest"}. Add Supabase
-          credentials to switch to a live database.
+        <div className="border-b border-[var(--color-line)] bg-[var(--color-surface-2)] px-4 py-1.5 text-center text-[0.75rem] text-[var(--color-ink-3)]">
+          Preview — listings, accounts and messages are not saved permanently
+          and reset from time to time.
         </div>
       ) : null}
 
