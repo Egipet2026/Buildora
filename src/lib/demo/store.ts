@@ -13,6 +13,11 @@ import type {
   VerificationRequest,
 } from "../types";
 import { DEFAULT_SETTINGS } from "../money";
+import type {
+  DemoAccount,
+  DemoSession,
+  OtpChallenge,
+} from "../auth/types";
 import {
   DEMO_BUSINESS_PROFILES,
   DEMO_CONVERSATIONS,
@@ -51,6 +56,11 @@ export interface DemoStore {
   verifications: VerificationRequest[];
   businessProfiles: BusinessProfile[];
   settings: PlatformSettings;
+
+  // --- credentials, only used when Supabase is not configured -------------
+  accounts: DemoAccount[];
+  challenges: OtpChallenge[];
+  sessions: DemoSession[];
 }
 
 const GLOBAL_KEY = Symbol.for("bizhub.demo.store");
@@ -70,6 +80,9 @@ function build(): DemoStore {
     verifications: structuredClone(DEMO_VERIFICATIONS),
     businessProfiles: structuredClone(DEMO_BUSINESS_PROFILES),
     settings: { ...DEFAULT_SETTINGS },
+    accounts: [],
+    challenges: [],
+    sessions: [],
   };
 }
 

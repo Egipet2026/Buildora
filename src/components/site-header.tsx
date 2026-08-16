@@ -7,6 +7,7 @@ import {
 } from "@/lib/data";
 import { isDemoMode } from "@/lib/supabase/config";
 import { GlobalSearch } from "./global-search";
+import { SignOutButton } from "./sign-out-button";
 
 const PRIMARY = [
   { href: "/businesses", label: "Buy a Business" },
@@ -91,11 +92,20 @@ export async function SiteHeader() {
                 <Link href="/dashboard" className="btn btn-ghost btn-sm hidden md:inline-flex">
                   Dashboard
                 </Link>
+                <SignOutButton
+                  className="btn btn-ghost btn-sm hidden md:inline-flex"
+                  label="Sign out"
+                />
               </>
             ) : (
-              <Link href="/login" className="btn btn-ghost btn-sm hidden sm:inline-flex">
-                Sign in
-              </Link>
+              <>
+                <Link href="/login" className="btn btn-ghost btn-sm hidden sm:inline-flex">
+                  Sign in
+                </Link>
+                <Link href="/register" className="btn btn-outline btn-sm hidden md:inline-flex">
+                  Create account
+                </Link>
+              </>
             )}
 
             <Link href="/sell" className="btn btn-primary btn-sm shrink-0">
@@ -167,14 +177,24 @@ export async function SiteHeader() {
                         Admin
                       </Link>
                     ) : null}
+                    <div className="my-2 hairline" />
+                    <SignOutButton />
                   </>
                 ) : (
-                  <Link
-                    href="/login"
-                    className="block rounded-lg px-3 py-2.5 text-sm font-medium hover:bg-[var(--color-surface-2)]"
-                  >
-                    Sign in
-                  </Link>
+                  <>
+                    <Link
+                      href="/login"
+                      className="block rounded-lg px-3 py-2.5 text-sm font-medium hover:bg-[var(--color-surface-2)]"
+                    >
+                      Sign in
+                    </Link>
+                    <Link
+                      href="/register"
+                      className="block rounded-lg px-3 py-2.5 text-sm font-medium hover:bg-[var(--color-surface-2)]"
+                    >
+                      Create account
+                    </Link>
+                  </>
                 )}
               </div>
             </details>

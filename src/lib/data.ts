@@ -5,6 +5,7 @@ import { getServerSupabase } from "./supabase/server";
 import { isDemoMode } from "./supabase/config";
 import { demoStore } from "./demo/store";
 import { DEMO_CURRENT_USER_ID } from "./demo/seed";
+import { readDemoSession } from "./auth/session";
 import { applyFilters, isFeaturedNow, type ListingFilters } from "./filters";
 import { DEFAULT_SETTINGS } from "./money";
 import type {
@@ -46,7 +47,17 @@ const MAX_ROWS = 1000;
  */
 export const getCurrentUser = cache(async (): Promise<Profile | null> => {
   if (isDemoMode) {
-    return demoStore().profiles.find((p) => p.id === DEMO_CURRENT_USER_ID) ?? null;
+    const session = await readDemoSession();
+    const profiles = demoStore().profiles;
+
+    // An account signed in through the code flow wins; an explicit sign-out
+    // means nobody; and a visitor who has done neither keeps the seeded demo
+    // identity so the marketplace is browsable on arrival.
+    if (session.kind === "account") {
+      return profiles.find((p) => p.id === session.accountId) ?? null;
+    }
+    if (session.kind === "guest") return null;
+    return profiles.find((p) => p.id === DEMO_CURRENT_USER_ID) ?? null;
   }
   const supabase = await getServerSupabase();
   if (!supabase) return null;
@@ -64,6 +75,25 @@ export const getCurrentUser = cache(async (): Promise<Profile | null> => {
 
   return (data as Profile | null) ?? null;
 });
+
+/**
+ * True only when the visitor signed in explicitly.
+ *
+ * In demo mode an arriving visitor is treated as the seeded account so the
+ * marketplace is browsable, but that is not a real session — the sign-in and
+ * sign-up pages must not redirect such a visitor away.
+ */
+export async function hasExplicitSession(): Promise<boolean> {
+  if (isDemoMode) {
+    return (await readDemoSession()).kind === "account";
+  }
+  const supabase = await getServerSupabase();
+  if (!supabase) return false;
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  return !!user;
+}
 
 export async function requireAdmin(): Promise<Profile | null> {
   const me = await getCurrentUser();

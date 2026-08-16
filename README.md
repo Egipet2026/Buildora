@@ -76,9 +76,9 @@ data.
 ### Connecting a real database
 
 1. Create a Supabase project.
-2. Run `supabase/migrations/0001_init.sql` against it (`supabase db push`, or
-   paste it into the SQL editor). It creates the schema, the row-level security
-   policies, the storage buckets and the sign-up trigger.
+2. Run the files in `supabase/migrations/` in order (`supabase db push`, or
+   paste them into the SQL editor). They create the schema, the row-level
+   security policies, the storage buckets and the sign-up trigger.
 3. Copy `.env.example` to `.env.local` and fill in:
 
    ```
@@ -88,6 +88,13 @@ data.
 
 4. Restart. Authentication, the database, storage and realtime messaging
    activate automatically — no code changes.
+
+**Confirmation codes.** Sign-up and sign-in take an email address *or* a phone
+number plus a password, then a six-digit code. Supabase sends the email code
+itself, but **phone sign-up needs an SMS provider** — configure one under
+Authentication → Providers → Phone (Twilio, MessageBird, Vonage or Textlocal),
+otherwise phone registration fails at the code step. In demo mode there is no
+provider at all, so the code is shown on screen and labelled as such.
 
 Optionally set `ANTHROPIC_API_KEY` to enable the live business-plan generator on
 `/start-a-business`. Without it the planner falls back to a deterministic
@@ -100,7 +107,7 @@ template.
 | Area | Status |
 | --- | --- |
 | Landing page, nine marketplaces, category browse | ✅ |
-| Registration / login (Supabase Auth), session refresh | ✅ |
+| Registration / login by email **or phone** + password, 6-digit code | ✅ |
 | Business marketplace with financial filters and five sort orders | ✅ |
 | Patent & technology marketplace, purchase / exclusive / non-exclusive licence | ✅ |
 | Digital assets, services, partners, ideas, products, AI tools, marketing | ✅ |
@@ -186,7 +193,15 @@ admin dashboard.
   flags off.
 - Offers are readable only by their two parties; messages only by conversation
   participants, enforced by a `SECURITY DEFINER` membership function.
-- Email addresses are never exposed through the profiles table.
+- Email addresses and phone numbers are never exposed through the profiles
+  table — they stay in `auth.users`, which only the member themselves can read.
+- The sign-in form returns the same message whether the account does not exist
+  or the password is wrong, so it cannot be used to discover who is a member.
+- Confirmation codes come from the CSPRNG, are stored hashed, expire after ten
+  minutes, die after five wrong guesses, and cannot be re-requested more than
+  once a minute. Issuing a new code retires the previous one.
+- The demo session cookie holds an opaque random token, not a user id, so it
+  cannot be edited into someone else's identity.
 - Listing documents live in a private storage bucket and are released on the
   seller's terms, not via public URLs.
 - Every admin server action re-checks the caller's role; the UI check is only
