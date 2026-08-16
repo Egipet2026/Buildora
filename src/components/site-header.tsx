@@ -5,7 +5,6 @@ import {
   getNotifications,
   getUnreadMessageCount,
 } from "@/lib/data";
-import { isDemoMode } from "@/lib/supabase/config";
 import { GlobalSearch } from "./global-search";
 import { SignOutButton } from "./sign-out-button";
 
@@ -49,16 +48,6 @@ export async function SiteHeader() {
 
   return (
     <>
-      {/* Written for a visitor, not for whoever deployed the site. The one
-          fact a visitor genuinely needs is that what they create here will not
-          be kept — anything else belongs in the README. */}
-      {isDemoMode ? (
-        <div className="border-b border-[var(--color-line)] bg-[var(--color-surface-2)] px-4 py-1.5 text-center text-[0.75rem] text-[var(--color-ink-3)]">
-          Preview — listings, accounts and messages are not saved permanently
-          and reset from time to time.
-        </div>
-      ) : null}
-
       <header className="sticky top-0 z-40 border-b border-[var(--color-line)] bg-[var(--color-surface)]/92 backdrop-blur-md">
         <div className="shell-wide flex h-16 items-center gap-4">
           <Link href="/" className="flex shrink-0 items-center gap-2">

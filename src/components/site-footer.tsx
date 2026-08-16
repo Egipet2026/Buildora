@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { MARKETPLACES } from "@/lib/taxonomy";
+import { isDemoMode } from "@/lib/supabase/config";
 
 const COLUMNS = [
   {
@@ -103,10 +104,19 @@ export function SiteFooter() {
             due diligence and take independent legal, tax and financial advice
             before entering any transaction.
           </p>
+          {/* The one operational fact a member deserves before they invest
+              effort here. It sits in the small print rather than across the
+              top of every page: informative, not a badge saying "unfinished". */}
+          {isDemoMode ? (
+            <p className="mt-4 text-[0.75rem] leading-relaxed text-[var(--color-ink-3)]">
+              Bizora is not yet connected to a permanent database. Listings,
+              accounts and messages are held only while the service is running
+              and are cleared periodically.
+            </p>
+          ) : null}
           <p className="mt-4 text-[0.75rem] text-[var(--color-ink-3)]">
-            © {new Date().getFullYear()} Bizora. Demonstration project — the
-            legal pages are placeholders pending review by a qualified
-            professional.
+            © {new Date().getFullYear()} Bizora. The legal pages are
+            placeholders pending review by a qualified professional.
           </p>
         </div>
       </div>
