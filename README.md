@@ -92,6 +92,15 @@ data.
 4. Restart. Authentication, the database, storage and realtime messaging
    activate automatically — no code changes.
 
+**Running the migrations without copying anything.** Pasting 35 KB of SQL is
+awkward on a phone. Supabase can run the migrations itself instead: in the
+project, **Project Settings → Integrations → GitHub**, connect this repository,
+leave **Working directory** empty (the `supabase/` folder is at the repository
+root), turn on **Deploy to production**, set the branch to `main`, and press
+**Save changes**. Two things catch people out: the settings do nothing until
+Save is pressed, and the integration only reacts to pushes made *after* that —
+so push a commit afterwards to trigger the first run.
+
 ### Sending the confirmation code
 
 Sign-up and sign-in take an email address *or* a phone number plus a password,
