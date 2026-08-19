@@ -1,12 +1,12 @@
 -- ===========================================================================
--- Bizora — complete database setup, in one file.
+-- Buildora — complete database setup, in one file.
 --
 -- Copy this whole file into the Supabase SQL Editor and press Run, once.
 -- It is the four migration files in supabase/migrations/ joined in order, so
 -- you do not have to run them one at a time.
 --
 -- Run it on a NEW, EMPTY Supabase project. On a project that already has
--- Bizora tables it will fail on the first "already exists" — that is safe,
+-- Buildora tables it will fail on the first "already exists" — that is safe,
 -- nothing is changed, but use the individual migration files instead.
 -- ===========================================================================
 
@@ -16,7 +16,7 @@
 -- ===========================================================================
 
 -- ===========================================================================
--- Bizora — initial schema
+-- Buildora — initial schema
 --
 -- Run against a fresh Supabase project:
 --   supabase db push          (or paste into the SQL editor)

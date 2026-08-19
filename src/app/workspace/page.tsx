@@ -64,7 +64,7 @@ export default async function WorkspacePage() {
             {published.length
               ? `${published.length} ${published.length === 1 ? "item is" : "items are"} live on your public page${
                   cheapest !== null ? `, from ${formatMoney(cheapest)}` : ""
-                }. Buyers enquire through Bizora and you agree terms directly.`
+                }. Buyers enquire through Buildora and you agree terms directly.`
               : "Nothing is live yet. Add what you sell — a product, a plan, a service — and it appears on your public page with a price and an enquiry button."}
           </p>
           <div className="mt-5 flex flex-wrap gap-2.5">
@@ -171,8 +171,8 @@ export default async function WorkspacePage() {
         )}
       </div>
 
-      <Notice tone="neutral" title="What Bizora does and does not do here">
-        Your storefront is a shop window and an enquiry channel. Bizora does not
+      <Notice tone="neutral" title="What Buildora does and does not do here">
+        Your storefront is a shop window and an enquiry channel. Buildora does not
         take payment for storefront products, does not ship anything, and does
         not guarantee your business to anyone who finds it. Prices, stock and
         claims on your page are yours — keep them accurate.

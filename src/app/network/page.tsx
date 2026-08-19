@@ -15,7 +15,7 @@ import type { PostKind } from "@/lib/types";
 export const metadata = {
   title: "Network",
   description:
-    "Follow founders and businesses on Bizora and see what they are building, shipping and looking for.",
+    "Follow founders and businesses on Buildora and see what they are building, shipping and looking for.",
 };
 
 const KIND_LABEL: Record<PostKind, string> = {
@@ -204,7 +204,7 @@ export default async function NetworkPage({
                           {person.full_name}
                         </Link>
                         <p className="truncate text-[0.75rem] text-[var(--color-ink-3)]">
-                          {person.headline ?? "Bizora member"}
+                          {person.headline ?? "Buildora member"}
                         </p>
                       </div>
                       {me ? (
@@ -225,7 +225,7 @@ export default async function NetworkPage({
             <Notice tone="neutral" title="A professional feed">
               Posts here are about businesses — what changed, what shipped, what
               is needed. Anything else gets removed. Nothing you post is an
-              offer, and nothing here has been checked by Bizora.
+              offer, and nothing here has been checked by Buildora.
             </Notice>
           </aside>
         </div>

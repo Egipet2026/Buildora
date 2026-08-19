@@ -31,7 +31,7 @@ export async function generateMetadata({
   if (!profile) return { title: "Member not found" };
   return {
     title: profile.full_name,
-    description: profile.headline ?? `${profile.full_name} on Bizora`,
+    description: profile.headline ?? `${profile.full_name} on Buildora`,
   };
 }
 
@@ -139,7 +139,7 @@ export default async function MemberPage({
               <div>
                 <SectionHead
                   title="Reviews"
-                  description="Left by the other side of a completed deal. Bizora does not accept reviews from anyone who has not transacted."
+                  description="Left by the other side of a completed deal. Buildora does not accept reviews from anyone who has not transacted."
                 />
                 <ReviewList reviews={reputation.reviews} authors={authors} />
               </div>
@@ -231,7 +231,7 @@ export default async function MemberPage({
             </div>
 
             <Notice tone="neutral" title="What a badge means">
-              A Verified badge confirms details this member evidenced to Bizora.
+              A Verified badge confirms details this member evidenced to Buildora.
               It is not an audit, a credit check, or an opinion on whether they
               are worth dealing with. Do your own checks before you commit.
             </Notice>

@@ -57,7 +57,7 @@ export async function SiteHeader() {
             >
               B
             </span>
-            <span className="display text-lg">Bizora</span>
+            <span className="display text-lg">Buildora</span>
           </Link>
 
           <nav className="ml-2 hidden items-center gap-0.5 lg:flex">

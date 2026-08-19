@@ -26,7 +26,7 @@ export default async function BuyerOffersPage() {
     <div className="space-y-5">
       <Notice tone="neutral">
         An offer starts a negotiation. It is not a binding contract, and an
-        acceptance on Bizora is not a contract of sale — the transaction is
+        acceptance on Buildora is not a contract of sale — the transaction is
         completed between you and the seller under written terms you agree
         separately.
       </Notice>

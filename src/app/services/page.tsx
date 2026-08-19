@@ -26,7 +26,7 @@ export default async function ServicesPage({
           Scope, deliverables and terms are agreed directly between you and
           them. Regulated professionals — lawyers, accountants, auditors — act
           under their own engagement terms and professional rules; nothing on a
-          Bizora profile constitutes professional advice.
+          Buildora profile constitutes professional advice.
         </Notice>
       }
     />

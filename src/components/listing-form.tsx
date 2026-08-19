@@ -436,7 +436,7 @@ export function ListingForm({ initialKind }: { initialKind?: ListingKind }) {
           <Notice tone="gold" title="Publishing rules for IP listings">
             You may only list intellectual property you own or are authorised to
             offer. Do not describe an unexamined or pending application as a
-            granted patent, and do not imply Bizora has assessed validity,
+            granted patent, and do not imply Buildora has assessed validity,
             enforceability or freedom to operate. Listings that misstate legal
             status are removed.
           </Notice>
@@ -535,7 +535,7 @@ export function ListingForm({ initialKind }: { initialKind?: ListingKind }) {
           <Notice tone="gold">
             A partner listing is a search for someone to work with. Do not use
             it to offer shares, securities or an investment return — that is a
-            regulated activity and is not permitted on Bizora.
+            regulated activity and is not permitted on Buildora.
           </Notice>
         </Fieldset>
       ) : null}
@@ -593,7 +593,7 @@ export function ListingForm({ initialKind }: { initialKind?: ListingKind }) {
             I confirm that I own, or am authorised to sell or license,
             everything in this listing; that the information I have given is
             accurate to the best of my knowledge; and that I will provide
-            supporting evidence on request. I understand that Bizora does not
+            supporting evidence on request. I understand that Buildora does not
             guarantee a sale, does not endorse my listing, and may remove it if
             it breaches the{" "}
             <a href="/legal/marketplace-rules" className="underline">

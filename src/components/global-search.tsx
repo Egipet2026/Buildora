@@ -45,7 +45,7 @@ export function GlobalSearch({
           placeholder="Search the marketplace…"
           value={value}
           onChange={(e) => setValue(e.target.value)}
-          aria-label="Search Bizora"
+          aria-label="Search Buildora"
         />
       </form>
     );
@@ -66,7 +66,7 @@ export function GlobalSearch({
           placeholder="Describe what you're looking for — “a SaaS business under €20,000”"
           value={value}
           onChange={(e) => setValue(e.target.value)}
-          aria-label="Search Bizora"
+          aria-label="Search Buildora"
         />
         <button type="submit" className="btn btn-brand btn-lg">
           Search

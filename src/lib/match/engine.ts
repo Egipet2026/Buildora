@@ -214,7 +214,7 @@ export function scoreListing(
     possible += 10;
     if (listing.is_verified) {
       score += 10;
-      reasons.push("Details evidenced to Bizora and checked");
+      reasons.push("Details evidenced to Buildora and checked");
     } else {
       cautions.push("Not verified — the seller's figures are unchecked");
     }

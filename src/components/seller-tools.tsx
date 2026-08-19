@@ -178,7 +178,7 @@ export function VerificationForm({
 
           <div className="rounded-lg border border-[#ecd9b0] bg-[var(--color-gold-tint)] px-4 py-3.5 text-[0.75rem] leading-relaxed text-[var(--color-ink-2)]">
             Verification confirms that specific information you supplied matches
-            the evidence and the public record, so far as Bizora can lawfully
+            the evidence and the public record, so far as Buildora can lawfully
             check it. It is <strong>not</strong> an audit, a valuation, a
             validity or freedom-to-operate opinion, or a statement that buying
             from you is a good decision.

@@ -78,7 +78,7 @@ export function MarketResearchTool() {
         {research ? (
           <div className="space-y-5">
             <Notice tone="gold" title="This is not market data">
-              Bizora has no market database and cannot look anything up. What
+              Buildora has no market database and cannot look anything up. What
               follows is a model&apos;s qualitative summary of how this kind of
               market tends to work — it contains no verified figures, may be out
               of date, and must not be quoted as research. Treat it as a list of
@@ -86,7 +86,7 @@ export function MarketResearchTool() {
               {research.generated_offline ? (
                 <span className="mt-2 block">
                   No model provider is configured on this deployment, so what
-                  you see below is Bizora&apos;s research method rather than an
+                  you see below is Buildora&apos;s research method rather than an
                   overview of your market.
                 </span>
               ) : null}

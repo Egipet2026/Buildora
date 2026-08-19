@@ -9,7 +9,7 @@ import type { ListingKind } from "@/lib/types";
 export const metadata = {
   title: "BizMatch",
   description:
-    "Tell Bizora your budget, country, skills and interests and see which businesses, patents, technologies, services and partners fit — with the reasoning shown.",
+    "Tell Buildora your budget, country, skills and interests and see which businesses, patents, technologies, services and partners fit — with the reasoning shown.",
 };
 
 type SP = Record<string, string | string[] | undefined>;
@@ -65,7 +65,7 @@ export default async function BizMatchPage({
       <PageHeader
         eyebrow="BizMatch"
         title="What fits you"
-        description="Say what you can spend, where you are, what you know and what you want. Bizora ranks everything on the platform against it and shows you why each one scored what it did."
+        description="Say what you can spend, where you are, what you know and what you want. Buildora ranks everything on the platform against it and shows you why each one scored what it did."
       />
 
       <div className="shell py-10">
@@ -272,7 +272,7 @@ export default async function BizMatchPage({
               <EmptyState
                 icon="⌕"
                 title="Nothing scored high enough"
-                description="Try widening the budget, clearing the country, or ticking more marketplaces. Bizora would rather show you nothing than pad the page with things that do not fit."
+                description="Try widening the budget, clearing the country, or ticking more marketplaces. Buildora would rather show you nothing than pad the page with things that do not fit."
                 action={{ href: "/bizmatch", label: "Change the criteria" }}
               />
             )}

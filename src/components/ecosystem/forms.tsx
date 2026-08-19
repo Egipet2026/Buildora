@@ -59,7 +59,7 @@ export function AlertForm() {
       <div>
         <h2 className="display text-lg">New alert</h2>
         <p className="mt-1 text-[0.8125rem] leading-relaxed text-[var(--color-ink-3)]">
-          Bizora checks every listing at the moment it is approved and notifies
+          Buildora checks every listing at the moment it is approved and notifies
           you if it matches. Nothing already on the platform will fire it — only
           what arrives from now on.
         </p>
@@ -369,7 +369,7 @@ export function MetricForm({ defaultMonth }: { defaultMonth: string }) {
       <div>
         <h2 className="display text-lg">Record a month</h2>
         <p className="mt-1 text-[0.8125rem] leading-relaxed text-[var(--color-ink-3)]">
-          Figures you enter yourself. Bizora does not connect to your bank or
+          Figures you enter yourself. Buildora does not connect to your bank or
           your accounting system, so nothing here is audited or verified —
           it is your own record, drawn as a chart.
         </p>

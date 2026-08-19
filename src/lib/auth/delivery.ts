@@ -27,7 +27,7 @@ const env = (key: string): string =>
 
 /** Sender address, falling back to something obviously non-production. */
 function fromAddress(): string {
-  return env("EMAIL_FROM") || "Bizora <onboarding@resend.dev>";
+  return env("EMAIL_FROM") || "Buildora <onboarding@resend.dev>";
 }
 
 export function emailProvider(): "resend" | "smtp" | null {
@@ -71,7 +71,7 @@ async function sendEmail(to: string, code: string): Promise<DeliveryResult> {
   const provider = emailProvider();
   if (!provider) return { delivered: false, provider: null };
 
-  const subject = `${code} is your Bizora confirmation code`;
+  const subject = `${code} is your Buildora confirmation code`;
 
   if (provider === "resend") {
     const response = await fetch("https://api.resend.com/emails", {
@@ -133,7 +133,7 @@ async function sendSms(to: string, code: string): Promise<DeliveryResult> {
   const sid = env("TWILIO_ACCOUNT_SID");
   const body = new URLSearchParams({
     To: to,
-    Body: `${code} is your Bizora confirmation code. It expires in 10 minutes. Never share it with anyone.`,
+    Body: `${code} is your Buildora confirmation code. It expires in 10 minutes. Never share it with anyone.`,
   });
 
   // Either a plain sender number or a Messaging Service — whichever is set.
@@ -170,11 +170,11 @@ async function sendSms(to: string, code: string): Promise<DeliveryResult> {
 
 function codeEmailText(code: string): string {
   return [
-    `Your Bizora confirmation code is ${code}.`,
+    `Your Buildora confirmation code is ${code}.`,
     "",
     "It expires in 10 minutes and can be used once.",
     "",
-    "Bizora will never ask you for this code by phone, chat or email. If you did not",
+    "Buildora will never ask you for this code by phone, chat or email. If you did not",
     "request it, ignore this message — nobody can use it without your password.",
   ].join("\n");
 }
@@ -188,7 +188,7 @@ function codeEmailHtml(code: string): string {
     <tr><td align="center">
       <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="max-width:480px;background:#ffffff;border-radius:14px;border:1px solid #e4e6ea;overflow:hidden;">
         <tr><td style="padding:28px 32px 0;">
-          <p style="margin:0;font-size:18px;font-weight:700;letter-spacing:-0.02em;color:#0f172a;">Bizora</p>
+          <p style="margin:0;font-size:18px;font-weight:700;letter-spacing:-0.02em;color:#0f172a;">Buildora</p>
         </td></tr>
         <tr><td style="padding:20px 32px 0;">
           <h1 style="margin:0;font-size:20px;line-height:1.35;font-weight:650;color:#0f172a;">Confirm your account</h1>
@@ -203,7 +203,7 @@ function codeEmailHtml(code: string): string {
         </td></tr>
         <tr><td style="padding:24px 32px 32px;">
           <p style="margin:0;font-size:13px;line-height:1.6;color:#6b7280;">
-            Bizora will never ask you for this code by phone, chat or email. If you did
+            Buildora will never ask you for this code by phone, chat or email. If you did
             not request it you can ignore this message — nobody can use the code
             without your password.
           </p>

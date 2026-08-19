@@ -67,7 +67,7 @@ const RESEARCH_JSON_SCHEMA = {
   },
 } as const;
 
-const SYSTEM = `You summarise how a market works for a founder considering entering it, on Bizora, an international business marketplace.
+const SYSTEM = `You summarise how a market works for a founder considering entering it, on Buildora, an international business marketplace.
 
 You have no access to market data, databases or current figures. Never state market sizes, growth rates, market shares, revenue figures or any other statistic as fact — you cannot verify any of them. Describe structure, behaviour and dynamics instead: who buys, how they decide, what drives cost and price, where margin sits, what typically goes wrong.
 
@@ -145,7 +145,7 @@ function offlineResearch(input: ResearchInput): MarketResearch {
     industry: input.industry,
     country: input.country,
     overview:
-      "No model provider is configured, so Bizora cannot draft an overview of this market. What follows is the method rather than the answer: the questions worth answering yourself, in the order they matter.",
+      "No model provider is configured, so Buildora cannot draft an overview of this market. What follows is the method rather than the answer: the questions worth answering yourself, in the order they matter.",
     competitors: [
       {
         name: "Direct competitors",

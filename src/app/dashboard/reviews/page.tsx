@@ -96,7 +96,7 @@ export default async function ReviewsPage() {
         </div>
       ) : null}
 
-      <Notice tone="neutral" title="How Bizora keeps reviews honest">
+      <Notice tone="neutral" title="How Buildora keeps reviews honest">
         Every review points at a transaction recorded on the platform, both
         sides can review each other once, and reviews cannot be deleted by the
         person they are about — only hidden by a moderator, with the record

@@ -91,7 +91,7 @@ export interface DemoStore {
   sessions: DemoSession[];
 }
 
-const GLOBAL_KEY = Symbol.for("bizora.demo.store");
+const GLOBAL_KEY = Symbol.for("buildora.demo.store");
 
 function build(): DemoStore {
   // Structured clone keeps the frozen seed arrays pristine.

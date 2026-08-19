@@ -155,7 +155,7 @@ export default async function BusinessProfilePage({
                     </Link>
                   ) : null}
                   <p className="mt-3 text-center text-[0.75rem] leading-relaxed text-[var(--color-ink-3)]">
-                    Bizora does not process payment for these items. You agree
+                    Buildora does not process payment for these items. You agree
                     terms directly with the business.
                   </p>
                 </div>
@@ -259,7 +259,7 @@ export default async function BusinessProfilePage({
             <div className="card p-6">
               <p className="eyebrow mb-3">Get in touch</p>
               <p className="text-[0.8125rem] leading-relaxed text-[var(--color-ink-3)]">
-                Messages stay on Bizora, so both sides keep a record. Your email
+                Messages stay on Buildora, so both sides keep a record. Your email
                 address and phone number are never shown.
               </p>
               {owner && me && !isOwner ? (
@@ -288,7 +288,7 @@ export default async function BusinessProfilePage({
             </div>
 
             <Notice tone="neutral">
-              Business profiles are self-published. Bizora does not verify the
+              Business profiles are self-published. Buildora does not verify the
               claims in them unless the business is separately verified.
             </Notice>
           </aside>

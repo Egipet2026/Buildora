@@ -70,7 +70,7 @@ export default async function GoalsPage() {
       <GoalForm />
 
       <Notice tone="neutral" title="These are your own numbers">
-        Bizora does not connect to your bank, your shop or your accounting
+        Buildora does not connect to your bank, your shop or your accounting
         system. Everything on this page is what you typed, so it is a private
         record for you rather than evidence for anyone else.
       </Notice>

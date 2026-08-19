@@ -1,4 +1,4 @@
-# Bizora
+# Buildora
 
 **Buy a Business. Build a Business. Sell a Business.**
 
@@ -18,10 +18,10 @@ deploy is connected to a real database from the first build.
 
 ### Deploy a public URL — one click
 
-[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https%3A%2F%2Fgithub.com%2FEgipet2026%2FBuildora&project-name=bizora&repository-name=bizora)
+[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https%3A%2F%2Fgithub.com%2FEgipet2026%2FBuildora&project-name=buildora&repository-name=buildora)
 
 Sign in to Vercel with GitHub, press Deploy, and in a few minutes you have a
-permanent address like `bizora-xxx.vercel.app` that anyone can open. No
+permanent address like `buildora-xxx.vercel.app` that anyone can open. No
 environment variables required.
 
 ### Run it in the browser — no installation
@@ -50,7 +50,7 @@ each one looks for.
 | **Fly.io** | Yes | `Dockerfile` | `fly launch` reads it. Card required even on the free allowance. |
 | **Koyeb / Northflank** | Yes | `Dockerfile` | Both deploy a container straight from GitHub. |
 | **Google Cloud Run** | Generous | `Dockerfile` | Scales to zero; pay per request. |
-| **Any VPS** | — | `Dockerfile` | `docker build -t bizora . && docker run -p 3000:3000 bizora`. Also works with Coolify or Dokploy. |
+| **Any VPS** | — | `Dockerfile` | `docker build -t buildora . && docker run -p 3000:3000 buildora`. Also works with Coolify or Dokploy. |
 
 **GitHub Pages will not work.** It serves static files only, and this app uses
 server actions and middleware for offers, messaging and moderation.
@@ -97,7 +97,7 @@ committed anywhere.
    every migration joined in order — schema, row-level security, storage
    buckets and the sign-up trigger. (The individual files in
    `supabase/migrations/` are still there for `supabase db push`, and are what
-   you need when upgrading a project that already has Bizora tables.)
+   you need when upgrading a project that already has Buildora tables.)
 3. Copy `.env.example` to `.env.local` and fill in:
 
    ```
@@ -217,7 +217,7 @@ is published under a real person's name and they are responsible for it.
 | **Watchlist** with price history, and price-drop notifications | ✅ |
 | **Opportunity alerts** — standing searches that fire the moment a listing is approved | ✅ |
 | **Reviews & ratings** — one per completed deal, both directions | ✅ |
-| **Bizora Trust Score** — verification, deals, reviews, age, upheld reports | ✅ |
+| **Buildora Trust Score** — verification, deals, reviews, age, upheld reports | ✅ |
 | **Find a co-founder** — matched on complementary skills, not similar ones | ✅ |
 | **Network** — follow founders, post updates, milestones and opportunities | ✅ |
 | **Business calculators** — profit, break-even, ROI, indicative valuation | ✅ |
@@ -323,7 +323,7 @@ admin dashboard.
 
 ## Legal position
 
-Bizora is a venue. It does not guarantee that a business is profitable, that a
+Buildora is a venue. It does not guarantee that a business is profitable, that a
 patent is valid or valuable, that a transaction will succeed, or that a seller
 is reliable. Verification confirms information a member has supplied, to the
 extent the platform can lawfully check it — it is never an endorsement.

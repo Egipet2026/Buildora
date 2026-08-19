@@ -27,7 +27,7 @@ export default async function RegisterPage() {
   return (
     <>
       <PageHeader
-        eyebrow="Join Bizora"
+        eyebrow="Join Buildora"
         title="Create your account"
         description="Free to join. Sign up with an email address or a phone number — whichever you actually check."
       />

@@ -1,7 +1,7 @@
 import type { Profile, Report, Review, Transaction } from "./types";
 
 /**
- * Ratings and the Bizora Trust Score.
+ * Ratings and the Buildora Trust Score.
  *
  * The score is a summary of what the platform can actually observe about an
  * account — is it verified, has it completed deals, what did the other side
@@ -87,7 +87,7 @@ export function trustScore(input: {
     factors.push({
       label: "Verified",
       points: 25,
-      detail: "Identity and details evidenced to Bizora and checked.",
+      detail: "Identity and details evidenced to Buildora and checked.",
     });
   } else {
     factors.push({
@@ -113,7 +113,7 @@ export function trustScore(input: {
     factors.push({
       label: "No completed deals yet",
       points: 0,
-      detail: "Nothing has gone through Bizora with this account so far.",
+      detail: "Nothing has gone through Buildora with this account so far.",
     });
   }
 

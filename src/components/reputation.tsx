@@ -108,7 +108,7 @@ const BAND_CLASS: Record<TrustScore["band"], string> = {
 export function TrustScoreCard({ trust }: { trust: TrustScore }) {
   return (
     <div className="card p-5">
-      <p className="eyebrow mb-3">Bizora Trust Score</p>
+      <p className="eyebrow mb-3">Buildora Trust Score</p>
 
       <div className="flex items-baseline gap-2.5">
         <p className={`display text-3xl leading-none ${BAND_CLASS[trust.band]}`}>
@@ -151,7 +151,7 @@ export function TrustScoreCard({ trust }: { trust: TrustScore }) {
       </dl>
 
       <p className="mt-4 hairline pt-3 text-[0.75rem] leading-relaxed text-[var(--color-ink-3)]">
-        The score summarises what Bizora can observe about this account. It is
+        The score summarises what Buildora can observe about this account. It is
         not a credit check, not a background check, and not a prediction that a
         deal will go well. Do your own due diligence regardless of the number.
       </p>

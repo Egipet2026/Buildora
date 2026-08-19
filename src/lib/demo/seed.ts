@@ -36,7 +36,7 @@ export const DEMO_PROFILES: Profile[] = [
     id: "u-admin",
     full_name: "Ana Petrova",
     avatar_url: null,
-    headline: "Bizora platform administrator",
+    headline: "Buildora platform administrator",
     bio: "Reviews listings, verification requests and reports.",
     country: "Bulgaria",
     role: "admin",

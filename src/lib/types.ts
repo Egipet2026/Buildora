@@ -1,5 +1,5 @@
 /**
- * Core domain types for Bizora.
+ * Core domain types for Buildora.
  *
  * These mirror the Postgres schema in `supabase/migrations/0001_init.sql`
  * one-to-one so the same shapes flow through the demo data layer and a real

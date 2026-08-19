@@ -1,5 +1,5 @@
 -- ===========================================================================
--- Bizora — initial schema
+-- Buildora — initial schema
 --
 -- Run against a fresh Supabase project:
 --   supabase db push          (or paste into the SQL editor)

@@ -66,7 +66,7 @@ export function SiteFooter() {
               >
                 B
               </span>
-              <span className="display text-lg">Bizora</span>
+              <span className="display text-lg">Buildora</span>
             </Link>
             <p className="mt-4 max-w-xs text-[0.875rem] leading-relaxed text-[var(--color-ink-3)]">
               Buy a business. Build a business. Sell a business. Everything you
@@ -95,7 +95,7 @@ export function SiteFooter() {
 
         <div className="mt-12 hairline pt-6">
           <p className="text-[0.75rem] leading-relaxed text-[var(--color-ink-3)]">
-            Bizora is a marketplace that connects buyers and sellers. It does
+            Buildora is a marketplace that connects buyers and sellers. It does
             not guarantee that any business is profitable, that any patent or
             technology is valuable, that any transaction will be successful, or
             that any seller is reliable. Verification confirms information a
@@ -109,13 +109,13 @@ export function SiteFooter() {
               top of every page: informative, not a badge saying "unfinished". */}
           {isDemoMode ? (
             <p className="mt-4 text-[0.75rem] leading-relaxed text-[var(--color-ink-3)]">
-              Bizora is not yet connected to a permanent database. Listings,
+              Buildora is not yet connected to a permanent database. Listings,
               accounts and messages are held only while the service is running
               and are cleared periodically.
             </p>
           ) : null}
           <p className="mt-4 text-[0.75rem] text-[var(--color-ink-3)]">
-            © {new Date().getFullYear()} Bizora. The legal pages are
+            © {new Date().getFullYear()} Buildora. The legal pages are
             placeholders pending review by a qualified professional.
           </p>
         </div>

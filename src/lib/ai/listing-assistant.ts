@@ -65,7 +65,7 @@ const DRAFT_JSON_SCHEMA = {
   },
 } as const;
 
-const SYSTEM = `You help a seller write a clear listing on Bizora, an international business marketplace.
+const SYSTEM = `You help a seller write a clear listing on Buildora, an international business marketplace.
 
 Work only from what the seller has written. You must not invent, estimate or imply any fact they did not give you — no revenue, profit, customer numbers, growth rates, dates, locations, technologies or credentials. If an obvious detail is missing, put it in the FAQ as something the buyer should ask, rather than filling it in yourself.
 

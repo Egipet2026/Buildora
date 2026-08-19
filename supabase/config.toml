@@ -5,7 +5,7 @@
 # project_id is a local label only — it does not have to match the id of the
 # hosted project it deploys to.
 
-project_id = "bizora"
+project_id = "buildora"
 
 [db]
 # Matches the Postgres major version Supabase provisions for new projects.

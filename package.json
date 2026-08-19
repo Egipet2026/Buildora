@@ -1,8 +1,8 @@
 {
-  "name": "bizora",
+  "name": "buildora",
   "version": "0.1.0",
   "private": true,
-  "description": "Bizora — Buy a Business. Build a Business. Sell a Business.",
+  "description": "Buildora — Buy a Business. Build a Business. Sell a Business.",
   "scripts": {
     "dev": "next dev",
     "build": "next build",

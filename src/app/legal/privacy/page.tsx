@@ -11,7 +11,7 @@ export default function PrivacyPage() {
         {
           heading: "1. What this covers",
           paragraphs: [
-            "This describes what personal data Bizora collects, why, and what members can do about it. It is written to reflect how the platform actually behaves, and must be reviewed against the data-protection law of each market before the platform operates commercially.",
+            "This describes what personal data Buildora collects, why, and what members can do about it. It is written to reflect how the platform actually behaves, and must be reviewed against the data-protection law of each market before the platform operates commercially.",
           ],
         },
         {

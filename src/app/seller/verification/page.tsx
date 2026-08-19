@@ -44,7 +44,7 @@ export default async function VerificationPage() {
               </span>
             </div>
             <p className="mt-4 leading-relaxed text-[var(--color-ink-2)]">
-              A Verified badge tells buyers that Bizora has checked specific
+              A Verified badge tells buyers that Buildora has checked specific
               facts you provided — who you are, that a company exists and you
               are connected to it, or that a patent number, jurisdiction, status
               and recorded holder match the public register.

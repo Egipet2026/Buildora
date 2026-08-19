@@ -256,7 +256,7 @@ export function ContactButton({
           <FormMessage state={state} />
 
           <p className="text-[0.75rem] leading-relaxed text-[var(--color-ink-3)]">
-            Conversations stay on Bizora. Your email address is never shared
+            Conversations stay on Buildora. Your email address is never shared
             with the other party. Keep negotiations here so there is a record if
             something goes wrong.
           </p>
@@ -391,7 +391,7 @@ export function ReportButton({
         open={open}
         onClose={() => setOpen(false)}
         title="Report to moderators"
-        description="Reports are reviewed by the Bizora team. The person you report is not told who reported them."
+        description="Reports are reviewed by the Buildora team. The person you report is not told who reported them."
       >
         <form action={action} className="space-y-4">
           <input type="hidden" name="targetType" value={targetType} />

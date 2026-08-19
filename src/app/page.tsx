@@ -126,7 +126,7 @@ export default async function HomePage() {
             <SectionHead
               eyebrow="Recommended for you"
               title="Based on what you have saved"
-              description="Drawn from the listings you saved and are watching — the categories, the price range and the countries. Bizora does not rank these by quality, and nobody pays to be here."
+              description="Drawn from the listings you saved and are watching — the categories, the price range and the countries. Buildora does not rank these by quality, and nobody pays to be here."
               action={{ href: "/bizmatch", label: "Refine with BizMatch" }}
             />
             <div className="space-y-4">
@@ -284,7 +284,7 @@ export default async function HomePage() {
       <Section className="border-t border-[var(--color-line)] bg-[var(--color-surface)]">
         <div className="shell">
           <SectionHead
-            eyebrow="How Bizora works"
+            eyebrow="How Buildora works"
             title="From “I want to start a business” to a business"
             description="Three paths through the same platform. Most people end up using all three."
           />

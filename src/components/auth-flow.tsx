@@ -93,7 +93,7 @@ function CredentialsStep({
               ? "Recognised as an email address."
               : looksLikePhone
                 ? "Recognised as a phone number — pick your country beside it."
-                : "Type either. Bizora works out which it is."
+                : "Type either. Buildora works out which it is."
           }
           required
         >
@@ -178,7 +178,7 @@ function CredentialsStep({
             </>
           ) : (
             <>
-              New to Bizora?{" "}
+              New to Buildora?{" "}
               <Link href="/register" className="font-medium text-[var(--color-brand)] hover:underline">
                 Create an account
               </Link>

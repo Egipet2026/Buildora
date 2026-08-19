@@ -13,7 +13,7 @@ export default async function LoginPage() {
     <>
       <PageHeader
         eyebrow="Welcome back"
-        title="Sign in to Bizora"
+        title="Sign in to Buildora"
         description="With the email address or phone number you registered. Your saved listings, offers and conversations are waiting."
       />
 
@@ -23,7 +23,7 @@ export default async function LoginPage() {
 
           <Notice tone="neutral">
             Signing in from a new device asks for a 6-digit code if your account
-            was never confirmed. Bizora never asks for your password or a code
+            was never confirmed. Buildora never asks for your password or a code
             by message — anyone who does is not us.
           </Notice>
 

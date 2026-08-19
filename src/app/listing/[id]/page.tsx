@@ -275,7 +275,7 @@ export default async function ListingPage({
 
                 <p className="mt-3 text-[0.75rem] leading-relaxed text-[var(--color-ink-3)]">
                   Figures are provided by the seller and have not been audited
-                  by Bizora. Ask for source documents before relying on them.
+                  by Buildora. Ask for source documents before relying on them.
                 </p>
               </div>
             ) : null}
@@ -481,7 +481,7 @@ export default async function ListingPage({
                     {listing.owner.is_verified ? (
                       <span
                         className="badge badge-verified"
-                        title="Identity and details confirmed by Bizora"
+                        title="Identity and details confirmed by Buildora"
                       >
                         ✓
                       </span>
@@ -517,13 +517,13 @@ export default async function ListingPage({
 
               <p className="mt-3 text-[0.75rem] leading-relaxed text-[var(--color-ink-3)]">
                 Contact details are never published. Message the seller through
-                Bizora so the conversation is recorded.
+                Buildora so the conversation is recorded.
               </p>
             </div>
 
             <div className="mt-5">
               <Notice tone="neutral">
-                Bizora is a venue for buyers and sellers to find each other. It
+                Buildora is a venue for buyers and sellers to find each other. It
                 does not guarantee that this business is profitable, that this
                 technology is valuable, or that this seller is reliable. Do your
                 own due diligence and take independent advice.

@@ -15,7 +15,7 @@ import type { ListingKind } from "@/lib/types";
 export const metadata = {
   title: "Opportunities",
   description:
-    "Everything newly available on Bizora in one feed — businesses for sale, patents, technologies, SaaS, websites, licences, services, suppliers, partners and co-founder requests.",
+    "Everything newly available on Buildora in one feed — businesses for sale, patents, technologies, SaaS, websites, licences, services, suppliers, partners and co-founder requests.",
 };
 
 /** A window recent enough that the feed shows movement, not the back catalogue. */
@@ -63,7 +63,7 @@ export default async function OpportunitiesPage({
       <PageHeader
         eyebrow="Opportunities"
         title="What is newly available"
-        description="One feed for everything that has just come onto Bizora — businesses, patents and technologies, SaaS and websites, licences, services, suppliers, partners and people looking for a co-founder."
+        description="One feed for everything that has just come onto Buildora — businesses, patents and technologies, SaaS and websites, licences, services, suppliers, partners and people looking for a co-founder."
       >
         <Link href="/dashboard/alerts" className="btn btn-outline">
           🔔 Alert me about these
@@ -154,7 +154,7 @@ export default async function OpportunitiesPage({
           <EmptyState
             icon="⌕"
             title="Nothing new in this category"
-            description="Try another category, or set an alert and Bizora will tell you the moment something appears."
+            description="Try another category, or set an alert and Buildora will tell you the moment something appears."
             action={{ href: "/opportunities", label: "Show everything" }}
           />
         )}
@@ -162,7 +162,7 @@ export default async function OpportunitiesPage({
         <div className="mt-10">
           <Notice tone="neutral">
             A place in this feed is not an endorsement. Listings appear here
-            because they are new, not because Bizora rates them — every one
+            because they are new, not because Buildora rates them — every one
             still needs your own checks before you commit to anything.
           </Notice>
         </div>

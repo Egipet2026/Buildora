@@ -11,7 +11,7 @@ export default function VerificationInfoPage() {
         {
           heading: "The short version",
           paragraphs: [
-            "A Verified badge means Bizora checked specific facts a member gave us, against evidence they supplied and against public records, so far as we can lawfully check them.",
+            "A Verified badge means Buildora checked specific facts a member gave us, against evidence they supplied and against public records, so far as we can lawfully check them.",
             "It is not an audit, a valuation, a credit check, a legal opinion, or a statement that a transaction is a good idea. A verified listing can still be a bad purchase.",
           ],
         },

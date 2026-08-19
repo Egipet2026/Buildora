@@ -130,7 +130,7 @@ const PLAN_JSON_SCHEMA = {
   },
 } as const;
 
-const SYSTEM = `You help founders turn a rough idea into a first structured business plan on Bizora, an international business marketplace.
+const SYSTEM = `You help founders turn a rough idea into a first structured business plan on Buildora, an international business marketplace.
 
 Write for someone who has never started a business before. Be concrete and specific to their idea — never generic filler.
 

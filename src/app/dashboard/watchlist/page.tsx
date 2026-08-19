@@ -17,7 +17,7 @@ export default async function WatchlistPage() {
     <div className="space-y-8">
       <SectionHead
         title="Watchlist"
-        description="Listings you are tracking. When an asking price falls, Bizora tells you — and shows you what it was when you added it."
+        description="Listings you are tracking. When an asking price falls, Buildora tells you — and shows you what it was when you added it."
       />
 
       {items.length ? (
@@ -100,7 +100,7 @@ export default async function WatchlistPage() {
         <EmptyState
           icon="◎"
           title="Nothing on your watchlist"
-          description="Open any listing and press “Watch the price”. Bizora will tell you if the seller drops it."
+          description="Open any listing and press “Watch the price”. Buildora will tell you if the seller drops it."
           action={{ href: "/businesses", label: "Browse businesses" }}
         />
       )}

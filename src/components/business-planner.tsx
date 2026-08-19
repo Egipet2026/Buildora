@@ -110,7 +110,7 @@ export function BusinessPlanner() {
               qualified professional in your country.
               {plan.generated_offline ? (
                 <span className="mt-2 block">
-                  Generated from Bizora&apos;s built-in template — no model
+                  Generated from Buildora&apos;s built-in template — no model
                   provider is configured, so this plan is generic rather than
                   tailored to your wording.
                 </span>
@@ -128,7 +128,7 @@ export function BusinessPlanner() {
                   <p className="mt-4 hairline pt-4 text-[0.75rem] leading-relaxed text-[var(--color-ink-3)]">
                     A suggestion, nothing more. Check the name is free in your
                     country&apos;s company register and as a trade mark before
-                    you use it — Bizora has not checked either.
+                    you use it — Buildora has not checked either.
                   </p>
                 </>
               ) : (
@@ -196,7 +196,7 @@ export function BusinessPlanner() {
               <h3 className="display text-xl">Now find what you need</h3>
               <p className="mt-2 text-[0.9375rem] leading-relaxed text-[var(--color-ink-2)]">
                 A plan is not a business. These are the parts of it you can
-                source on Bizora today.
+                source on Buildora today.
               </p>
               <div className="mt-5 grid gap-2.5 sm:grid-cols-2">
                 {[
@@ -234,7 +234,7 @@ export function BusinessPlanner() {
             </span>
             <h2 className="display mt-4 text-xl">Your plan appears here</h2>
             <p className="mt-2 max-w-sm text-[0.875rem] leading-relaxed text-[var(--color-ink-3)]">
-              Describe your idea and Bizora drafts an indicative plan: who your
+              Describe your idea and Buildora drafts an indicative plan: who your
               customers are, how the business could make money, what it might
               cost, who you need, and what to do in the first week.
             </p>
@@ -246,7 +246,7 @@ export function BusinessPlanner() {
 }
 
 /**
- * Turns the plan into a real business profile on Bizora.
+ * Turns the plan into a real business profile on Buildora.
  *
  * Everything is pre-filled but editable, and the button says plainly what it
  * creates — a member should never find a public page appearing under their
@@ -272,7 +272,7 @@ function CreateBusiness({ plan }: { plan: BusinessPlan }) {
       <div className="card bg-[var(--color-surface-2)] p-6 lg:p-8">
         <h3 className="display text-xl">Make it real</h3>
         <p className="mt-2 max-w-2xl leading-relaxed text-[var(--color-ink-2)]">
-          Create the business on Bizora and this plan stops being a document:
+          Create the business on Buildora and this plan stops being a document:
           you get a public storefront you can put products on, a build plan
           seeded with these first steps, goals to track and a dashboard to
           record what actually happens.
@@ -366,7 +366,7 @@ function CreateBusiness({ plan }: { plan: BusinessPlan }) {
       </div>
 
       <p className="text-[0.75rem] leading-relaxed text-[var(--color-ink-3)]">
-        This creates a public page on Bizora under your account. It does not
+        This creates a public page on Buildora under your account. It does not
         register a company, reserve a name, or create any legal entity —
         registration happens with your national authority, not here.
       </p>

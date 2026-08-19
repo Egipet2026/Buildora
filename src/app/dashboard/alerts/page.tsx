@@ -18,7 +18,7 @@ export default async function AlertsPage() {
     <div className="space-y-8">
       <SectionHead
         title="Opportunity alerts"
-        description="Standing searches. Bizora checks each one the moment a listing is approved and notifies you if it matches — no polling, no digest delay."
+        description="Standing searches. Buildora checks each one the moment a listing is approved and notifies you if it matches — no polling, no digest delay."
       />
 
       <AlertForm />

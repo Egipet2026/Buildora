@@ -93,7 +93,7 @@ export default async function CoFounderPage() {
       <PageHeader
         eyebrow="Find a co-founder"
         title="The person who covers what you cannot"
-        description="Not a list of people who do what you already do. Bizora ranks by complementary skills — what you are missing against what they bring, and the other way round."
+        description="Not a list of people who do what you already do. Buildora ranks by complementary skills — what you are missing against what they bring, and the other way round."
       >
         <Link href="/co-founders/new" className="btn btn-primary">
           {mine ? "Edit my profile" : "Publish my profile"}
@@ -241,7 +241,7 @@ export default async function CoFounderPage() {
             A co-founder relationship is a legal and financial commitment.
             Agree equity, vesting, roles and what happens if one of you leaves
             in writing, and have it reviewed by a lawyer in your jurisdiction.
-            Bizora introduces people; it does not paper the deal and takes no
+            Buildora introduces people; it does not paper the deal and takes no
             part in it.
           </Notice>
         </div>

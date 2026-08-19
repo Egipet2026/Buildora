@@ -1,5 +1,5 @@
 # ---------------------------------------------------------------------------
-# Bizora — production image
+# Buildora — production image
 #
 # Runs anywhere that takes a container: Render, Railway, Fly.io, Koyeb,
 # Northflank, Google Cloud Run, a plain VPS with Docker, Coolify, Dokploy.

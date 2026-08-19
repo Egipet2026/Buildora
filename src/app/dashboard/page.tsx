@@ -129,7 +129,7 @@ export default async function DashboardPage() {
       <div>
         <SectionHead
           title="Keep exploring"
-          description="Every marketplace on Bizora."
+          description="Every marketplace on Buildora."
         />
         <div className="grid grid-cols-2 gap-3 md:grid-cols-3 lg:grid-cols-5">
           {MARKETPLACES.map((m) => (

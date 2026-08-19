@@ -11,7 +11,7 @@ export default async function MarketplacePage({
     <BrowsePage
       eyebrow="Everything"
       title="Explore the marketplace"
-      description="Every listing on Bizora in one place — businesses, patents and technologies, digital assets, services, partners, ideas, suppliers, AI tools and marketing."
+      description="Every listing on Buildora in one place — businesses, patents and technologies, digital assets, services, partners, ideas, suppliers, AI tools and marketing."
       searchParams={await searchParams}
       basePath="/marketplace"
       showFinancials

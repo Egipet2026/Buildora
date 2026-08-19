@@ -30,7 +30,7 @@ export default async function PatentsPage({
             presented as a granted patent.
           </p>
           <p>
-            Where a listing is verified, Bizora has confirmed the stated number,
+            Where a listing is verified, Buildora has confirmed the stated number,
             jurisdiction, status and recorded holder against the public register
             — to the extent it can lawfully do so. That is a check on the
             paperwork, not a validity opinion, a freedom-to-operate opinion, or
