@@ -5,7 +5,6 @@ import { useActionState, useEffect, useState } from "react";
 import { FormMessage, SubmitButton } from "./dialog";
 import { Field, Notice } from "./ui";
 import { createListingAction } from "@/lib/actions";
-import { ListingAssistant } from "./listing-assistant";
 import { IDLE } from "@/lib/action-state";
 import { COUNTRIES, MARKETPLACES } from "@/lib/taxonomy";
 import type { ListingKind } from "@/lib/types";
@@ -126,20 +125,6 @@ export function ListingForm({ initialKind }: { initialKind?: ListingKind }) {
             ))}
           </select>
         </Field>
-
-        {/* Drafting help sits above the fields it fills, and only ever writes
-            into them — nothing it produces is submitted unread. */}
-        <ListingAssistant
-          kind={kind}
-          title={copy.title}
-          onApply={(draft) =>
-            setCopy({
-              title: draft.title,
-              summary: draft.summary,
-              description: draft.description,
-            })
-          }
-        />
 
         <Field
           label="Title"

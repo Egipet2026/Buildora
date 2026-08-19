@@ -169,21 +169,6 @@ If you use Supabase for auth, Supabase sends the email code itself, and phone
 sign-up needs an SMS provider configured under Authentication → Providers →
 Phone.
 
-### The AI features
-
-Set `ANTHROPIC_API_KEY` to enable them. Three surfaces use it:
-
-| Surface | Without a key |
-| --- | --- |
-| `/start-a-business` — business plan, name, competitors, risks | Falls back to a deterministic template |
-| `/market-research` — indicative market overview | Falls back to a research *method*, not a fabricated overview |
-| “Improve with AI” on a listing | Unavailable — the seller writes it themselves |
-
-All three are labelled as indicative wherever they appear. The listing
-assistant is constrained to rewrite only what the seller supplied: it must not
-add revenue figures, customer counts or claims of any kind, because that text
-is published under a real person's name and they are responsible for it.
-
 ---
 
 ## What's in the MVP
@@ -197,7 +182,7 @@ is published under a real person's name and they are responsible for it.
 | Digital assets, services, partners, ideas, products, AI tools, marketing | ✅ |
 | Business profiles (“looking for partners / developers / suppliers…”) | ✅ |
 | Business workspace: a real storefront with priced products, stock and drafts | ✅ |
-| Build plan — an editable checklist the AI planner can seed but does not own | ✅ |
+| Build plan — an editable checklist seeded from starter templates | ✅ |
 | Member directory and public member pages | ✅ |
 | Listing creation with moderation queue | ✅ |
 | Listing detail: financials, rights, documents, seller, similar listings | ✅ |
@@ -224,7 +209,6 @@ is published under a real person's name and they are responsible for it.
 | **Goals** with progress bars, and a monthly business dashboard with charts | ✅ |
 | **Starter checklists** by business type, feeding the build plan | ✅ |
 | **Market research** — indicative overview of a market, clearly labelled | ✅ |
-| **AI listing assistant** — drafts a listing from your notes, adds no facts | ✅ |
 | **Recommended for you** — from what you saved and watched, or nothing at all | ✅ |
 
 ### Deliberately not built
@@ -262,7 +246,6 @@ src/
     co-founders/           Complementary-skill matching
     network/               Professional feed
     tools/                 Business calculators
-    market-research/       Indicative market overview
     legal/                 Placeholder legal documents
   components/              UI, listing cards, filters, dialogs, forms
   lib/

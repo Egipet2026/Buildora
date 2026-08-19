@@ -1,4 +1,3 @@
-import type { BusinessPlan, ListingDraft, MarketResearch } from "./types";
 
 /**
  * Shared result shape for every server action, plus its initial value.
@@ -15,8 +14,5 @@ export interface ActionState {
   redirectTo?: string;
 }
 
-export type PlanState = ActionState & { plan?: BusinessPlan };
-export type ResearchState = ActionState & { research?: MarketResearch };
-export type ListingDraftState = ActionState & { draft?: ListingDraft };
 
 export const IDLE: ActionState = { ok: false };

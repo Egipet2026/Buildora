@@ -25,7 +25,6 @@ const PRIMARY = [
   { href: "/services", label: "Services", always: true },
   { href: "/partners", label: "Partners", always: false },
   { href: "/opportunities", label: "Opportunities", always: false },
-  { href: "/start-a-business", label: "Start a Business", always: false },
   { href: "/bizmatch", label: "BizMatch", always: true },
 ];
 
@@ -57,7 +56,7 @@ const MENU_TOPICS: { title: string; hint: string; items: MenuItem[] }[] = [
     hint: "Your own business, here",
     items: [
       { href: "/workspace", label: "My business" },
-      { href: "/start-a-business", label: "Start a business" },
+      { href: "/business-profiles/new", label: "Set up my business" },
       { href: "/workspace/products", label: "Products" },
       { href: "/workspace/plan", label: "Business plan" },
       { href: "/workspace/goals", label: "Goals & checklist" },
@@ -81,7 +80,6 @@ const MENU_TOPICS: { title: string; hint: string; items: MenuItem[] }[] = [
     hint: "Run the numbers first",
     items: [
       { href: "/tools", label: "Calculators" },
-      { href: "/market-research", label: "Market research" },
       { href: "/pricing", label: "Pricing & fees" },
     ],
   },

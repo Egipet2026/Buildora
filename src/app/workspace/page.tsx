@@ -113,16 +113,13 @@ export default async function WorkspacePage() {
             </>
           ) : (
             <p className="mt-2 text-[0.875rem] leading-relaxed text-[var(--color-ink-2)]">
-              No steps yet. Write your own, or generate an indicative plan and
-              keep the steps you agree with.
+              No steps yet. Start from one of the starter checklists, or
+              write your own.
             </p>
           )}
           <div className="mt-5 flex flex-wrap gap-2.5">
             <Link href="/workspace/plan" className="btn btn-brand">
               Open the plan
-            </Link>
-            <Link href="/start-a-business" className="btn btn-outline">
-              Generate steps with AI
             </Link>
           </div>
         </div>

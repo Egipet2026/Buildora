@@ -79,7 +79,7 @@ export default async function HomePage() {
               <Link href="/businesses" className="btn btn-primary btn-lg">
                 Buy a Business
               </Link>
-              <Link href="/start-a-business" className="btn btn-brand btn-lg">
+              <Link href="/business-profiles/new" className="btn btn-brand btn-lg">
                 Start a Business
               </Link>
               <Link href="/sell" className="btn btn-outline btn-lg">
@@ -308,13 +308,13 @@ export default async function HomePage() {
                 tag: "Build",
                 title: "Start from an idea",
                 steps: [
-                  "Describe what you want to build",
-                  "Get an indicative plan: customers, model, costs, first steps",
-                  "Publish a business profile and say what you are looking for",
+                  "Set up your business and say what it does",
+                  "Work through a starter checklist, or write your own steps",
+                  "Publish products and prices on your own storefront",
                   "Find a partner, a developer, a designer or a supplier",
                   "License the technology you would otherwise have to invent",
                 ],
-                href: "/start-a-business",
+                href: "/business-profiles/new",
                 cta: "Start a business",
               },
               {
@@ -425,12 +425,12 @@ export default async function HomePage() {
             Start with “I want to start a business.” Finish with a business.
           </h2>
           <p className="mx-auto mt-4 max-w-xl text-[0.9375rem] leading-relaxed text-white/70">
-            Idea → business plan → partner → specialist → technology → patent →
+            Idea → storefront → partner → specialist → technology → patent →
             website → SaaS → marketing → business.
           </p>
           <div className="mt-8 flex flex-wrap justify-center gap-3">
             <Link
-              href="/start-a-business"
+              href="/business-profiles/new"
               className="btn btn-lg bg-white text-[var(--color-ink)] hover:bg-white/90"
             >
               Start a Business

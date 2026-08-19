@@ -21,8 +21,8 @@ export default function ToolsPage() {
         title="Business calculators"
         description="Four calculations worth doing before you buy, sell or start anything. Nothing is stored and nothing is sent anywhere — the arithmetic runs in your browser."
       >
-        <Link href="/start-a-business" className="btn btn-outline">
-          Plan a business instead
+        <Link href="/business-profiles/new" className="btn btn-outline">
+          Start a business instead
         </Link>
       </PageHeader>
 

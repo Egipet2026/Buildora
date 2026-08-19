@@ -192,16 +192,6 @@ export const verificationSchema = z.object({
     .max(4000),
 });
 
-export const businessPlanSchema = z.object({
-  idea: z
-    .string()
-    .trim()
-    .min(15, "Describe your idea in a sentence or two")
-    .max(2000),
-  country: z.string().trim().max(80).default(""),
-  budget: z.string().trim().max(80).default(""),
-});
-
 /** Flattens a ZodError into `{ field: message }` for inline form errors. */
 export function fieldErrors(error: z.ZodError): Record<string, string> {
   const out: Record<string, string> = {};

@@ -51,9 +51,6 @@ export default async function WorkspaceLayout({
               <Link href="/business-profiles/new" className="btn btn-brand btn-lg">
                 Set up my business
               </Link>
-              <Link href="/start-a-business" className="btn btn-outline btn-lg">
-                I need a plan first
-              </Link>
             </div>
           </div>
 

@@ -16,17 +16,11 @@ import {
 } from "./data";
 import { calculateFees } from "./money";
 import { runAlertsForListing, runPriceDropAlerts } from "./ecosystem/watch";
-import { generateResearch } from "./ai/research";
-import { draftListing } from "./ai/listing-assistant";
 import type {
   ActionState,
-  ListingDraftState,
-  PlanState,
-  ResearchState,
 } from "./action-state";
 import { MARKETPLACE_BY_KIND } from "./taxonomy";
 import {
-  businessPlanSchema,
   businessProfileSchema,
   directConversationSchema,
   fieldErrors,
@@ -1268,71 +1262,6 @@ export async function adminSettingsAction(
 
 // ------------------------------------------------------- business profiles
 
-/* ------------------------------------------------------------- AI tools */
-
-/**
- * Market research, generated on request.
- *
- * Deliberately never cached or stored: it is one model's summary at one
- * moment, and keeping it around invites people to treat it as a source.
- */
-export async function generateResearchAction(
-  _prev: ResearchState,
-  formData: FormData,
-): Promise<ResearchState> {
-  const industry = String(formData.get("industry") ?? "").trim();
-  const country = String(formData.get("country") ?? "").trim();
-  const customer = String(formData.get("customer") ?? "").trim();
-  const product = String(formData.get("product") ?? "").trim();
-
-  if (industry.length < 2)
-    return fail("Name the industry you want to look at.", {
-      industry: "Enter an industry",
-    });
-
-  const research = await generateResearch({
-    industry,
-    country: country || "any market",
-    customer: customer || "not specified",
-    product: product || "not specified",
-  });
-
-  return { ok: true, research };
-}
-
-/**
- * Rewrites a seller's rough notes into listing copy they then edit.
- *
- * The result is never published from here — it is handed back to the form so
- * the seller reads and approves every word under their own name.
- */
-export async function draftListingAction(
-  _prev: ListingDraftState,
-  formData: FormData,
-): Promise<ListingDraftState> {
-  const { error } = await currentUserOrFail();
-  if (error) return error;
-
-  const notes = String(formData.get("notes") ?? "").trim();
-  if (notes.length < 30)
-    return fail("Tell the assistant more about what you are selling.", {
-      notes: "At least a couple of sentences",
-    });
-
-  const draft = await draftListing({
-    kind: (String(formData.get("kind") ?? "business") as ListingKind),
-    title: String(formData.get("title") ?? "").trim() || undefined,
-    notes,
-  });
-
-  if (!draft)
-    return fail(
-      "The drafting assistant is not available on this deployment — set ANTHROPIC_API_KEY to enable it. You can still write the listing yourself.",
-    );
-
-  return { ok: true, draft };
-}
-
 export async function createBusinessProfileAction(
   _prev: ActionState,
   formData: FormData,
@@ -1389,19 +1318,4 @@ export async function createBusinessProfileAction(
     message: "Business profile published.",
     redirectTo: `/business-profiles/${profile.slug}`,
   };
-}
-
-// -------------------------------------------------------- AI business plan
-
-export async function generateBusinessPlanAction(
-  _prev: PlanState,
-  formData: FormData,
-): Promise<PlanState> {
-  const parsed = businessPlanSchema.safeParse(Object.fromEntries(formData));
-  if (!parsed.success)
-    return fail("Please fix the highlighted fields.", fieldErrors(parsed.error));
-
-  const { generatePlan } = await import("./ai/plan");
-  const plan = await generatePlan(parsed.data);
-  return { ok: true, plan };
 }
