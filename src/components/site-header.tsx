@@ -8,6 +8,7 @@ import {
 import { GlobalSearch } from "./global-search";
 import { NavLink } from "./nav-link";
 import { SignOutButton } from "./sign-out-button";
+import { Wordmark } from "./wordmark";
 
 /**
  * The main navigation.
@@ -117,14 +118,12 @@ export async function SiteHeader() {
     <>
       <header className="sticky top-0 z-40 border-b border-[var(--color-line)] bg-[var(--color-surface)]/92 backdrop-blur-md">
         <div className="shell-wide flex h-16 items-center gap-4">
-          <Link href="/" className="tap flex shrink-0 items-center gap-2 rounded-lg px-1 py-1">
-            <span
-              className="flex h-8 w-8 items-center justify-center rounded-lg bg-[var(--color-ink)] text-sm font-bold text-white"
-              aria-hidden
-            >
-              B
-            </span>
-            <span className="display text-lg">Buildora</span>
+          <Link
+            href="/"
+            aria-label="Buildora — home"
+            className="tap flex shrink-0 items-center gap-2 rounded-lg px-1 py-1"
+          >
+            <Wordmark idSuffix="header" markClassName="h-7 sm:h-8" />
           </Link>
 
           <nav className="ml-2 hidden items-center gap-0.5 lg:flex">

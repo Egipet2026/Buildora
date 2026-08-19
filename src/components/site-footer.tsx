@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { MARKETPLACES } from "@/lib/taxonomy";
 import { isDemoMode } from "@/lib/supabase/config";
+import { Wordmark } from "./wordmark";
 
 const COLUMNS = [
   {
@@ -59,14 +60,12 @@ export function SiteFooter() {
       <div className="shell py-14">
         <div className="grid gap-10 md:grid-cols-2 lg:grid-cols-7">
           <div className="lg:col-span-2">
-            <Link href="/" className="flex items-center gap-2">
-              <span
-                className="flex h-8 w-8 items-center justify-center rounded-lg bg-[var(--color-ink)] text-sm font-bold text-white"
-                aria-hidden
-              >
-                B
-              </span>
-              <span className="display text-lg">Buildora</span>
+            <Link
+              href="/"
+              aria-label="Buildora — home"
+              className="tap flex w-fit items-center gap-2 rounded-lg px-1 py-1"
+            >
+              <Wordmark idSuffix="footer" textClassName="!inline" />
             </Link>
             <p className="mt-4 max-w-xs text-[0.875rem] leading-relaxed text-[var(--color-ink-3)]">
               Buy a business. Build a business. Sell a business. Everything you
