@@ -12,8 +12,9 @@ Built with Next.js 15 (App Router), TypeScript, Tailwind CSS v4 and Supabase.
 
 ## Open it in a browser
 
-Three ways, fastest first. All of them run the app in **demo mode** — seeded
-data, an account already signed in, no configuration needed.
+Three ways, fastest first. None of them need any configuration: the Supabase
+project the app talks to is committed in `src/lib/supabase/project.ts`, so a
+deploy is connected to a real database from the first build.
 
 ### Deploy a public URL — one click
 
@@ -65,13 +66,28 @@ npm install
 npm run dev          # http://localhost:3000
 ```
 
-With no environment variables the app runs in **demo mode**: a seeded dataset
-of businesses, patents, services, partners, offers, conversations and
-moderation queues, with a demo account already signed in.
-Every authenticated surface — buyer dashboard, seller dashboard, admin,
-messaging, negotiations — is browsable immediately, and writes are applied to an
-in-memory store so the flows behave like the real thing. A restart resets the
-data.
+Out of the box this connects to the Supabase project committed in
+`src/lib/supabase/project.ts` — the same one the deployed site uses. Set
+`NEXT_PUBLIC_SUPABASE_URL` and `NEXT_PUBLIC_SUPABASE_ANON_KEY` in
+`.env.local` to point at your own project instead; the environment always wins
+over the committed values.
+
+**Demo mode** — a seeded dataset of businesses, patents, services, partners,
+offers and conversations held in memory, with every authenticated surface
+browsable immediately — is what runs when there is no project at all. Empty
+both values in `project.ts` to get it back.
+
+### Why the project credentials are in the repository
+
+The URL and the publishable key are public by design: the key is sent to every
+visitor's browser on every page load, and Supabase's dashboard says in as many
+words that publishable keys can be shared publicly. What protects the data is
+row-level security, which the migrations enable on every table.
+
+Committing them means deploying needs no dashboard configuration, which is the
+single step that most often goes wrong. The **secret key** (`sb_secret_…`) is a
+different thing entirely — it bypasses row-level security and must never be
+committed anywhere.
 
 ### Connecting a real database
 
