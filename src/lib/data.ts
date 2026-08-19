@@ -9,6 +9,7 @@ import { readDemoSession } from "./auth/session";
 import { applyFilters, isFeaturedNow, type ListingFilters } from "./filters";
 import { DEFAULT_SETTINGS } from "./money";
 import { summariseRatings, trustScore } from "./reputation";
+import { canAdminister } from "./roles";
 import type {
   BusinessGoal,
   BusinessMetric,
@@ -110,7 +111,7 @@ export async function hasExplicitSession(): Promise<boolean> {
 
 export async function requireAdmin(): Promise<Profile | null> {
   const me = await getCurrentUser();
-  return me?.role === "admin" ? me : null;
+  return canAdminister(me?.role) ? me : null;
 }
 
 // ---------------------------------------------------------------- profiles

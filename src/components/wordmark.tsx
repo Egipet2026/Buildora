@@ -32,7 +32,7 @@ export function BuildoraMark({
 
   return (
     <svg
-      viewBox="-8 -8 420 476"
+      viewBox="-8 -8 416 472"
       className={className}
       role="img"
       aria-label="Buildora"
@@ -45,11 +45,12 @@ export function BuildoraMark({
       </defs>
 
       {/* The tower: an open frame, drawn as one stroked line. */}
+      {/* The tower: an open frame, drawn as one stroked line. */}
       <path
-        d="M 23 460 L 23 100 L 160 26 L 160 460"
+        d="M 22 456 L 22 98 L 143 36 L 143 456"
         fill="none"
         stroke={`url(#${gradient})`}
-        strokeWidth="40"
+        strokeWidth="44"
         strokeLinejoin="miter"
         strokeMiterlimit="10"
       />
@@ -57,17 +58,17 @@ export function BuildoraMark({
       <g fill={ink}>
         {/* Skyline and the B's stem are one shape, so no seam shows where
             they meet. */}
-        <path d="M 63 460 L 63 306 L 142 228 L 142 200 L 214 124 L 214 460 Z" />
+        <path d="M 63 456 L 63 302 L 122 244 L 122 232 L 178 165 L 178 456 Z" />
         <path
           fillRule="evenodd"
-          d="M 196 58
-             L 292 58
-             A 100 100 0 0 1 292 258
-             L 302 258
-             A 102 102 0 0 1 302 460
-             L 196 460 Z
-             M 248 106 L 288 106 A 52 52 0 0 1 288 210 L 248 210 Z
-             M 248 308 L 288 308 A 53 53 0 0 1 288 414 L 248 414 Z"
+          d="M 153 56
+             L 270 56
+             A 92.5 92.5 0 0 1 270 241
+             L 292 241
+             A 107.5 107.5 0 0 1 292 456
+             L 153 456 Z
+             M 210 109 L 270 109 A 39.5 39.5 0 0 1 270 188 L 210 188 Z
+             M 210 294 L 293 294 A 54 54 0 0 1 293 402 L 210 402 Z"
         />
       </g>
     </svg>

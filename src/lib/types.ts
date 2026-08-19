@@ -32,7 +32,7 @@ export type DealType =
   | "license_exclusive"
   | "license_non_exclusive";
 
-export type UserRole = "user" | "admin";
+export type UserRole = "user" | "admin" | "owner";
 
 export type VerificationStatus =
   | "none"

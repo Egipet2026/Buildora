@@ -1,6 +1,7 @@
 import { ModerateUser } from "@/components/admin-actions";
 import { getCurrentUser, getListings, getProfiles } from "@/lib/data";
 import { formatDate } from "@/lib/money";
+import { roleLabel } from "@/lib/roles";
 
 export const metadata = { title: "Members" };
 
@@ -38,8 +39,12 @@ export default async function AdminUsersPage() {
               <td>
                 <p className="font-medium text-[var(--color-ink)]">
                   {p.full_name}
-                  {p.role === "admin" ? (
-                    <span className="badge badge-brand ml-1.5">Admin</span>
+                  {p.role !== "user" ? (
+                    <span
+                      className={`ml-1.5 badge ${p.role === "owner" ? "badge-gold" : "badge-brand"}`}
+                    >
+                      {roleLabel(p.role)}
+                    </span>
                   ) : null}
                 </p>
                 {p.headline ? (

@@ -32,6 +32,7 @@ import {
 import { categoryName, MARKETPLACE_BY_KIND } from "@/lib/taxonomy";
 import { isFeaturedNow } from "@/lib/filters";
 import type { DealType, ListingWithOwner } from "@/lib/types";
+import { canAdminister } from "@/lib/roles";
 
 const DEAL_LABELS: Record<DealType, string> = {
   purchase: "Buy rights outright",
@@ -70,7 +71,7 @@ export default async function ListingPage({
     ]);
 
   const isOwner = me?.id === listing.owner_id;
-  const isAdmin = me?.role === "admin";
+  const isAdmin = canAdminister(me?.role);
   const visible =
     listing.status === "active" || listing.status === "sold" || isOwner || isAdmin;
   if (!visible) notFound();

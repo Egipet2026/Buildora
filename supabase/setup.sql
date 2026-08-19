@@ -2,7 +2,7 @@
 -- Buildora — complete database setup, in one file.
 --
 -- Copy this whole file into the Supabase SQL Editor and press Run, once.
--- It is the four migration files in supabase/migrations/ joined in order, so
+-- It is the migration files in supabase/migrations/ joined in order, so
 -- you do not have to run them one at a time.
 --
 -- Run it on a NEW, EMPTY Supabase project. On a project that already has
@@ -43,7 +43,7 @@ create type deal_type as enum (
   'purchase', 'license_exclusive', 'license_non_exclusive'
 );
 
-create type user_role as enum ('user', 'admin');
+create type user_role as enum ('user', 'admin', 'owner');
 
 create type verification_status as enum ('none', 'pending', 'verified', 'rejected');
 
@@ -106,7 +106,7 @@ set search_path = public
 as $$
   select exists (
     select 1 from public.profiles
-    where id = auth.uid() and role = 'admin'
+    where id = auth.uid() and role in ('admin', 'owner')
   );
 $$;
 
@@ -1014,3 +1014,70 @@ comment on table public.reports is
 comment on table public.notifications is
   'In-app notifications. Written by the server on offers, messages, moderation decisions, alert matches and price drops.';
 
+
+
+-- ===========================================================================
+-- 0006_owner_role.sql
+-- ===========================================================================
+
+-- The owner role.
+--
+-- Until now the highest role was 'admin', which every moderator holds. The
+-- person who owns the platform is not one moderator among several, and the
+-- distinction matters the first time there is more than one of them: an admin
+-- can be added and removed, an owner is who the thing belongs to.
+--
+-- Adding a value to an enum cannot happen in the same transaction that first
+-- uses it, so this file only adds the value. Everything that acts on it is in
+-- 0007, which runs as its own transaction.
+--
+-- On a project created after this was written the value already exists, having
+-- come from 0001, and this is a no-op.
+
+alter type user_role add value if not exists 'owner';
+
+
+-- ===========================================================================
+-- 0007_owner_grant.sql
+-- ===========================================================================
+
+-- Owner privileges, and who holds them.
+--
+-- An owner can do everything an admin can. Rather than teach every policy
+-- about a second role, is_admin() — which all of them already go through —
+-- answers for both. is_owner() exists for the few things that should stay with
+-- the owner alone.
+
+create or replace function public.is_admin()
+returns boolean
+language sql
+stable
+security definer
+set search_path = public
+as $$
+  select exists (
+    select 1 from public.profiles
+    where id = auth.uid() and role in ('admin', 'owner')
+  );
+$$;
+
+create or replace function public.is_owner()
+returns boolean
+language sql
+stable
+security definer
+set search_path = public
+as $$
+  select exists (
+    select 1 from public.profiles
+    where id = auth.uid() and role = 'owner'
+  );
+$$;
+
+-- The founding account. Named here because there is no other way to hand out
+-- the first owner role: every route that could grant it is itself behind a
+-- privilege check, so the first one has to come from a migration. A project
+-- that does not have this account is unaffected — the update matches nothing.
+update public.profiles
+   set role = 'owner'
+ where id = '0c213896-9665-44d7-8932-803ec34da95d';

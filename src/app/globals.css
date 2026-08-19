@@ -397,6 +397,13 @@ details[open] > summary .menu-chev {
   border-color: #ccd7fb;
 }
 
+/* The owner. One person, so it gets the one colour nothing else uses. */
+.badge-gold {
+  background: var(--color-gold-tint);
+  color: var(--color-gold);
+  border-color: #edd8ae;
+}
+
 .badge-danger {
   background: var(--color-danger-tint);
   color: var(--color-danger);

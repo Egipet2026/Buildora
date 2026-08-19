@@ -9,6 +9,7 @@ import { GlobalSearch } from "./global-search";
 import { NavLink } from "./nav-link";
 import { SignOutButton } from "./sign-out-button";
 import { Wordmark } from "./wordmark";
+import { canAdminister } from "@/lib/roles";
 
 /**
  * The main navigation.
@@ -108,7 +109,7 @@ export async function SiteHeader() {
           href: "/dashboard/notifications",
           label: `Notifications${unreadNotifications > 0 ? ` (${unreadNotifications})` : ""}`,
         },
-        ...(me.role === "admin"
+        ...(canAdminister(me.role)
           ? [{ href: "/admin", label: "Admin" }]
           : []),
       ]

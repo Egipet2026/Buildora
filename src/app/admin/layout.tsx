@@ -2,6 +2,7 @@ import { redirect } from "next/navigation";
 import { TabNav } from "@/components/tab-nav";
 import { Notice, PageHeader } from "@/components/ui";
 import { getAdminStats, getCurrentUser } from "@/lib/data";
+import { canAdminister } from "@/lib/roles";
 
 export default async function AdminLayout({
   children,
@@ -13,7 +14,7 @@ export default async function AdminLayout({
 
   // Authorisation is enforced again inside every admin server action, and by
   // RLS at the database layer — this check only controls what is rendered.
-  if (me.role !== "admin") {
+  if (!canAdminister(me.role)) {
     return (
       <div className="shell py-20">
         <div className="mx-auto max-w-lg">

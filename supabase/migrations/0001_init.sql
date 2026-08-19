@@ -26,7 +26,7 @@ create type deal_type as enum (
   'purchase', 'license_exclusive', 'license_non_exclusive'
 );
 
-create type user_role as enum ('user', 'admin');
+create type user_role as enum ('user', 'admin', 'owner');
 
 create type verification_status as enum ('none', 'pending', 'verified', 'rejected');
 
@@ -89,7 +89,7 @@ set search_path = public
 as $$
   select exists (
     select 1 from public.profiles
-    where id = auth.uid() and role = 'admin'
+    where id = auth.uid() and role in ('admin', 'owner')
   );
 $$;
 
