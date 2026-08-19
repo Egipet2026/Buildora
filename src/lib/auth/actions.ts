@@ -17,6 +17,7 @@ import {
 } from "./crypto";
 import {
   channelNoun,
+  detectChannel,
   isValidEmail,
   isValidPhone,
   maskDestination,
@@ -54,39 +55,61 @@ function fail(message: string, errors?: Record<string, string>): AuthState {
 /* ------------------------------------------------------------ validation */
 
 const credentialsSchema = z.object({
-  method: z.enum(["email", "phone"]),
-  email: z.string().default(""),
+  // One field. What it holds is worked out here, not chosen by the member.
+  identifier: z.string().trim().min(1, "Enter your email or phone number"),
   dialCode: z.string().default("+359"),
-  phone: z.string().default(""),
   password: z.string().min(8, "Use at least 8 characters"),
   fullName: z.string().default(""),
 });
 
 /** Resolves the submitted method into a canonical destination. */
+/**
+ * Turns whatever the member typed into a channel and a canonical destination.
+ *
+ * Detection runs on the server as well as in the browser: the client only
+ * changes what the form looks like, and a form field is not something to
+ * trust when it decides where a login code gets sent.
+ */
 function resolveDestination(
   v: z.infer<typeof credentialsSchema>,
 ): { channel: AuthChannel; destination: string } | { error: AuthState } {
-  if (v.method === "email") {
-    const email = normaliseEmail(v.email);
+  const channel = detectChannel(v.identifier);
+
+  if (channel === null) {
+    return {
+      error: fail("Check the details below.", {
+        identifier: "Enter an email address or a phone number",
+      }),
+    };
+  }
+
+  if (channel === "email") {
+    const email = normaliseEmail(v.identifier);
     if (!isValidEmail(email)) {
       return {
         error: fail("Check the details below.", {
-          email: "Enter a valid email address",
+          identifier: "That email address does not look right",
         }),
       };
     }
     return { channel: "email", destination: email };
   }
 
-  const phone = normalisePhone(v.dialCode, v.phone);
-  if (!isValidPhone(phone)) {
+  // A number typed with its own country code keeps it; one typed without
+  // takes the code chosen beside the field.
+  const typed = v.identifier.trim();
+  const e164 = typed.startsWith("+")
+    ? `+${typed.replace(/\D/g, "")}`
+    : normalisePhone(v.dialCode, typed);
+
+  if (!isValidPhone(e164)) {
     return {
       error: fail("Check the details below.", {
-        phone: "Enter a valid number, without the leading zero",
+        identifier: "Enter a valid number, without the leading zero",
       }),
     };
   }
-  return { channel: "phone", destination: phone };
+  return { channel: "phone", destination: e164 };
 }
 
 /* -------------------------------------------------------- demo challenges */

@@ -117,6 +117,36 @@ root), turn on **Deploy to production**, set the branch to `main`, and press
 Save is pressed, and the integration only reacts to pushes made *after* that —
 so push a commit afterwards to trigger the first run.
 
+### Signing in with Google or Microsoft
+
+Both buttons are on the sign-in and sign-up pages already. They work as soon as
+the provider is switched on in the Supabase project under **Authentication →
+Providers** — Google, and **Azure** for Microsoft. Each needs an OAuth client
+registered with that provider (Google Cloud Console, or a Microsoft Entra app
+registration) and the redirect URL Supabase shows you pasted into it.
+
+**No confirmation code is asked for on this path**, and that is deliberate
+rather than a shortcut: the provider has already established that the person
+controls the account, and hands back an address it has verified itself. Asking
+again would add a step without adding an assurance. Signing up with an email
+address or a phone number still takes a code, because nothing has vouched for
+those.
+
+Until a provider is enabled, pressing its button returns Supabase's own
+"provider is not enabled" message, shown as-is.
+
+### One field for email or phone
+
+There is no tab to pick between them. What the member types decides: an `@`
+makes it an email address, and something made only of digits and phone
+punctuation makes it a number, at which point a country-code selector appears
+beside the field — unless the number already begins with `+`, in which case it
+is taken as written.
+
+The same detection runs again on the server. The browser only decides what the
+form looks like; a form field is not something to trust when it determines
+where a login code is sent.
+
 ### Sending the confirmation code
 
 Sign-up and sign-in take an email address *or* a phone number plus a password,

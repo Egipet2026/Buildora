@@ -6,11 +6,8 @@ import { useActionState, useEffect, useRef, useState } from "react";
 import { Field, Notice } from "./ui";
 import { loginAction, registerAction, verifyCodeAction } from "@/lib/auth/actions";
 import { AUTH_IDLE, type AuthState } from "@/lib/auth/state";
-import {
-  DEFAULT_DIAL_CODE,
-  DIAL_CODES,
-  type AuthChannel,
-} from "@/lib/auth/identity";
+import { OAuthButtons } from "./oauth-buttons";
+import { DEFAULT_DIAL_CODE, DIAL_CODES, detectChannel } from "@/lib/auth/identity";
 
 type Mode = "login" | "register";
 
@@ -63,168 +60,143 @@ function CredentialsStep({
   action: (formData: FormData) => void;
   pending: boolean;
 }) {
-  const [method, setMethod] = useState<AuthChannel>("email");
+  const [identifier, setIdentifier] = useState("");
   const err = state.errors ?? {};
 
+  // What the member is typing decides the form, not a tab they had to pick.
+  const channel = detectChannel(identifier);
+  const looksLikePhone = channel === "phone";
+
   return (
-    <form action={action} className="card space-y-5 p-6 lg:p-8">
-      <input type="hidden" name="method" value={method} />
+    <div className="card space-y-6 p-6 lg:p-8">
+      <OAuthButtons mode={mode} />
 
-      <div>
-        <span className="field-label">How do you want to sign {mode === "register" ? "up" : "in"}?</span>
-        <div
-          role="tablist"
-          aria-label="Sign-in method"
-          className="grid grid-cols-2 gap-2"
-        >
-          {(
-            [
-              ["email", "Email", "✉"],
-              ["phone", "Phone number", "☎"],
-            ] as const
-          ).map(([value, label, icon]) => (
-            <button
-              key={value}
-              type="button"
-              role="tab"
-              aria-selected={method === value}
-              onClick={() => setMethod(value)}
-              className={`flex items-center justify-center gap-2 rounded-xl border px-3 py-3 text-[0.875rem] font-medium transition-colors ${
-                method === value
-                  ? "border-[var(--color-brand)] bg-[var(--color-brand-tint)] text-[var(--color-brand-dark)]"
-                  : "border-[var(--color-line-2)] text-[var(--color-ink-2)] hover:border-[var(--color-ink-3)]"
-              }`}
-            >
-              <span aria-hidden>{icon}</span>
-              {label}
-            </button>
-          ))}
-        </div>
-      </div>
+      <form action={action} className="space-y-5">
+        {mode === "register" ? (
+          <Field label="Full name" htmlFor="fullName" error={err.fullName} required>
+            <input
+              id="fullName"
+              name="fullName"
+              className="input"
+              autoComplete="name"
+              required
+            />
+          </Field>
+        ) : null}
 
-      {mode === "register" ? (
-        <Field label="Full name" htmlFor="fullName" error={err.fullName} required>
-          <input
-            id="fullName"
-            name="fullName"
-            className="input"
-            autoComplete="name"
-            required
-          />
-        </Field>
-      ) : null}
-
-      {method === "email" ? (
-        <Field label="Email address" htmlFor="email" error={err.email} required>
-          <input
-            id="email"
-            name="email"
-            type="email"
-            inputMode="email"
-            className="input"
-            autoComplete="email"
-            placeholder="you@company.com"
-            required
-          />
-        </Field>
-      ) : (
         <Field
-          label="Phone number"
-          htmlFor="phone"
-          error={err.phone}
-          hint="Without the leading zero — we add the country code for you."
+          label="Email or phone number"
+          htmlFor="identifier"
+          error={err.identifier}
+          hint={
+            channel === "email"
+              ? "Recognised as an email address."
+              : looksLikePhone
+                ? "Recognised as a phone number — pick your country beside it."
+                : "Type either. Bizora works out which it is."
+          }
           required
         >
-          <div className="flex gap-2">
-            <select
-              name="dialCode"
-              defaultValue={DEFAULT_DIAL_CODE}
-              className="select w-32 shrink-0"
-              aria-label="Country dialling code"
-            >
-              {DIAL_CODES.map((d) => (
-                <option key={`${d.country}${d.code}`} value={d.code}>
-                  {d.flag} {d.code}
-                </option>
-              ))}
-            </select>
+          <div className={looksLikePhone ? "flex gap-2" : undefined}>
+            {looksLikePhone && !identifier.trim().startsWith("+") ? (
+              <select
+                name="dialCode"
+                defaultValue={DEFAULT_DIAL_CODE}
+                className="select w-32 shrink-0"
+                aria-label="Country dialling code"
+              >
+                {DIAL_CODES.map((d) => (
+                  <option key={`${d.country}${d.code}`} value={d.code}>
+                    {d.flag} {d.code}
+                  </option>
+                ))}
+              </select>
+            ) : null}
             <input
-              id="phone"
-              name="phone"
-              type="tel"
-              inputMode="tel"
+              id="identifier"
+              name="identifier"
               className="input"
-              autoComplete="tel-national"
-              placeholder="888 123 456"
+              // The keyboard follows the guess, but never locks the field:
+              // someone half-way through typing must still be able to change
+              // their mind and write the other kind.
+              inputMode={looksLikePhone ? "tel" : "email"}
+              autoComplete={mode === "register" ? "username" : "username"}
+              placeholder="you@company.com or 888 123 456"
+              value={identifier}
+              onChange={(e) => setIdentifier(e.target.value)}
               required
             />
           </div>
         </Field>
-      )}
 
-      <Field
-        label="Password"
-        htmlFor="password"
-        error={err.password}
-        hint={mode === "register" ? "At least 8 characters." : undefined}
-        required
-      >
-        <input
-          id="password"
-          name="password"
-          type="password"
-          className="input"
-          minLength={8}
-          autoComplete={mode === "register" ? "new-password" : "current-password"}
+        <Field
+          label="Password"
+          htmlFor="password"
+          error={err.password}
+          hint={mode === "register" ? "At least 8 characters." : undefined}
           required
-        />
-      </Field>
-
-      {state.message && !state.ok ? (
-        <p
-          role="alert"
-          className="rounded-lg border border-[#f4c9c6] bg-[var(--color-danger-tint)] px-3 py-2.5 text-[0.8125rem] text-[var(--color-danger)]"
         >
-          {state.message}
-        </p>
-      ) : null}
+          <input
+            id="password"
+            name="password"
+            type="password"
+            className="input"
+            minLength={8}
+            autoComplete={mode === "register" ? "new-password" : "current-password"}
+            required
+          />
+        </Field>
 
-      <button type="submit" className="btn btn-brand btn-lg w-full" disabled={pending}>
-        {pending
-          ? "Working…"
-          : mode === "register"
-            ? "Create account"
-            : "Sign in"}
-      </button>
+        {state.message && !state.ok ? (
+          <p
+            role="alert"
+            className="rounded-lg border border-[#f4c9c6] bg-[var(--color-danger-tint)] px-3 py-2.5 text-[0.8125rem] text-[var(--color-danger)]"
+          >
+            {state.message}
+          </p>
+        ) : null}
 
-      <p className="text-center text-[0.8125rem] text-[var(--color-ink-3)]">
-        {mode === "register" ? (
-          <>
-            Already have an account?{" "}
-            <Link href="/login" className="font-medium text-[var(--color-brand)] hover:underline">
-              Sign in
-            </Link>
-          </>
-        ) : (
-          <>
-            New to Bizora?{" "}
-            <Link href="/register" className="font-medium text-[var(--color-brand)] hover:underline">
-              Create an account
-            </Link>
-          </>
-        )}
-      </p>
+        <button type="submit" className="btn btn-brand btn-lg w-full" disabled={pending}>
+          {pending
+            ? "Working…"
+            : mode === "register"
+              ? "Create account"
+              : "Sign in"}
+        </button>
 
-      {mode === "register" ? (
         <p className="text-center text-[0.75rem] leading-relaxed text-[var(--color-ink-3)]">
-          By creating an account you accept the{" "}
-          <Link href="/legal/terms" className="underline">Terms of Service</Link>,{" "}
-          <Link href="/legal/marketplace-rules" className="underline">Marketplace Rules</Link>{" "}
-          and{" "}
-          <Link href="/legal/privacy" className="underline">Privacy Policy</Link>.
+          You will be sent a 6-digit code to confirm the {channel === "phone" ? "number" : "address"}.
         </p>
-      ) : null}
-    </form>
+
+        <p className="text-center text-[0.8125rem] text-[var(--color-ink-3)]">
+          {mode === "register" ? (
+            <>
+              Already have an account?{" "}
+              <Link href="/login" className="font-medium text-[var(--color-brand)] hover:underline">
+                Sign in
+              </Link>
+            </>
+          ) : (
+            <>
+              New to Bizora?{" "}
+              <Link href="/register" className="font-medium text-[var(--color-brand)] hover:underline">
+                Create an account
+              </Link>
+            </>
+          )}
+        </p>
+
+        {mode === "register" ? (
+          <p className="text-center text-[0.75rem] leading-relaxed text-[var(--color-ink-3)]">
+            By creating an account you accept the{" "}
+            <Link href="/legal/terms" className="underline">Terms of Service</Link>,{" "}
+            <Link href="/legal/marketplace-rules" className="underline">Marketplace Rules</Link>{" "}
+            and{" "}
+            <Link href="/legal/privacy" className="underline">Privacy Policy</Link>.
+          </p>
+        ) : null}
+      </form>
+    </div>
   );
 }
 

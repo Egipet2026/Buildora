@@ -32,6 +32,23 @@ export const DIAL_CODES: { country: string; code: string; flag: string }[] = [
 export const DEFAULT_DIAL_CODE = "+359";
 
 /** Lowercased and trimmed. Emails are case-insensitive in practice. */
+/**
+ * Works out whether what someone typed is an email address or a phone number.
+ *
+ * An "@" settles it: no phone number contains one, and no address omits it.
+ * Otherwise, anything made only of digits and the punctuation people put in
+ * phone numbers is treated as a number. Anything else is neither, and the
+ * caller says so rather than guessing — asking once beats sending a code to
+ * the wrong place.
+ */
+export function detectChannel(raw: string): AuthChannel | null {
+  const value = raw.trim();
+  if (!value) return null;
+  if (value.includes("@")) return "email";
+  if (/^\+?[\d\s().-]{4,}$/.test(value)) return "phone";
+  return null;
+}
+
 export function normaliseEmail(raw: string): string {
   return raw.trim().toLowerCase();
 }
