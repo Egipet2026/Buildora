@@ -2,7 +2,7 @@ import "server-only";
 
 import Anthropic from "@anthropic-ai/sdk";
 import { z } from "zod";
-import type { BusinessPlan } from "../types";
+import type { BusinessPlan, OfflineReason } from "../types";
 
 /**
  * Business-plan generator for /start-a-business.
@@ -132,7 +132,30 @@ const PLAN_JSON_SCHEMA = {
 
 const SYSTEM = `You help founders turn a rough idea into a first structured business plan on Buildora, an international business marketplace.
 
-Write for someone who has never started a business before. Be concrete and specific to their idea — never generic filler.
+Write for someone who has never started a business before.
+
+Every field must be about THIS business. A reader must be able to tell, from
+any single section, which idea it was written for. Concretely:
+
+- Name the thing being sold, the people buying it and the place it happens.
+  "Office workers in Sofia who buy breakfast on the way in" — not "early
+  adopters" or "your target market".
+- Cost lines must be the actual cost lines of this business. A bakery has
+  flour, an oven, a lease and a night shift; a software product does not.
+  Never fall back to a generic list of company registration, website and
+  accounting unless those genuinely are the largest costs here.
+- Competitors must be the kinds of business this one would actually lose a
+  customer to in the stated country. Name real ones only where they are
+  genuinely well known there; never invent a company.
+- First steps must be things this founder could do this week, in order.
+- Risks must be ways THIS business fails, each with the early signal that it
+  is happening.
+
+If a sentence would read the same for a bakery and a software company, it is
+wrong — rewrite it until it could only be about this one.
+
+Where the founder's description is too thin to be specific, say what you would
+need to know rather than padding with generalities.
 
 Cost estimates are rough orders of magnitude for planning only. Express them as ranges in euros with the basis stated (for example "€800–2,000 / month, depends on city"). Never present a figure as a forecast, a guarantee, or an expected return.
 
@@ -146,7 +169,7 @@ interface PlanInput {
 
 export async function generatePlan(input: PlanInput): Promise<BusinessPlan> {
   const apiKey = process.env.ANTHROPIC_API_KEY;
-  if (!apiKey) return offlinePlan(input);
+  if (!apiKey) return offlinePlan(input, "not_configured");
 
   try {
     const client = new Anthropic({ apiKey });
@@ -176,7 +199,8 @@ export async function generatePlan(input: PlanInput): Promise<BusinessPlan> {
 
     // Safety classifiers can decline a request: that returns HTTP 200 with
     // stop_reason "refusal" and no usable content, so check before reading it.
-    if (response.stop_reason === "refusal") return offlinePlan(input);
+    if (response.stop_reason === "refusal")
+      return offlinePlan(input, "call_failed");
 
     const text = response.content
       .filter((block) => block.type === "text")
@@ -184,12 +208,15 @@ export async function generatePlan(input: PlanInput): Promise<BusinessPlan> {
       .join("");
 
     const parsed = planSchema.safeParse(JSON.parse(text));
-    if (!parsed.success) return offlinePlan(input);
+    if (!parsed.success) return offlinePlan(input, "call_failed");
 
     return { ...parsed.data, generated_offline: false };
-  } catch {
+  } catch (error) {
     // A planner outage must never block the page — fall back to the template.
-    return offlinePlan(input);
+    // The reason is logged because the page cannot show it: the message would
+    // be written by the provider and may name the account or the key.
+    console.error("[plan] model call failed, using template:", error);
+    return offlinePlan(input, "call_failed");
   }
 }
 
@@ -198,7 +225,10 @@ export async function generatePlan(input: PlanInput): Promise<BusinessPlan> {
  * It reflects the user's own words back in a structured shape rather than
  * inventing detail it cannot know.
  */
-function offlinePlan(input: PlanInput): BusinessPlan {
+function offlinePlan(
+  input: PlanInput,
+  reason: OfflineReason,
+): BusinessPlan {
   const idea = input.idea.trim().replace(/\s+/g, " ");
   const market = input.country?.trim() || "your target market";
 
@@ -272,5 +302,6 @@ function offlinePlan(input: PlanInput): BusinessPlan {
       "Get one paying customer before building anything more",
     ],
     generated_offline: true,
+    offline_reason: reason,
   };
 }

@@ -2,7 +2,7 @@ import "server-only";
 
 import Anthropic from "@anthropic-ai/sdk";
 import { z } from "zod";
-import type { MarketResearch } from "../types";
+import type { MarketResearch, OfflineReason } from "../types";
 
 /**
  * Indicative market research for /market-research.
@@ -88,7 +88,7 @@ export async function generateResearch(
   input: ResearchInput,
 ): Promise<MarketResearch> {
   const apiKey = process.env.ANTHROPIC_API_KEY;
-  if (!apiKey) return offlineResearch(input);
+  if (!apiKey) return offlineResearch(input, "not_configured");
 
   try {
     const client = new Anthropic({ apiKey });
@@ -113,7 +113,8 @@ export async function generateResearch(
       ],
     });
 
-    if (response.stop_reason === "refusal") return offlineResearch(input);
+    if (response.stop_reason === "refusal")
+      return offlineResearch(input, "call_failed");
 
     const text = response.content
       .filter((block) => block.type === "text")
@@ -121,7 +122,7 @@ export async function generateResearch(
       .join("");
 
     const parsed = researchSchema.safeParse(JSON.parse(text));
-    if (!parsed.success) return offlineResearch(input);
+    if (!parsed.success) return offlineResearch(input, "call_failed");
 
     return {
       industry: input.industry,
@@ -129,8 +130,9 @@ export async function generateResearch(
       ...parsed.data,
       generated_offline: false,
     };
-  } catch {
-    return offlineResearch(input);
+  } catch (error) {
+    console.error("[research] model call failed, using template:", error);
+    return offlineResearch(input, "call_failed");
   }
 }
 
@@ -140,7 +142,10 @@ export async function generateResearch(
  * With no model available the honest output is a research method, not a
  * fabricated overview of an industry nobody has looked at.
  */
-function offlineResearch(input: ResearchInput): MarketResearch {
+function offlineResearch(
+  input: ResearchInput,
+  reason: OfflineReason,
+): MarketResearch {
   return {
     industry: input.industry,
     country: input.country,
@@ -182,5 +187,6 @@ function offlineResearch(input: ResearchInput): MarketResearch {
       "Compete on the part of the experience competitors treat as an afterthought",
     ],
     generated_offline: true,
+    offline_reason: reason,
   };
 }

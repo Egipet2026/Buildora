@@ -6,6 +6,7 @@ import { Field, Notice } from "./ui";
 import { generateResearchAction } from "@/lib/actions";
 import type { ResearchState } from "@/lib/action-state";
 import { COUNTRIES } from "@/lib/taxonomy";
+import { AiFallbackNotice } from "./ai-fallback-notice";
 
 const RESEARCH_IDLE: ResearchState = { ok: false };
 
@@ -77,19 +78,19 @@ export function MarketResearchTool() {
       <div>
         {research ? (
           <div className="space-y-5">
+            {research.generated_offline ? (
+              <AiFallbackNotice
+                reason={research.offline_reason}
+                what="research"
+              />
+            ) : null}
+
             <Notice tone="gold" title="This is not market data">
               Buildora has no market database and cannot look anything up. What
               follows is a model&apos;s qualitative summary of how this kind of
               market tends to work — it contains no verified figures, may be out
               of date, and must not be quoted as research. Treat it as a list of
               things to go and check.
-              {research.generated_offline ? (
-                <span className="mt-2 block">
-                  No model provider is configured on this deployment, so what
-                  you see below is Buildora&apos;s research method rather than an
-                  overview of your market.
-                </span>
-              ) : null}
             </Notice>
 
             <div className="card p-6 lg:p-8">

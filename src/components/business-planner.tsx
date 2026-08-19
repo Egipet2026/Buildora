@@ -13,6 +13,7 @@ import {
 import { IDLE, type PlanState } from "@/lib/action-state";
 import { COUNTRIES } from "@/lib/taxonomy";
 import type { BusinessPlan } from "@/lib/types";
+import { AiFallbackNotice } from "./ai-fallback-notice";
 
 const EXAMPLES = [
   "I want to build a food delivery business for office workers in Sofia.",
@@ -102,19 +103,16 @@ export function BusinessPlanner() {
       <div>
         {plan ? (
           <div className="space-y-5">
+            {plan.generated_offline ? (
+              <AiFallbackNotice reason={plan.offline_reason} what="plan" />
+            ) : null}
+
             <Notice tone="gold" title="This plan is indicative only">
               It is a structured starting point for your own research — not a
               financial forecast, not a guarantee of revenue, and not legal,
               tax, accounting or investment advice. Costs are rough orders of
               magnitude. Confirm anything that depends on local law with a
               qualified professional in your country.
-              {plan.generated_offline ? (
-                <span className="mt-2 block">
-                  Generated from Buildora&apos;s built-in template — no model
-                  provider is configured, so this plan is generic rather than
-                  tailored to your wording.
-                </span>
-              ) : null}
             </Notice>
 
             <div className="card p-6 lg:p-8">
