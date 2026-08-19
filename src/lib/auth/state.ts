@@ -21,6 +21,9 @@ export interface AuthState {
   purpose?: ChallengePurpose;
   /** Demo mode only: there is no mail or SMS provider, so the code is shown. */
   demoCode?: string;
+  /** Whether a provider actually accepted the message, so the screen can say
+      what happened rather than assuming it worked. */
+  delivered?: boolean;
   redirectTo?: string;
   /** Unix ms after which a new code may be requested. */
   resendAvailableAt?: number;

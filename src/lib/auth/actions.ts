@@ -147,25 +147,44 @@ async function issueDemoChallenge(
  * The code is only ever put on screen when there is genuinely no provider to
  * send it with — never as a convenience once one is configured.
  */
+/**
+ * Whether the code may be put on screen at all.
+ *
+ * The only acceptable reason is that nothing exists to deliver it with. A
+ * provider that is configured but failed is emphatically not a licence to
+ * print the code: the failure is temporary and retryable, whereas a code on
+ * screen can be read by anyone looking at it — including over a shoulder, in
+ * a screen recording, or by whoever the browser is shared with.
+ *
+ * Every branch that might reveal the code goes through this one function, so
+ * the rule cannot drift apart between the first attempt, a wrong guess and a
+ * resend.
+ */
+function codeMayBeShown(channel: AuthChannel): boolean {
+  return !canDeliver(channel);
+}
+
 function deliveryState(
   channel: AuthChannel,
   challenge: OtpChallenge,
-): { message: string; demoCode?: string } {
+): { message: string; demoCode?: string; delivered: boolean } {
   if (challenge.delivered) {
     return {
+      delivered: true,
       message: `We sent a 6-digit code to your ${channelNoun(channel)}.`,
     };
   }
 
-  if (canDeliver(channel)) {
-    // A provider exists but refused. Showing the code would be a security
-    // hole, so the member is told to try again instead.
+  if (!codeMayBeShown(channel)) {
+    // A provider exists but refused. The member gets a retry, not the code.
     return {
+      delivered: false,
       message: `We could not send the code to your ${channelNoun(channel)} just now. Request a new one in a moment.`,
     };
   }
 
   return {
+    delivered: false,
     message: `No ${channel === "email" ? "email" : "SMS"} provider is configured, so the code is shown below instead of being sent.`,
     demoCode: challenge.demoCode,
   };
@@ -244,7 +263,7 @@ export async function registerAction(
           },
     );
     if (error) return fail(error.message);
-    return pending;
+    return { ...pending, delivered: true };
   }
 
   const store = demoStore();
@@ -405,7 +424,7 @@ export async function verifyCodeAction(
     const errors = fieldErrors(parsed.error);
     return stay(errors.code ?? "Enter the 6-digit code.", {
       errors,
-      demoCode: liveDemoCode(destination),
+      demoCode: liveDemoCode(channel, destination),
     });
   }
   const code = parsed.data.code;
@@ -448,7 +467,7 @@ export async function verifyCodeAction(
     }
     return stay(
       `That code is not right. ${left} ${left === 1 ? "attempt" : "attempts"} left.`,
-      { demoCode: challenge.delivered ? undefined : challenge.demoCode },
+      { demoCode: codeMayBeShown(channel) ? challenge.demoCode : undefined },
     );
   }
 
@@ -468,10 +487,13 @@ export async function verifyCodeAction(
 }
 
 /** The code of the live challenge, so the demo hint survives a failed attempt. */
-function liveDemoCode(destination: string): string | undefined {
-  if (!isDemoMode) return undefined;
+function liveDemoCode(
+  channel: AuthChannel,
+  destination: string,
+): string | undefined {
+  if (!isDemoMode || !codeMayBeShown(channel)) return undefined;
   return demoStore().challenges.find(
-    (c) => c.destination === destination && !c.consumedAt && !c.delivered,
+    (c) => c.destination === destination && !c.consumedAt,
   )?.demoCode;
 }
 
@@ -505,7 +527,7 @@ async function resendCode(
       const wait = Math.ceil((RESEND_COOLDOWN_MS - since) / 1000);
       return stay(`Wait ${wait}s before requesting another code.`, {
         demoCode:
-          previous.consumedAt || previous.delivered
+          previous.consumedAt || !codeMayBeShown(channel)
             ? undefined
             : previous.demoCode,
         resendAvailableAt:

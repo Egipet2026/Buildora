@@ -248,6 +248,9 @@ function VerifyStep({
   const masked = state.maskedDestination ?? context.maskedDestination ?? "";
   const purpose = state.purpose ?? context.purpose ?? "signup";
   const demoCode = state.demoCode;
+  // Say what actually happened. Claiming a code was sent when the provider
+  // refused sends the member to an inbox that will never have anything in it.
+  const delivered = state.delivered ?? context.delivered ?? false;
 
   const seconds = useCountdown(state.resendAvailableAt);
   const inputRef = useRef<HTMLInputElement>(null);
@@ -272,9 +275,31 @@ function VerifyStep({
         </button>
         <h2 className="display text-2xl">Enter your code</h2>
         <p className="mt-2 text-[0.9375rem] leading-relaxed text-[var(--color-ink-2)]">
-          We sent a 6-digit code to{" "}
-          <strong className="font-semibold text-[var(--color-ink)]">{masked}</strong>. It
-          expires in 10 minutes.
+          {delivered ? (
+            <>
+              We sent a 6-digit code to{" "}
+              <strong className="font-semibold text-[var(--color-ink)]">
+                {masked}
+              </strong>
+              . It expires in 10 minutes.
+            </>
+          ) : demoCode ? (
+            <>
+              Your code for{" "}
+              <strong className="font-semibold text-[var(--color-ink)]">
+                {masked}
+              </strong>{" "}
+              is below. It expires in 10 minutes.
+            </>
+          ) : (
+            <>
+              We could not send a code to{" "}
+              <strong className="font-semibold text-[var(--color-ink)]">
+                {masked}
+              </strong>{" "}
+              just now. Request a new one below.
+            </>
+          )}
         </p>
       </div>
 
