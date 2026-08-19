@@ -131,16 +131,31 @@ body {
 }
 
 .card-hover {
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
   transition:
     border-color 0.18s ease,
     box-shadow 0.18s ease,
-    transform 0.18s ease;
+    transform 0.12s ease;
 }
 
-.card-hover:hover {
+/* A card that is really a link presses like one. Without this a tap on a
+   listing looks identical to a tap on empty space until the next page
+   arrives. */
+.card-hover:active {
   border-color: var(--color-line-2);
-  box-shadow: 0 12px 28px -18px rgb(12 15 20 / 0.28);
-  transform: translateY(-2px);
+  box-shadow: 0 4px 10px -8px rgb(12 15 20 / 0.3);
+  transform: scale(0.99);
+}
+
+/* Lifting on hover is for pointers only: a phone leaves the last card
+   tapped hovering above the page for as long as it stays on screen. */
+@media (hover: hover) {
+  .card-hover:hover {
+    border-color: var(--color-line-2);
+    box-shadow: 0 12px 28px -18px rgb(12 15 20 / 0.28);
+    transform: translateY(-2px);
+  }
 }
 
 /* ----------------------------------------------------------- buttons */
@@ -158,10 +173,17 @@ body {
   border: 1px solid transparent;
   cursor: pointer;
   white-space: nowrap;
+  /* A tap must not be mistaken for a double-tap-to-zoom, or the browser
+     holds the press for 300ms before anything happens and the button feels
+     broken. */
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
   transition:
-    background-color 0.15s ease,
-    border-color 0.15s ease,
-    color 0.15s ease;
+    background-color 0.12s ease,
+    border-color 0.12s ease,
+    color 0.12s ease,
+    transform 0.06s ease,
+    box-shadow 0.12s ease;
 }
 
 .btn:disabled {
@@ -169,20 +191,34 @@ body {
   cursor: not-allowed;
 }
 
+/* The press itself. On a phone there is no hover, so without this a tap
+   gives no sign at all that it registered — the page simply changes some
+   time later, or does not. The button sinks slightly and darkens for as
+   long as the finger is down. */
+.btn:active:not(:disabled) {
+  transform: scale(0.97);
+  box-shadow: inset 0 2px 5px -2px rgb(12 15 20 / 0.35);
+}
+
+.btn:focus-visible {
+  outline: 2px solid var(--color-brand);
+  outline-offset: 2px;
+}
+
 .btn-primary {
   background: var(--color-ink);
   color: #fff;
 }
-.btn-primary:hover:not(:disabled) {
-  background: #22282f;
+.btn-primary:active:not(:disabled) {
+  background: #000205;
 }
 
 .btn-brand {
   background: var(--color-brand);
   color: #fff;
 }
-.btn-brand:hover:not(:disabled) {
-  background: var(--color-brand-dark);
+.btn-brand:active:not(:disabled) {
+  background: #102e88;
 }
 
 .btn-outline {
@@ -190,7 +226,8 @@ body {
   border-color: var(--color-line-2);
   color: var(--color-ink);
 }
-.btn-outline:hover:not(:disabled) {
+.btn-outline:active:not(:disabled) {
+  background: var(--color-surface-2);
   border-color: var(--color-ink-3);
 }
 
@@ -198,14 +235,36 @@ body {
   background: transparent;
   color: var(--color-ink-2);
 }
-.btn-ghost:hover:not(:disabled) {
-  background: rgb(12 15 20 / 0.05);
+.btn-ghost:active:not(:disabled) {
+  background: rgb(12 15 20 / 0.09);
   color: var(--color-ink);
 }
 
 .btn-danger {
   background: var(--color-danger);
   color: #fff;
+}
+.btn-danger:active:not(:disabled) {
+  background: #8d1a15;
+}
+
+/* Hover belongs to devices that have a pointer. A phone that emulates it
+   leaves the hover colour stuck on the last button touched, which reads as
+   "still selected" long after the tap. */
+@media (hover: hover) {
+  .btn-primary:hover:not(:disabled) {
+    background: #22282f;
+  }
+  .btn-brand:hover:not(:disabled) {
+    background: var(--color-brand-dark);
+  }
+  .btn-outline:hover:not(:disabled) {
+    border-color: var(--color-ink-3);
+  }
+  .btn-ghost:hover:not(:disabled) {
+    background: rgb(12 15 20 / 0.05);
+    color: var(--color-ink);
+  }
 }
 
 .btn-sm {
@@ -216,6 +275,87 @@ body {
 .btn-lg {
   padding: 0.9rem 1.5rem;
   font-size: 1rem;
+}
+
+/* ------------------------------------------------- pressable surfaces */
+
+/*
+ * Anything tappable that is not a `.btn`: navigation links, menu rows,
+ * marketplace chips, whole cards that act as links. They get the same
+ * promise — the moment a finger lands, something changes.
+ */
+.tap {
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
+  transition:
+    background-color 0.12s ease,
+    color 0.12s ease,
+    transform 0.06s ease;
+}
+
+.tap:active {
+  background-color: rgb(12 15 20 / 0.09);
+  transform: scale(0.985);
+}
+
+.tap:focus-visible {
+  outline: 2px solid var(--color-brand);
+  outline-offset: -2px;
+}
+
+/* Where you already are. After a tap the destination says so, which is the
+   other half of "did that work?" — the press confirms the tap, this
+   confirms the arrival. */
+.tap[aria-current="page"] {
+  background-color: var(--color-brand-tint);
+  color: var(--color-brand-dark);
+  font-weight: 650;
+}
+
+@media (hover: hover) {
+  .tap:hover {
+    background-color: var(--color-surface-2);
+  }
+  .tap[aria-current="page"]:hover {
+    background-color: var(--color-brand-tint);
+  }
+}
+
+/* The arrow on a menu topic, pointing down when shut and up when open. */
+.menu-chev {
+  transition: transform 0.18s ease;
+}
+details[open] > summary .menu-chev {
+  transform: rotate(180deg);
+}
+
+/* The spinner shown beside a link whose page is still loading. */
+@keyframes tap-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.tap-spinner {
+  display: inline-block;
+  height: 0.75rem;
+  width: 0.75rem;
+  flex-shrink: 0;
+  border-radius: 999px;
+  border: 2px solid currentColor;
+  border-top-color: transparent;
+  opacity: 0.65;
+  animation: tap-spin 0.6s linear infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .btn:active:not(:disabled),
+  .tap:active {
+    transform: none;
+  }
+  .tap-spinner {
+    animation-duration: 1.6s;
+  }
 }
 
 /* ------------------------------------------------------------ badges */
