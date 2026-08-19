@@ -397,6 +397,12 @@ details[open] > summary .menu-chev {
   border-color: #ccd7fb;
 }
 
+.badge-accent {
+  background: var(--color-accent-tint);
+  color: var(--color-accent);
+  border-color: #bfe3d9;
+}
+
 /* The owner. One person, so it gets the one colour nothing else uses. */
 .badge-gold {
   background: var(--color-gold-tint);

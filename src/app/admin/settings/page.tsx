@@ -1,4 +1,5 @@
 import { SettingsForm } from "@/components/admin-actions";
+import { IntegrationsPanel } from "@/components/integrations-panel";
 import { Notice } from "@/components/ui";
 import { getSettings } from "@/lib/data";
 import { calculateFees, formatMoney } from "@/lib/money";
@@ -14,6 +15,8 @@ export default async function AdminSettingsPage() {
       <SettingsForm settings={settings} />
 
       <aside className="space-y-5">
+        <IntegrationsPanel />
+
         <div className="card p-6">
           <p className="eyebrow mb-4">Current split on €50,000</p>
           <dl className="space-y-3">
