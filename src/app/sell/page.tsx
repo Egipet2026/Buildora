@@ -88,12 +88,14 @@ export default async function SellPage({
                   </dt>
                   <dd>{formatMoney(settings.featured_price_cents)}</dd>
                 </div>
-                <div className="flex justify-between">
-                  <dt className="text-[var(--color-ink-3)]">
-                    Boost ({settings.boost_days} days)
-                  </dt>
-                  <dd>{formatMoney(settings.boost_price_cents)}</dd>
-                </div>
+                {settings.boost_tiers.map((tier) => (
+                  <div key={tier.days} className="flex justify-between">
+                    <dt className="text-[var(--color-ink-3)]">
+                      Boost ({tier.days} days)
+                    </dt>
+                    <dd>{formatMoney(tier.price_cents)}</dd>
+                  </div>
+                ))}
               </dl>
               <Link
                 href="/pricing"

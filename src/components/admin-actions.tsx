@@ -293,18 +293,22 @@ export function SettingsForm({ settings }: { settings: PlatformSettings }) {
       value: settings.featured_days,
       step: "1",
     },
-    {
-      name: "boostPrice",
-      label: "Boost price (€)",
-      value: settings.boost_price_cents / 100,
-      step: "0.01",
-    },
-    {
-      name: "boostDays",
-      label: "Boost duration (days)",
-      value: settings.boost_days,
-      step: "1",
-    },
+    // One pair of fields per Boost tier, so the lengths on sale and what each
+    // costs are edited in the same place rather than in Stripe.
+    ...settings.boost_tiers.flatMap((tier, i) => [
+      {
+        name: `boostDays${i}`,
+        label: `Boost ${i + 1} — duration (days)`,
+        value: tier.days,
+        step: "1",
+      },
+      {
+        name: `boostPrice${i}`,
+        label: `Boost ${i + 1} — price (€)`,
+        value: tier.price_cents / 100,
+        step: "0.01",
+      },
+    ]),
     {
       name: "premiumPrice",
       label: "Premium Seller (€ / month)",

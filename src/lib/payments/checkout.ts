@@ -32,6 +32,12 @@ export type CheckoutRequest = {
   amountCents: number;
   currency: string;
   listingId?: string;
+  /**
+   * How many days the purchase buys, for placements. Carried on the Stripe
+   * session so the webhook grants the length that was actually paid for,
+   * rather than re-reading a setting that may have changed since.
+   */
+  days?: number;
   /** Where to send the customer once Stripe is done with them. */
   returnPath: string;
   /**
@@ -72,6 +78,7 @@ export async function createCheckout(
       kind: req.kind,
       user_id: req.userId,
       ...(req.listingId ? { listing_id: req.listingId } : {}),
+      ...(req.days ? { days: String(req.days) } : {}),
     },
     success_url: `${base}${req.returnPath}${req.returnPath.includes("?") ? "&" : "?"}paid=1`,
     cancel_url: `${base}${req.returnPath}?cancelled=1`,

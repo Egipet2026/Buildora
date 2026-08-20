@@ -971,15 +971,26 @@ export async function promoteListingAction(
   if (error) return error;
 
   const listingId = String(formData.get("listingId") ?? "");
-  const plan = String(formData.get("plan") ?? "");
+  // One radio group sends "featured" or "boost:<days>", so a length can never
+  // arrive without the plan it belongs to.
+  const [plan, chosenDays] = String(formData.get("choice") ?? "").split(":");
   const listing = await getListing(listingId);
   if (!listing) return fail("That listing no longer exists.");
   if (listing.owner_id !== me!.id)
     return fail("You can only promote your own listings.");
 
-  const settings = await getSettings();
-  const days = plan === "featured" ? settings.featured_days : settings.boost_days;
   if (plan !== "featured" && plan !== "boost") return fail("Unknown plan.");
+
+  const settings = await getSettings();
+  let days: number;
+  if (plan === "featured") {
+    days = settings.featured_days;
+  } else {
+    const wanted = Number(chosenDays);
+    const tier = settings.boost_tiers.find((t) => t.days === wanted);
+    if (!tier) return fail("Choose how long you want the boost to run.");
+    days = tier.days;
+  }
 
   const until = new Date(Date.now() + days * 86_400_000).toISOString();
   const patch =
@@ -1239,8 +1250,10 @@ export async function adminSettingsAction(
     commission_bps: Math.min(5000, Math.round(num("commissionPercent", 10) * 100)),
     featured_price_cents: Math.round(num("featuredPrice", 9) * 100),
     featured_days: Math.max(1, Math.round(num("featuredDays", 7))),
-    boost_price_cents: Math.round(num("boostPrice", 5) * 100),
-    boost_days: Math.max(1, Math.round(num("boostDays", 3))),
+    boost_tiers: current.boost_tiers.map((tier, i) => ({
+      days: Math.max(1, Math.round(num(`boostDays${i}`, tier.days))),
+      price_cents: Math.round(num(`boostPrice${i}`, tier.price_cents / 100) * 100),
+    })),
     premium_monthly_cents: Math.round(num("premiumPrice", 29) * 100),
     verification_fee_cents: Math.round(num("verificationFee", 49) * 100),
   };

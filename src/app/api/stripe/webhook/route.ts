@@ -114,8 +114,13 @@ async function settle(session: Stripe.Checkout.Session) {
 
   if (kind === "featured" || kind === "boost") {
     if (!listingId) return;
+    // The length travelled with the session, so a settings change between
+    // paying and this arriving cannot shorten what someone paid for.
     const settings = await getSettings();
-    const days = kind === "featured" ? settings.featured_days : settings.boost_days;
+    const paidDays = Number(session.metadata?.days);
+    const days = Number.isFinite(paidDays) && paidDays > 0
+      ? paidDays
+      : settings.featured_days;
     const until = new Date(Date.now() + days * 86_400_000).toISOString();
     await supabase
       .from("listings")

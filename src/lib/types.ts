@@ -510,12 +510,25 @@ export interface Post {
   created_at: string;
 }
 
+/**
+ * One length of Boost a seller can buy.
+ *
+ * A Boost is a one-off placement for a fixed number of days, not a
+ * subscription — nobody expects a "7 days" purchase to bill them again next
+ * week. Each tier is therefore a single charge, and the days it buys are
+ * recorded with the payment so the webhook grants exactly what was paid for.
+ */
+export interface BoostTier {
+  days: number;
+  price_cents: number;
+}
+
 export interface PlatformSettings {
   commission_bps: number;
   featured_price_cents: number;
   featured_days: number;
-  boost_price_cents: number;
-  boost_days: number;
+  /** Ordered shortest first. The seller picks one. */
+  boost_tiers: BoostTier[];
   premium_monthly_cents: number;
   verification_fee_cents: number;
   currency: string;

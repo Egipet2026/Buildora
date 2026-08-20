@@ -22,13 +22,13 @@ export default async function PricingPage() {
       description:
         "Your listing appears in the Featured rails on the home page and at the top of its marketplace. Labelled as paid placement wherever it shows.",
     },
-    {
-      name: "Boost",
-      price: formatMoney(s.boost_price_cents),
-      period: `${s.boost_days} days`,
+    ...s.boost_tiers.map((tier) => ({
+      name: `Boost — ${tier.days} days`,
+      price: formatMoney(tier.price_cents),
+      period: "one-off",
       description:
-        "Lifts your listing within whichever sort order a buyer has chosen, without overriding their intent.",
-    },
+        "Lifts your listing within whichever sort order a buyer has chosen, without overriding their intent. A single charge for the days shown — it does not renew.",
+    })),
     {
       name: "Premium Seller",
       price: formatMoney(s.premium_monthly_cents),

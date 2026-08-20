@@ -5,8 +5,11 @@ export const DEFAULT_SETTINGS: PlatformSettings = {
   commission_bps: 1000, // 10%
   featured_price_cents: 900, // €9
   featured_days: 7,
-  boost_price_cents: 500, // €5
-  boost_days: 3,
+  boost_tiers: [
+    { days: 7, price_cents: 499 }, // €4.99
+    { days: 14, price_cents: 1299 }, // €12.99
+    { days: 30, price_cents: 1999 }, // €19.99
+  ],
   premium_monthly_cents: 2900, // €29 / month
   verification_fee_cents: 4900, // €49
   currency: "EUR",

@@ -38,8 +38,10 @@ export default async function PromotionsPage() {
         listings={listings.map((l) => ({ id: l.id, title: l.title }))}
         featuredPrice={formatMoney(settings.featured_price_cents)}
         featuredDays={settings.featured_days}
-        boostPrice={formatMoney(settings.boost_price_cents)}
-        boostDays={settings.boost_days}
+        boostTiers={settings.boost_tiers.map((tier) => ({
+          days: tier.days,
+          price: formatMoney(tier.price_cents),
+        }))}
         payByCard={paymentsEnabled()}
       />
 

@@ -16,15 +16,14 @@ export function PromoteForm({
   listings,
   featuredPrice,
   featuredDays,
-  boostPrice,
-  boostDays,
+  boostTiers,
   payByCard,
 }: {
   listings: { id: string; title: string }[];
   featuredPrice: string;
   featuredDays: number;
-  boostPrice: string;
-  boostDays: number;
+  /** The Boost lengths on sale, shortest first. */
+  boostTiers: { days: number; price: string }[];
   /** True when Stripe is configured, so this is a real purchase. */
   payByCard: boolean;
 }) {
@@ -55,7 +54,7 @@ export function PromoteForm({
           <label className="flex cursor-pointer gap-3 rounded-xl border border-[var(--color-line-2)] p-4">
             <input
               type="radio"
-              name="plan"
+              name="choice"
               value="featured"
               defaultChecked
               className="mt-0.5 h-4 w-4 accent-[var(--color-brand)]"
@@ -70,23 +69,29 @@ export function PromoteForm({
               </span>
             </span>
           </label>
-          <label className="flex cursor-pointer gap-3 rounded-xl border border-[var(--color-line-2)] p-4">
-            <input
-              type="radio"
-              name="plan"
-              value="boost"
-              className="mt-0.5 h-4 w-4 accent-[var(--color-brand)]"
-            />
-            <span>
-              <span className="block text-[0.875rem] font-semibold">
-                Boost — {boostPrice} / {boostDays} days
+          {boostTiers.map((tier, i) => (
+            <label
+              key={tier.days}
+              className="flex cursor-pointer gap-3 rounded-xl border border-[var(--color-line-2)] p-4"
+            >
+              <input
+                type="radio"
+                name="choice"
+                value={`boost:${tier.days}`}
+                className="mt-0.5 h-4 w-4 accent-[var(--color-brand)]"
+              />
+              <span>
+                <span className="block text-[0.875rem] font-semibold">
+                  Boost — {tier.price} / {tier.days} days
+                </span>
+                <span className="mt-0.5 block text-[0.75rem] leading-relaxed text-[var(--color-ink-3)]">
+                  {i === 0
+                    ? "Lifts your listing within whatever sort order a buyer chooses, without overriding their intent."
+                    : `The same placement, running for ${tier.days} days.`}
+                </span>
               </span>
-              <span className="mt-0.5 block text-[0.75rem] leading-relaxed text-[var(--color-ink-3)]">
-                Lifts your listing within whatever sort order a buyer chooses,
-                without overriding their intent.
-              </span>
-            </span>
-          </label>
+            </label>
+          ))}
         </div>
       </fieldset>
 

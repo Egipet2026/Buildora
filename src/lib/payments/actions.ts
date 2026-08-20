@@ -83,7 +83,9 @@ export async function startPromotionAction(
   const me = await getCurrentUser();
   if (!me) return fail("Sign in first.");
 
-  const plan = String(formData.get("plan") ?? "");
+  // One radio group sends "featured" or "boost:<days>", so a length can never
+  // arrive without the plan it belongs to.
+  const [plan, chosenDays] = String(formData.get("choice") ?? "").split(":");
   if (plan !== "featured" && plan !== "boost") return fail("Unknown plan.");
 
   const listing = await getListing(String(formData.get("listingId") ?? ""));
@@ -92,18 +94,32 @@ export async function startPromotionAction(
     return fail("You can only promote your own listings.");
 
   const settings = await getSettings();
-  const amount =
-    plan === "featured" ? settings.featured_price_cents : settings.boost_price_cents;
-  const days = plan === "featured" ? settings.featured_days : settings.boost_days;
+
+  // Which tier was chosen is decided here by matching the requested length
+  // against the configured tiers — the form cannot name a length that is not
+  // on sale, or pair one with a different price.
+  let days: number;
+  let amount: number;
+  if (plan === "featured") {
+    days = settings.featured_days;
+    amount = settings.featured_price_cents;
+  } else {
+    const wanted = Number(chosenDays);
+    const tier = settings.boost_tiers.find((t) => t.days === wanted);
+    if (!tier) return fail("Choose how long you want the boost to run.");
+    days = tier.days;
+    amount = tier.price_cents;
+  }
 
   const result = await createCheckout({
     kind: plan,
     userId: me.id,
-    label: plan === "featured" ? "Featured listing" : "Listing boost",
+    label: plan === "featured" ? "Featured listing" : `Listing boost — ${days} days`,
     description: `${listing.title} — ${days} days`,
     amountCents: amount,
     currency: settings.currency,
     listingId: listing.id,
+    days,
     returnPath: "/seller/promotions",
   });
 
