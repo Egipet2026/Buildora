@@ -317,12 +317,6 @@ export function SettingsForm({ settings }: { settings: PlatformSettings }) {
       value: settings.verification_fee_cents / 100,
       step: "0.01",
     },
-    {
-      name: "analyzerPrice",
-      label: "Business Analyzer (€)",
-      value: settings.analyzer_price_cents / 100,
-      step: "0.01",
-    },
   ];
 
   return (

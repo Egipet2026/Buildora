@@ -40,6 +40,7 @@ const COLUMNS = [
       { href: "/seller", label: "Seller Dashboard" },
       { href: "/seller/verification", label: "Get Verified" },
       { href: "/seller/promotions", label: "Featured & Boost" },
+      { href: "/seller/payouts", label: "Getting Paid" },
     ],
   },
   {

@@ -1,4 +1,6 @@
 import { VerificationForm } from "@/components/seller-tools";
+import { VerificationPayment } from "@/components/verification-payment";
+import { paymentsEnabled } from "@/lib/payments/stripe";
 import { Notice, SectionHead } from "@/components/ui";
 import {
   getCurrentUser,
@@ -55,6 +57,14 @@ export default async function VerificationPage() {
           />
         </div>
       </div>
+
+      {paymentsEnabled() && !me.is_verified ? (
+        <div className="max-w-sm">
+          <VerificationPayment
+            price={formatMoney(settings.verification_fee_cents)}
+          />
+        </div>
+      ) : null}
 
       <div className="grid gap-5 md:grid-cols-3">
         {[

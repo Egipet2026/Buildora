@@ -234,9 +234,8 @@ function rank(l: Listing): number {
  * "I want a SaaS business under €20,000" →
  *   { kind: "business", category: "saas", maxPrice: 2_000_000 }
  *
- * Deliberately rule-based: it is predictable, runs with no API key and
- * degrades to keyword search when nothing matches. The AI-powered variant is
- * a separate opt-in feature rather than a replacement.
+ * Deliberately rule-based: it is predictable, needs no third-party service,
+ * and degrades to keyword search when nothing matches.
  */
 export function parseSmartQuery(input: string): ListingFilters {
   const text = input.toLowerCase();

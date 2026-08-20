@@ -169,6 +169,42 @@ If you use Supabase for auth, Supabase sends the email code itself, and phone
 sign-up needs an SMS provider configured under Authentication → Providers →
 Phone.
 
+### Payments
+
+Optional. Without `STRIPE_SECRET_KEY` the site works exactly as it did before:
+a sale is recorded, no money moves, and every button that would charge says so
+rather than pretending.
+
+| Variable | Why |
+| --- | --- |
+| `STRIPE_SECRET_KEY` | Takes the payment. `sk_test_…` charges nothing. |
+| `STRIPE_WEBHOOK_SECRET` | From the endpoint you point at `/api/stripe/webhook`. Nothing paid for is granted without it. |
+| `SUPABASE_SERVICE_ROLE_KEY` | Lets the webhook write past row-level security — it has no signed-in user to act as. Bypasses every access rule, so never commit it and never prefix it `NEXT_PUBLIC_`. |
+
+Two shapes of payment, which are not the same transaction:
+
+- **Platform revenue** — Featured, Boost, verification, Premium. An ordinary
+  charge; the money is the platform's.
+- **A sale between members** — a Stripe destination charge. The buyer pays, the
+  seller's connected account is credited, and the platform's commission is
+  taken as an application fee on the way past. The platform never holds money
+  that is not its own, which is deliberate: holding other people's funds is a
+  regulated activity.
+
+Sellers connect a Stripe Express account at `/seller/payouts`. Until Stripe says
+`charges_enabled`, their listings cannot be paid for by card and the buy button
+says why.
+
+The browser is never believed about a payment. Returning to the success page
+proves only that a browser followed a redirect. Stripe's signed webhook is the
+only thing that grants anything, it is checked against the raw request body, and
+every grant is guarded on the payment row still being `pending` so a redelivery
+changes nothing.
+
+Buildora is not an escrow service and holds no funds. Payment reaching a
+seller's account is not confirmation that a business, domain or patent has
+actually changed hands.
+
 ---
 
 ## What's in the MVP

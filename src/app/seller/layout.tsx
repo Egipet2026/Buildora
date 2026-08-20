@@ -43,6 +43,7 @@ export default async function SellerLayout({
             { href: "/seller/analytics", label: "Analytics" },
             { href: "/seller/promotions", label: "Featured & Boost" },
             { href: "/seller/verification", label: "Verification" },
+            { href: "/seller/payouts", label: "Payouts" },
           ]}
         />
         <div className="py-8">{children}</div>

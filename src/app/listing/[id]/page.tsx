@@ -17,6 +17,7 @@ import {
   getFavoriteIds,
   getListing,
   getMemberReputation,
+  getProfile,
   getOffers,
   getSettings,
   getSimilarListings,
@@ -33,6 +34,8 @@ import { categoryName, MARKETPLACE_BY_KIND } from "@/lib/taxonomy";
 import { isFeaturedNow } from "@/lib/filters";
 import type { DealType, ListingWithOwner } from "@/lib/types";
 import { canAdminister } from "@/lib/roles";
+import { paymentsEnabled } from "@/lib/payments/stripe";
+import { payoutBlocker } from "@/lib/payments/checkout";
 
 const DEAL_LABELS: Record<DealType, string> = {
   purchase: "Buy rights outright",
@@ -94,6 +97,12 @@ export default async function ListingPage({
 
   const canTransact =
     listing.status === "active" && !isOwner && listing.deal_types.length > 0;
+
+  // A card can only be charged when Stripe is configured here *and* this
+  // seller has finished Stripe's onboarding. Otherwise the buy button records
+  // the deal without moving money, and says so.
+  const seller = await getProfile(listing.owner_id);
+  const payByCard = paymentsEnabled() && !!seller && payoutBlocker(seller) === null;
 
   return (
     <div className="bg-[var(--color-canvas)]">
@@ -427,6 +436,7 @@ export default async function ListingPage({
                         priceCents={listing.price_cents}
                         commissionBps={settings.commission_bps}
                         disabled={!canTransact}
+                        payByCard={payByCard}
                       />
                     ) : null}
                     <OfferButton

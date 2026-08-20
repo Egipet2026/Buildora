@@ -9,7 +9,6 @@ export const DEFAULT_SETTINGS: PlatformSettings = {
   boost_days: 3,
   premium_monthly_cents: 2900, // €29 / month
   verification_fee_cents: 4900, // €49
-  analyzer_price_cents: 1900, // €19
   currency: "EUR",
 };
 

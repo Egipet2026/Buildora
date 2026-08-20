@@ -230,7 +230,7 @@ export function EmptyState({
 
 /**
  * Standing disclaimer block. Used anywhere the platform must be explicit that
- * it is a venue, not a guarantor — listings, verification, AI output, fees.
+ * it is a venue, not a guarantor — listings, verification, fees, valuations.
  */
 export function Notice({
   tone = "neutral",

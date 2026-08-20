@@ -11,6 +11,7 @@ import {
 } from "@/lib/actions";
 import { IDLE } from "@/lib/action-state";
 import { calculateFees, formatMoney } from "@/lib/money";
+import { startPurchaseAction } from "@/lib/payments/actions";
 import type { DealType } from "@/lib/types";
 
 const DEAL_LABELS: Record<DealType, string> = {
@@ -277,15 +278,27 @@ export function BuyNowButton({
   priceCents,
   commissionBps,
   disabled,
+  payByCard,
 }: Common & {
   priceCents: number;
   commissionBps: number;
   disabled?: boolean;
+  /**
+   * True when a card can actually be charged for this listing — Stripe is
+   * configured and this seller has finished onboarding. When it is false the
+   * button still works, but it records the sale without moving money and says
+   * so, rather than showing a payment page that would fail.
+   */
+  payByCard: boolean;
 }) {
   const [open, setOpen] = useState(false);
-  const [state, action, pending] = useActionState(mockCheckoutAction, IDLE);
+  const [state, action, pending] = useActionState(
+    payByCard ? startPurchaseAction : mockCheckoutAction,
+    IDLE,
+  );
   const fees = calculateFees(priceCents, commissionBps);
 
+  // A card payment leaves for Stripe instead of redirecting inside the app.
   useRedirectOnSuccess(state);
 
   return (
@@ -335,18 +348,35 @@ export function BuyNowButton({
           </dl>
 
           <div className="rounded-lg border border-[#ecd9b0] bg-[var(--color-gold-tint)] px-4 py-3.5 text-[0.8125rem] leading-relaxed text-[var(--color-ink-2)]">
-            <strong className="font-semibold">Test transaction.</strong> This
-            records the deal and the commission split so both sides can see the
-            numbers. It takes no payment, holds no funds and transfers nothing.
-            Real payments and escrow require a regulated marketplace payment
-            provider, which is not connected in this MVP. Settle the actual
-            transfer of money and ownership through your own advisers.
+            {payByCard ? (
+              <>
+                <strong className="font-semibold">
+                  Buildora is not an escrow service.
+                </strong>{" "}
+                Your card is charged by Stripe and the money settles to the
+                seller, less the platform fee. Buildora does not hold the funds
+                and cannot reverse the payment for you. Paying does not
+                transfer ownership of anything — agree in writing with the
+                seller how the business, domain, patent or account actually
+                changes hands, and take your own legal advice before you pay.
+              </>
+            ) : (
+              <>
+                <strong className="font-semibold">No payment is taken.</strong>{" "}
+                This records the deal and the commission split so both sides can
+                see the numbers, but it moves no money — this seller has not
+                connected a payout account. Settle the actual transfer of money
+                and ownership between yourselves.
+              </>
+            )}
           </div>
 
           <FormMessage state={state} />
 
           <SubmitButton pending={pending}>
-            Record test transaction
+            {payByCard
+              ? `Pay ${formatMoney(fees.amount_cents, currency)} with Stripe`
+              : "Record the transaction"}
           </SubmitButton>
         </form>
       </Dialog>

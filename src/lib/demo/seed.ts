@@ -44,6 +44,8 @@ export const DEMO_PROFILES: Profile[] = [
     verification_status: "verified",
     is_blocked: false,
     premium_tier: "pro",
+    stripe_account_id: null,
+    stripe_charges_enabled: false,
     created_at: days(420),
   },
   {
@@ -58,6 +60,8 @@ export const DEMO_PROFILES: Profile[] = [
     verification_status: "verified",
     is_blocked: false,
     premium_tier: "premium",
+    stripe_account_id: null,
+    stripe_charges_enabled: false,
     created_at: days(96),
   },
   {
@@ -72,6 +76,8 @@ export const DEMO_PROFILES: Profile[] = [
     verification_status: "verified",
     is_blocked: false,
     premium_tier: "premium",
+    stripe_account_id: null,
+    stripe_charges_enabled: false,
     created_at: days(310),
   },
   {
@@ -86,6 +92,8 @@ export const DEMO_PROFILES: Profile[] = [
     verification_status: "verified",
     is_blocked: false,
     premium_tier: "free",
+    stripe_account_id: null,
+    stripe_charges_enabled: false,
     created_at: days(275),
   },
   {
@@ -100,6 +108,8 @@ export const DEMO_PROFILES: Profile[] = [
     verification_status: "pending",
     is_blocked: false,
     premium_tier: "free",
+    stripe_account_id: null,
+    stripe_charges_enabled: false,
     created_at: days(140),
   },
   {
@@ -114,6 +124,8 @@ export const DEMO_PROFILES: Profile[] = [
     verification_status: "verified",
     is_blocked: false,
     premium_tier: "free",
+    stripe_account_id: null,
+    stripe_charges_enabled: false,
     created_at: days(200),
   },
   {
@@ -128,6 +140,8 @@ export const DEMO_PROFILES: Profile[] = [
     verification_status: "verified",
     is_blocked: false,
     premium_tier: "free",
+    stripe_account_id: null,
+    stripe_charges_enabled: false,
     created_at: days(180),
   },
   {
@@ -142,6 +156,8 @@ export const DEMO_PROFILES: Profile[] = [
     verification_status: "none",
     is_blocked: false,
     premium_tier: "free",
+    stripe_account_id: null,
+    stripe_charges_enabled: false,
     created_at: days(64),
   },
   {
@@ -156,6 +172,8 @@ export const DEMO_PROFILES: Profile[] = [
     verification_status: "verified",
     is_blocked: false,
     premium_tier: "free",
+    stripe_account_id: null,
+    stripe_charges_enabled: false,
     created_at: days(150),
   },
   {
@@ -170,6 +188,8 @@ export const DEMO_PROFILES: Profile[] = [
     verification_status: "verified",
     is_blocked: false,
     premium_tier: "premium",
+    stripe_account_id: null,
+    stripe_charges_enabled: false,
     created_at: days(230),
   },
   {
@@ -184,6 +204,8 @@ export const DEMO_PROFILES: Profile[] = [
     verification_status: "rejected",
     is_blocked: true,
     premium_tier: "free",
+    stripe_account_id: null,
+    stripe_charges_enabled: false,
     created_at: days(12),
   },
 ];

@@ -7,6 +7,7 @@ import {
   promoteListingAction,
   requestVerificationAction,
 } from "@/lib/actions";
+import { startPromotionAction } from "@/lib/payments/actions";
 import { IDLE } from "@/lib/action-state";
 import { useState } from "react";
 
@@ -17,14 +18,20 @@ export function PromoteForm({
   featuredDays,
   boostPrice,
   boostDays,
+  payByCard,
 }: {
   listings: { id: string; title: string }[];
   featuredPrice: string;
   featuredDays: number;
   boostPrice: string;
   boostDays: number;
+  /** True when Stripe is configured, so this is a real purchase. */
+  payByCard: boolean;
 }) {
-  const [state, action, pending] = useActionState(promoteListingAction, IDLE);
+  const [state, action, pending] = useActionState(
+    payByCard ? startPromotionAction : promoteListingAction,
+    IDLE,
+  );
 
   if (!listings.length) return null;
 
@@ -86,12 +93,13 @@ export function PromoteForm({
       <FormMessage state={state} />
 
       <SubmitButton pending={pending} className="btn btn-brand w-full">
-        Activate (test billing)
+        {payByCard ? "Continue to payment" : "Activate (no payment taken)"}
       </SubmitButton>
 
       <p className="text-[0.75rem] leading-relaxed text-[var(--color-ink-3)]">
-        No payment is taken in this MVP. Promotion activates immediately so the
-        placement behaviour can be evaluated end to end.
+        {payByCard
+          ? "You will pay on Stripe. The placement starts once the payment clears, which is usually immediate. Paid placement is labelled as such wherever it appears."
+          : "No payment provider is connected here, so this activates immediately and nothing is charged."}
       </p>
     </form>
   );

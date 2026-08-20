@@ -4,6 +4,7 @@ import { EmptyState, Notice, SectionHead } from "@/components/ui";
 import { getCurrentUser, getListings, getSettings } from "@/lib/data";
 import { formatDate, formatMoney } from "@/lib/money";
 import { isFeaturedNow } from "@/lib/filters";
+import { paymentsEnabled } from "@/lib/payments/stripe";
 
 export const metadata = { title: "Featured & Boost" };
 
@@ -39,6 +40,7 @@ export default async function PromotionsPage() {
         featuredDays={settings.featured_days}
         boostPrice={formatMoney(settings.boost_price_cents)}
         boostDays={settings.boost_days}
+        payByCard={paymentsEnabled()}
       />
 
       <div className="space-y-8">

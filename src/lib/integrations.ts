@@ -1,6 +1,8 @@
 import "server-only";
 
 import { emailProvider, smsProvider } from "./auth/delivery";
+import { isTestMode, paymentsEnabled } from "./payments/stripe";
+import { hasServiceRole } from "./supabase/service";
 import { SUPABASE_URL, isDemoMode } from "./supabase/config";
 
 /**
@@ -41,6 +43,25 @@ export function integrationStatuses(): IntegrationStatus[] {
         ? "Running on sample data held in memory"
         : new URL(SUPABASE_URL).hostname,
       variable: "NEXT_PUBLIC_SUPABASE_URL",
+    },
+    {
+      name: "Payments",
+      purpose: "Card payments, the commission split and seller payouts",
+      connected: paymentsEnabled(),
+      detail: paymentsEnabled()
+        ? isTestMode()
+          ? "Stripe · test mode — no money moves"
+          : "Stripe · live"
+        : "Sales are recorded without money changing hands",
+      variable: "STRIPE_SECRET_KEY",
+      // A live Stripe key with no way to write past row-level security means
+      // real money is taken and nothing is granted for it. Worth shouting about.
+      warning:
+        paymentsEnabled() && !hasServiceRole()
+          ? "Stripe is connected but SUPABASE_SERVICE_ROLE_KEY is not set, so the webhook cannot record a payment. Payments would be taken and nothing granted — set it before going live."
+          : paymentsEnabled() && !(process.env.STRIPE_WEBHOOK_SECRET ?? "").trim()
+            ? "STRIPE_WEBHOOK_SECRET is not set, so Stripe's confirmation is refused and nothing paid for is ever granted."
+            : undefined,
     },
     {
       name: "Email",

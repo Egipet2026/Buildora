@@ -68,6 +68,12 @@ export interface Profile {
   verification_status: VerificationStatus;
   is_blocked: boolean;
   premium_tier: PremiumTier;
+  /**
+   * The seller's Stripe connected account, once they have started onboarding.
+   * A payout is only possible when Stripe has also said charges are enabled.
+   */
+  stripe_account_id: string | null;
+  stripe_charges_enabled: boolean;
   created_at: string;
 }
 
@@ -250,6 +256,39 @@ export interface Transaction {
   created_at: string;
 }
 
+/** What a charge was for. Anything not a listing sale is platform revenue. */
+export type PaymentKind =
+  | "listing_purchase"
+  | "featured"
+  | "boost"
+  | "verification"
+  | "premium";
+
+export type PaymentStatus = "pending" | "paid" | "failed" | "refunded";
+
+/**
+ * One charge the platform initiated.
+ *
+ * Written when checkout starts and settled by Stripe's webhook, so a row in
+ * `pending` means the customer opened a payment page and either has not
+ * finished or never will.
+ */
+export interface Payment {
+  id: string;
+  user_id: string;
+  kind: PaymentKind;
+  listing_id: string | null;
+  amount_cents: number;
+  /** The platform's cut. Equals amount_cents when the platform is the seller. */
+  fee_cents: number;
+  currency: string;
+  status: PaymentStatus;
+  stripe_session_id: string | null;
+  stripe_payment_intent: string | null;
+  created_at: string;
+  paid_at: string | null;
+}
+
 export interface Report {
   id: string;
   reporter_id: string;
@@ -319,9 +358,9 @@ export type ProductStatus = "draft" | "published" | "out_of_stock";
 export type MilestoneStage = "validate" | "set_up" | "launch" | "grow";
 
 /**
- * One step in the business's build plan. The AI planner can seed these, but
- * they are ordinary editable records afterwards — the plan is a working
- * checklist the owner owns, not a document the model hands back.
+ * One step in the business's build plan. A starter checklist can seed these,
+ * but they are ordinary editable records afterwards — the plan is a working
+ * checklist the owner owns, not a template they are stuck with.
  */
 export interface BusinessMilestone {
   id: string;
@@ -479,6 +518,5 @@ export interface PlatformSettings {
   boost_days: number;
   premium_monthly_cents: number;
   verification_fee_cents: number;
-  analyzer_price_cents: number;
   currency: string;
 }

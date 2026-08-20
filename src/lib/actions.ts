@@ -1243,7 +1243,6 @@ export async function adminSettingsAction(
     boost_days: Math.max(1, Math.round(num("boostDays", 3))),
     premium_monthly_cents: Math.round(num("premiumPrice", 29) * 100),
     verification_fee_cents: Math.round(num("verificationFee", 49) * 100),
-    analyzer_price_cents: Math.round(num("analyzerPrice", 19) * 100),
   };
 
   if (isDemoMode) {

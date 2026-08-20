@@ -37,13 +37,6 @@ export default async function PricingPage() {
         "Unlimited active listings, priority moderation, advanced analytics and saved-search alerts.",
     },
     {
-      name: "Business Analyzer",
-      price: formatMoney(s.analyzer_price_cents),
-      period: "per listing",
-      description:
-        "An AI review of a listing: what is missing, what a buyer will question, and how the numbers compare with similar listings. Indicative only.",
-    },
-    {
       name: "Advanced Analytics",
       price: "Included with Premium",
       period: "",

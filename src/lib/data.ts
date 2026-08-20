@@ -147,6 +147,8 @@ export function unknownProfile(id: string): Profile {
     verification_status: "none",
     is_blocked: false,
     premium_tier: "free",
+    stripe_account_id: null,
+    stripe_charges_enabled: false,
     created_at: new Date(0).toISOString(),
   };
 }
