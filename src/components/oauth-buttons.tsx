@@ -16,7 +16,7 @@ import { getBrowserSupabase } from "@/lib/supabase/client";
  * rather than dressed up as a temporary glitch.
  */
 
-type Provider = "google" | "azure";
+type Provider = "google" | "github";
 
 const PROVIDERS: {
   id: Provider;
