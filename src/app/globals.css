@@ -57,8 +57,6 @@ body {
   font-feature-settings: "cv02", "cv03", "cv04", "cv11";
   -webkit-font-smoothing: antialiased;
   text-rendering: optimizeLegibility;
-  /* Member-written text can contain a long URL or an unbroken token. Without
-     this it widens the page and every screen scrolls sideways. */
   overflow-wrap: break-word;
 }
 
@@ -139,17 +137,12 @@ body {
     transform 0.12s ease;
 }
 
-/* A card that is really a link presses like one. Without this a tap on a
-   listing looks identical to a tap on empty space until the next page
-   arrives. */
 .card-hover:active {
   border-color: var(--color-line-2);
   box-shadow: 0 4px 10px -8px rgb(12 15 20 / 0.3);
   transform: scale(0.99);
 }
 
-/* Lifting on hover is for pointers only: a phone leaves the last card
-   tapped hovering above the page for as long as it stays on screen. */
 @media (hover: hover) {
   .card-hover:hover {
     border-color: var(--color-line-2);
@@ -173,9 +166,6 @@ body {
   border: 1px solid transparent;
   cursor: pointer;
   white-space: nowrap;
-  /* A tap must not be mistaken for a double-tap-to-zoom, or the browser
-     holds the press for 300ms before anything happens and the button feels
-     broken. */
   touch-action: manipulation;
   -webkit-tap-highlight-color: transparent;
   transition:
@@ -191,10 +181,6 @@ body {
   cursor: not-allowed;
 }
 
-/* The press itself. On a phone there is no hover, so without this a tap
-   gives no sign at all that it registered — the page simply changes some
-   time later, or does not. The button sinks slightly and darkens for as
-   long as the finger is down. */
 .btn:active:not(:disabled) {
   transform: scale(0.97);
   box-shadow: inset 0 2px 5px -2px rgb(12 15 20 / 0.35);
@@ -248,9 +234,6 @@ body {
   background: #8d1a15;
 }
 
-/* Hover belongs to devices that have a pointer. A phone that emulates it
-   leaves the hover colour stuck on the last button touched, which reads as
-   "still selected" long after the tap. */
 @media (hover: hover) {
   .btn-primary:hover:not(:disabled) {
     background: #22282f;
@@ -279,11 +262,6 @@ body {
 
 /* ------------------------------------------------- pressable surfaces */
 
-/*
- * Anything tappable that is not a `.btn`: navigation links, menu rows,
- * marketplace chips, whole cards that act as links. They get the same
- * promise — the moment a finger lands, something changes.
- */
 .tap {
   touch-action: manipulation;
   -webkit-tap-highlight-color: transparent;
@@ -303,9 +281,6 @@ body {
   outline-offset: -2px;
 }
 
-/* Where you already are. After a tap the destination says so, which is the
-   other half of "did that work?" — the press confirms the tap, this
-   confirms the arrival. */
 .tap[aria-current="page"] {
   background-color: var(--color-brand-tint);
   color: var(--color-brand-dark);
@@ -321,7 +296,6 @@ body {
   }
 }
 
-/* The arrow on a menu topic, pointing down when shut and up when open. */
 .menu-chev {
   transition: transform 0.18s ease;
 }
@@ -329,33 +303,183 @@ details[open] > summary .menu-chev {
   transform: rotate(180deg);
 }
 
-/* The spinner shown beside a link whose page is still loading. */
-@keyframes tap-spin {
+/* ============================================================================
+   MODERN LOADING & MODAL ANIMATIONS
+   ============================================================================ */
+
+/* Premium loading indicator - smooth pulse */
+@keyframes pulse-dot {
+  0%, 100% {
+    opacity: 0.4;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1.1);
+  }
+}
+
+@keyframes slide-up {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
   to {
-    transform: rotate(360deg);
+    opacity: 1;
+    transform: translateY(0);
   }
 }
 
-.tap-spinner {
+@keyframes fade-in-scale {
+  from {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes bounce-in {
+  0% {
+    opacity: 0;
+    transform: scale(0.85) translateY(10px);
+  }
+  50% {
+    opacity: 1;
+  }
+  100% {
+    transform: scale(1) translateY(0);
+  }
+}
+
+@keyframes shimmer {
+  0% {
+    background-position: -1000px 0;
+  }
+  100% {
+    background-position: 1000px 0;
+  }
+}
+
+/* Modern spinner - three dots */
+.modern-spinner {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  height: 1.2rem;
+}
+
+.modern-spinner span {
   display: inline-block;
-  height: 0.75rem;
-  width: 0.75rem;
-  flex-shrink: 0;
-  border-radius: 999px;
-  border: 2px solid currentColor;
-  border-top-color: transparent;
-  opacity: 0.65;
-  animation: tap-spin 0.6s linear infinite;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: currentColor;
+  animation: pulse-dot 1.4s ease-in-out infinite;
 }
 
-@media (prefers-reduced-motion: reduce) {
-  .btn:active:not(:disabled),
-  .tap:active {
-    transform: none;
+.modern-spinner span:nth-child(2) {
+  animation-delay: 0.2s;
+}
+
+.modern-spinner span:nth-child(3) {
+  animation-delay: 0.4s;
+}
+
+/* Dialog/Modal animations */
+dialog {
+  animation: fade-in-scale 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+dialog::backdrop {
+  animation: fade-in 0.2s ease-out;
+}
+
+@keyframes fade-in {
+  from {
+    opacity: 0;
   }
-  .tap-spinner {
-    animation-duration: 1.6s;
+  to {
+    opacity: 1;
   }
+}
+
+dialog[open] {
+  animation: fade-in-scale 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+/* Form submission loading state */
+.form-loading {
+  position: relative;
+  opacity: 0.6;
+  pointer-events: none;
+}
+
+.form-loading::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(255, 255, 255, 0.3),
+    transparent
+  );
+  animation: shimmer 2s infinite;
+}
+
+/* Premium loading dots */
+.loading-dots {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.loading-dots span {
+  display: inline-block;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: currentColor;
+  animation: pulse-dot 1.6s ease-in-out infinite;
+}
+
+.loading-dots span:nth-child(2) {
+  animation-delay: 0.2s;
+}
+
+.loading-dots span:nth-child(3) {
+  animation-delay: 0.4s;
+}
+
+/* Content reveal animations */
+.animate-slide-up {
+  animation: slide-up 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.animate-fade-in-scale {
+  animation: fade-in-scale 0.3s ease-out;
+}
+
+.animate-bounce-in {
+  animation: bounce-in 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+/* Staggered animations for lists */
+.animate-stagger-item:nth-child(1) {
+  animation-delay: 0.05s;
+}
+.animate-stagger-item:nth-child(2) {
+  animation-delay: 0.1s;
+}
+.animate-stagger-item:nth-child(3) {
+  animation-delay: 0.15s;
+}
+.animate-stagger-item:nth-child(n + 4) {
+  animation-delay: calc(0.05s * (var(--item-index, 0) + 1));
 }
 
 /* ------------------------------------------------------------ badges */
@@ -403,7 +527,6 @@ details[open] > summary .menu-chev {
   border-color: #bfe3d9;
 }
 
-/* The owner. One person, so it gets the one colour nothing else uses. */
 .badge-gold {
   background: var(--color-gold-tint);
   color: var(--color-gold);
@@ -523,8 +646,6 @@ details[open] > summary .menu-chev {
 
 /* ------------------------------------------------- decorative covers */
 
-/* Listings carry no uploaded imagery in the seed data, so covers are
-   generated from the listing id — deterministic, fast, and never broken. */
 .cover {
   position: relative;
   display: flex;
@@ -585,5 +706,13 @@ details[open] > summary .menu-chev {
   }
   .scroll-row > * {
     flex: initial;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
   }
 }
