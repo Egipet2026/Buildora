@@ -4,7 +4,7 @@ import { useState } from "react";
 import { getBrowserSupabase } from "@/lib/supabase/client";
 
 /**
- * Signing in with Google or Microsoft.
+ * Signing in with Google or GitHub.
  *
  * No confirmation code is asked for on this path, and that is not a shortcut:
  * the provider has already established that the person controls the account,
