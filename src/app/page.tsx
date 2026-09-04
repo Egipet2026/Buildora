@@ -193,10 +193,8 @@ export default async function HomePage() {
                 <div className="absolute inset-0 bg-gradient-to-br from-[var(--color-brand)] to-transparent opacity-0 group-hover:opacity-5 transition-opacity" />
                 
                 <div className="relative z-10">
-                  <span className="text-4xl transition-transform group-hover:scale-110" aria-hidden>
-                    {m.icon}
-                  </span>
-                  <span className="mt-4 block text-base font-bold leading-snug text-[var(--color-ink)]">
+                  <div className="h-10 w-10 mb-4 text-[var(--color-brand)] group-hover:text-[var(--color-accent)] transition-colors" dangerouslySetInnerHTML={{ __html: m.icon }} />
+                  <span className="mt-2 block text-base font-bold leading-snug text-[var(--color-ink)]">
                     {m.name}
                   </span>
                   <span className="mt-2 line-clamp-2 block text-sm leading-relaxed text-[var(--color-ink-3)]">
@@ -217,10 +215,8 @@ export default async function HomePage() {
                 <div className="absolute inset-0 bg-gradient-to-br from-[var(--color-brand)] to-transparent opacity-5" />
                 
                 <div className="relative z-10">
-                  <span className="text-4xl opacity-50" aria-hidden>
-                    {s.icon}
-                  </span>
-                  <span className="mt-4 block text-base font-bold leading-snug text-[var(--color-ink)]">
+                  <div className="h-10 w-10 mb-4 text-[var(--color-ink-3)] opacity-50" dangerouslySetInnerHTML={{ __html: s.icon }} />
+                  <span className="mt-2 block text-base font-bold leading-snug text-[var(--color-ink)]">
                     {s.name}
                   </span>
                   <span className="mt-2 text-sm leading-relaxed text-[var(--color-ink-3)]">
