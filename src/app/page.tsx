@@ -44,9 +44,6 @@ export default async function HomePage() {
     getListings({ kind: "digital_asset", sort: "popular", limit: 3 }),
   ]);
 
-  // Recommendations are built from what this member has actually saved and
-  // watched. With no history there is nothing honest to personalise on, so the
-  // strip simply does not appear rather than pretending to know them.
   const recommended = await recommendFor(me?.id ?? null, savedIds);
 
   const totalListings = Object.values(counts).reduce((a, b) => a + b, 0);
@@ -56,61 +53,97 @@ export default async function HomePage() {
 
   return (
     <>
-      {/* ------------------------------------------------------------ hero */}
-      <section className="relative overflow-hidden border-b border-[var(--color-line)] bg-[var(--color-surface)]">
+      {/* ============================================================ HERO */}
+      <section className="relative overflow-hidden border-b border-[var(--color-line)]">
+        {/* Background gradient with animated elements */}
+        <div className="absolute inset-0 bg-gradient-to-br from-[var(--color-surface)] via-[var(--color-canvas)] to-[var(--color-surface)] opacity-60" />
+        
+        {/* Decorative gradient line */}
         <div
-          className="pointer-events-none absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-[var(--color-brand)] to-transparent opacity-40"
+          className="pointer-events-none absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-[var(--color-brand)] to-transparent opacity-50"
           aria-hidden
         />
-        <div className="shell py-16 lg:py-24">
-          <div className="max-w-3xl">
-            <p className="eyebrow mb-5">
-              The international business marketplace
-            </p>
-            <h1 className="display text-[2.75rem] leading-[1.02] sm:text-6xl lg:text-[4.5rem]">
-              Build. Buy. Sell.{" "}
-              <span className="text-[var(--color-brand)]">Grow.</span>
+        
+        {/* Animated background elements */}
+        <div className="pointer-events-none absolute -right-40 -top-40 h-80 w-80 rounded-full bg-[var(--color-brand)] opacity-5 blur-3xl" />
+        <div className="pointer-events-none absolute -left-40 -bottom-40 h-80 w-80 rounded-full bg-[var(--color-brand)] opacity-5 blur-3xl" />
+
+        <div className="shell relative z-10 py-20 lg:py-32">
+          <div className="max-w-4xl">
+            {/* Eyebrow */}
+            <div className="mb-6 inline-flex items-center gap-2">
+              <span className="inline-block h-1 w-12 rounded-full bg-[var(--color-brand)]" />
+              <p className="text-sm font-semibold tracking-wider text-[var(--color-brand)] uppercase">
+                Global Business Marketplace
+              </p>
+            </div>
+
+            {/* Main heading with gradient */}
+            <h1 className="display text-5xl font-bold leading-[1.1] sm:text-6xl lg:text-7xl">
+              Build.{" "}
+              <span className="inline-block bg-gradient-to-r from-[var(--color-brand)] to-[var(--color-accent)] bg-clip-text text-transparent">
+                Buy.
+              </span>{" "}
+              Sell. Grow.
             </h1>
-            <p className="mt-6 max-w-xl text-lg leading-relaxed text-[var(--color-ink-2)]">
-              Everything you need to start, buy, build and grow a business.
+
+            {/* Subheading */}
+            <p className="mt-8 max-w-2xl text-xl leading-relaxed text-[var(--color-ink-2)]">
+              The international marketplace where entrepreneurs start, buy, build and grow businesses. 
+              Buy proven companies. License technologies. Hire specialists. Find partners.
             </p>
 
-            <div className="mt-8 flex flex-wrap gap-3">
-              <Link href="/businesses" className="btn btn-primary btn-lg">
-                Buy a Business
+            {/* CTA Buttons */}
+            <div className="mt-10 flex flex-wrap gap-4">
+              <Link 
+                href="/businesses" 
+                className="btn btn-primary btn-lg font-semibold shadow-lg hover:shadow-xl transition-shadow"
+              >
+                Explore Businesses
               </Link>
-              <Link href="/business-profiles/new" className="btn btn-brand btn-lg">
-                Start a Business
+              <Link 
+                href="/business-profiles/new" 
+                className="btn btn-brand btn-lg font-semibold shadow-lg hover:shadow-xl transition-shadow"
+              >
+                Start Your Business
               </Link>
-              <Link href="/sell" className="btn btn-outline btn-lg">
+              <Link 
+                href="/sell" 
+                className="btn btn-outline btn-lg font-semibold hover:bg-[var(--color-surface-2)] transition-colors"
+              >
                 Sell a Business
-              </Link>
-              <Link href="/marketplace" className="btn btn-outline btn-lg">
-                Explore Marketplace
               </Link>
             </div>
 
-            <div className="mt-10 max-w-2xl">
-              <GlobalSearch />
+            {/* Search Bar */}
+            <div className="mt-12 max-w-2xl">
+              <div className="relative">
+                <div className="absolute inset-0 bg-gradient-to-r from-[var(--color-brand)] to-[var(--color-accent)] rounded-xl opacity-20 blur-xl" />
+                <div className="relative">
+                  <GlobalSearch />
+                </div>
+              </div>
             </div>
           </div>
 
-          <dl className="mt-14 grid grid-cols-2 gap-6 border-t border-[var(--color-line)] pt-8 sm:grid-cols-4">
+          {/* Stats Section */}
+          <dl className="mt-20 grid grid-cols-2 gap-6 border-t border-[var(--color-line)] pt-12 sm:grid-cols-4">
             {[
-              { label: "Live listings", value: formatNumber(totalListings) },
-              { label: "Marketplaces", value: MARKETPLACES.length },
-              {
-                label: "Platform commission",
-                value: `${settings.commission_bps / 100}%`,
-              },
-              {
-                label: "Transactions recorded",
-                value: formatNumber(settled.length),
-              },
+              { label: "Active Listings", value: formatNumber(totalListings), icon: "📊" },
+              { label: "Marketplaces", value: MARKETPLACES.length, icon: "🌍" },
+              { label: "Commission", value: `${settings.commission_bps / 100}%`, icon: "💰" },
+              { label: "Transactions", value: formatNumber(settled.length), icon: "✅" },
             ].map((stat) => (
-              <div key={stat.label}>
-                <dt className="eyebrow">{stat.label}</dt>
-                <dd className="display mt-1.5 text-2xl">{stat.value}</dd>
+              <div key={stat.label} className="group">
+                <div className="flex items-baseline gap-3 mb-2">
+                  <span className="text-2xl" aria-hidden>{stat.icon}</span>
+                  <dt className="text-xs font-semibold tracking-wide text-[var(--color-ink-3)] uppercase">
+                    {stat.label}
+                  </dt>
+                </div>
+                <dd className="display text-3xl font-bold group-hover:text-[var(--color-brand)] transition-colors">
+                  {stat.value}
+                </dd>
               </div>
             ))}
           </dl>
@@ -119,15 +152,15 @@ export default async function HomePage() {
 
       <MarketplaceStrip />
 
-      {/* --------------------------------------------------- recommended */}
+      {/* ================================================== RECOMMENDED */}
       {recommended.length ? (
-        <Section className="border-b border-[var(--color-line)] bg-[var(--color-surface)]">
+        <Section className="border-t border-b border-[var(--color-line)] bg-gradient-to-b from-[var(--color-surface)] to-[var(--color-canvas)]">
           <div className="shell">
             <SectionHead
-              eyebrow="Recommended for you"
-              title="Based on what you have saved"
-              description="Drawn from the listings you saved and are watching — the categories, the price range and the countries. Buildora does not rank these by quality, and nobody pays to be here."
-              action={{ href: "/bizmatch", label: "Refine with BizMatch" }}
+              eyebrow="🎯 Personalized"
+              title="Recommended Opportunities"
+              description="Curated listings based on your saved preferences and watchlist"
+              action={{ href: "/bizmatch", label: "Advanced Matching" }}
             />
             <div className="space-y-4">
               {recommended.map((match) => (
@@ -138,68 +171,79 @@ export default async function HomePage() {
         </Section>
       ) : null}
 
-      {/* ------------------------------------------------------ categories */}
+      {/* ================================================== MARKETPLACES */}
       <Section className="bg-[var(--color-canvas)]">
         <div className="shell">
           <SectionHead
-            eyebrow="Categories"
-            title="Nine marketplaces, one platform"
-            description="Whether you are acquiring a company, licensing a technology or hiring the specialist who will build your next product — it is all here."
+            eyebrow="📚 Categories"
+            title="Nine Specialized Marketplaces"
+            description="Whether you're acquiring a company, licensing technology, or hiring specialists — everything is unified in one platform."
           />
 
-          <div className="grid grid-cols-2 gap-3.5 md:grid-cols-3 lg:grid-cols-4">
-            {MARKETPLACES.map((m) => (
+          <div className="grid grid-cols-2 gap-4 md:grid-cols-3 lg:grid-cols-4">
+            {MARKETPLACES.map((m, idx) => (
               <Link
                 key={m.slug}
                 href={`/${m.slug}`}
-                className="card card-hover flex flex-col p-5"
+                className="group card card-hover relative overflow-hidden p-5 transition-all duration-300 hover:shadow-lg"
+                style={{
+                  animationDelay: `${idx * 50}ms`,
+                }}
               >
-                <span className="text-2xl" aria-hidden>
-                  {m.icon}
-                </span>
-                <span className="mt-3 text-[0.9375rem] font-semibold leading-snug">
-                  {m.name}
-                </span>
-                <span className="mt-1.5 line-clamp-2 text-[0.75rem] leading-relaxed text-[var(--color-ink-3)]">
-                  {m.tagline}
-                </span>
-                <span className="mt-3 text-[0.6875rem] font-semibold text-[var(--color-ink-3)]">
-                  {counts[m.kind] ?? 0} live
-                </span>
+                <div className="absolute inset-0 bg-gradient-to-br from-[var(--color-brand)] to-transparent opacity-0 group-hover:opacity-5 transition-opacity" />
+                
+                <div className="relative z-10">
+                  <span className="text-4xl transition-transform group-hover:scale-110" aria-hidden>
+                    {m.icon}
+                  </span>
+                  <span className="mt-4 block text-base font-bold leading-snug text-[var(--color-ink)]">
+                    {m.name}
+                  </span>
+                  <span className="mt-2 line-clamp-2 block text-sm leading-relaxed text-[var(--color-ink-3)]">
+                    {m.tagline}
+                  </span>
+                  <span className="mt-4 inline-block rounded-full bg-[var(--color-brand)] px-3 py-1 text-xs font-semibold text-white">
+                    {counts[m.kind] ?? 0} live
+                  </span>
+                </div>
               </Link>
             ))}
 
-            {REGULATED_SURFACES.map((s) => (
+            {REGULATED_SURFACES.map((s, idx) => (
               <div
                 key={s.slug}
-                className="card flex flex-col border-dashed p-5 opacity-80"
+                className="card relative overflow-hidden border-2 border-dashed border-[var(--color-line)] p-5 opacity-75"
               >
-                <span className="text-2xl" aria-hidden>
-                  {s.icon}
-                </span>
-                <span className="mt-3 text-[0.9375rem] font-semibold leading-snug">
-                  {s.name}
-                </span>
-                <span className="mt-1.5 text-[0.75rem] leading-relaxed text-[var(--color-ink-3)]">
-                  {s.note}
-                </span>
-                <span className="badge badge-neutral mt-3 self-start">
-                  Not yet available
-                </span>
+                <div className="absolute inset-0 bg-gradient-to-br from-[var(--color-brand)] to-transparent opacity-5" />
+                
+                <div className="relative z-10">
+                  <span className="text-4xl opacity-50" aria-hidden>
+                    {s.icon}
+                  </span>
+                  <span className="mt-4 block text-base font-bold leading-snug text-[var(--color-ink)]">
+                    {s.name}
+                  </span>
+                  <span className="mt-2 text-sm leading-relaxed text-[var(--color-ink-3)]">
+                    {s.note}
+                  </span>
+                  <span className="badge badge-neutral mt-4 inline-block">
+                    Coming Soon
+                  </span>
+                </div>
               </div>
             ))}
           </div>
         </div>
       </Section>
 
-      {/* ------------------------------------------------ featured businesses */}
-      <Section className="border-t border-[var(--color-line)] bg-[var(--color-surface)]">
+      {/* ================================================ FEATURED */}
+      <Section className="border-y border-[var(--color-line)] bg-[var(--color-surface)]">
         <div className="shell">
           <SectionHead
-            eyebrow="Featured"
-            title="Featured businesses"
-            description="Paid placement. Featured status is advertising — it says nothing about the quality of a business."
-            action={{ href: "/businesses", label: "All businesses" }}
+            eyebrow="⭐ Spotlight"
+            title="Featured Businesses"
+            description="Premium placements from verified sellers"
+            action={{ href: "/businesses", label: "Browse All" }}
           />
           <ListingGrid
             listings={featuredBusinesses}
@@ -209,39 +253,39 @@ export default async function HomePage() {
         </div>
       </Section>
 
-      {/* -------------------------------------------------------- trending */}
-      <Section className="border-t border-[var(--color-line)]">
+      {/* ================================================ TRENDING */}
+      <Section className="border-b border-[var(--color-line)]">
         <div className="shell">
           <SectionHead
-            eyebrow="Momentum"
-            title="Trending opportunities"
-            description="The most viewed and most saved listings across every marketplace this week."
-            action={{ href: "/marketplace?sort=popular", label: "See all" }}
+            eyebrow="🔥 Momentum"
+            title="Trending This Week"
+            description="Most viewed and saved opportunities across all marketplaces"
+            action={{ href: "/marketplace?sort=popular", label: "View More" }}
           />
           <ListingGrid listings={trending} savedIds={savedIds} redirectTo="/" />
         </div>
       </Section>
 
-      {/* ----------------------------------------------------------- newest */}
-      <Section className="border-t border-[var(--color-line)] bg-[var(--color-surface)]">
+      {/* ================================================ NEWEST */}
+      <Section className="border-b border-[var(--color-line)] bg-[var(--color-surface)]">
         <div className="shell">
           <SectionHead
-            eyebrow="Just listed"
-            title="New businesses"
-            action={{ href: "/businesses?sort=newest", label: "Browse newest" }}
+            eyebrow="✨ Fresh"
+            title="Just Listed"
+            action={{ href: "/businesses?sort=newest", label: "See All" }}
           />
           <ListingGrid listings={newest} savedIds={savedIds} redirectTo="/" />
         </div>
       </Section>
 
-      {/* --------------------------------------------------------- patents */}
-      <Section className="border-t border-[var(--color-line)]">
+      {/* ================================================ PATENTS */}
+      <Section className="border-b border-[var(--color-line)]">
         <div className="shell">
           <SectionHead
-            eyebrow="Intellectual property"
-            title="Featured patents & technologies"
-            description="Buy the rights outright or license the technology. Every listing states its status and jurisdiction — a pending application is never shown as a granted patent."
-            action={{ href: "/patents", label: "All patents" }}
+            eyebrow="🔬 IP"
+            title="Patents & Technologies"
+            description="Buy rights or license technology. Every listing details its status and jurisdiction."
+            action={{ href: "/patents", label: "Explore Patents" }}
           />
           <ListingGrid
             listings={featuredPatents}
@@ -251,26 +295,26 @@ export default async function HomePage() {
         </div>
       </Section>
 
-      {/* -------------------------------------------------------- services */}
-      <Section className="border-t border-[var(--color-line)] bg-[var(--color-surface)]">
+      {/* ================================================ SERVICES */}
+      <Section className="border-b border-[var(--color-line)] bg-[var(--color-surface)]">
         <div className="shell">
           <SectionHead
-            eyebrow="Talent"
-            title="Popular services"
-            description="Developers, designers, marketers, accountants and lawyers who work with founders."
-            action={{ href: "/services", label: "All experts" }}
+            eyebrow="👥 Talent"
+            title="Vetted Specialists"
+            description="Developers, designers, marketers, and consultants for your venture"
+            action={{ href: "/services", label: "Find Experts" }}
           />
           <ListingGrid listings={services} savedIds={savedIds} redirectTo="/" />
         </div>
       </Section>
 
-      {/* -------------------------------------------------- digital assets */}
-      <Section className="border-t border-[var(--color-line)]">
+      {/* ================================================ DIGITAL ASSETS */}
+      <Section className="border-b border-[var(--color-line)]">
         <div className="shell">
           <SectionHead
-            eyebrow="Digital"
-            title="SaaS, apps, sites & domains"
-            action={{ href: "/digital-assets", label: "All digital assets" }}
+            eyebrow="💻 Digital"
+            title="SaaS, Apps & Domains"
+            action={{ href: "/digital-assets", label: "Browse Digital Assets" }}
           />
           <ListingGrid
             listings={digitalAssets}
@@ -280,166 +324,182 @@ export default async function HomePage() {
         </div>
       </Section>
 
-      {/* ------------------------------------------------------- how it works */}
-      <Section className="border-t border-[var(--color-line)] bg-[var(--color-surface)]">
+      {/* ================================================ HOW IT WORKS */}
+      <Section className="border-b border-[var(--color-line)] bg-gradient-to-b from-[var(--color-surface)] to-[var(--color-canvas)]">
         <div className="shell">
           <SectionHead
-            eyebrow="How Buildora works"
-            title="From “I want to start a business” to a business"
-            description="Three paths through the same platform. Most people end up using all three."
+            eyebrow="🚀 Getting Started"
+            title="From Idea to Successful Business"
+            description="Three paths, one unified platform. Most entrepreneurs use all three."
           />
 
-          <div className="grid gap-5 lg:grid-cols-3">
+          <div className="grid gap-6 lg:grid-cols-3">
             {[
               {
                 tag: "Buy",
-                title: "Acquire something that already works",
+                icon: "🛍️",
+                title: "Acquire an Established Business",
                 steps: [
-                  "Search and filter by price, profit, country and category",
-                  "Save listings and message the seller privately",
-                  "Make an offer, counter and negotiate in one thread",
-                  "Review the documents the seller releases after acceptance",
-                  "Close the deal with your own legal and financial advisers",
+                  "Search & filter by financials, growth, location",
+                  "Private messaging with verified sellers",
+                  "Make offers and negotiate terms",
+                  "Review documents and due diligence",
+                  "Close with your advisors",
                 ],
                 href: "/businesses",
-                cta: "Buy a business",
+                cta: "Buy Now",
               },
               {
                 tag: "Build",
-                title: "Start from an idea",
+                icon: "🏗️",
+                title: "Start From Your Idea",
                 steps: [
-                  "Set up your business and say what it does",
-                  "Work through a starter checklist, or write your own steps",
-                  "Publish products and prices on your own storefront",
-                  "Find a partner, a developer, a designer or a supplier",
-                  "License the technology you would otherwise have to invent",
+                  "Create your business profile",
+                  "Follow proven startup checklists",
+                  "Launch your storefront with products",
+                  "Find partners and specialists",
+                  "License technologies & tools",
                 ],
                 href: "/business-profiles/new",
-                cta: "Start a business",
+                cta: "Start Building",
               },
               {
                 tag: "Sell",
-                title: "Exit on your terms",
+                icon: "💼",
+                title: "Exit on Your Terms",
                 steps: [
-                  "Create a listing with your financials and what is included",
-                  "A moderator reviews it before it goes live",
-                  "Request verification of the details you can evidence",
-                  "Receive offers, counter, and pick your buyer",
-                  `Pay ${settings.commission_bps / 100}% only when a transaction completes`,
+                  "Create a verified business listing",
+                  "Professional moderation review",
+                  "Get verified and featured",
+                  "Receive & negotiate offers",
+                  `${settings.commission_bps / 100}% commission on completion`,
                 ],
                 href: "/sell",
-                cta: "Sell a business",
+                cta: "List Your Business",
               },
             ].map((col) => (
-              <div key={col.tag} className="card flex flex-col p-6">
-                <span className="badge badge-brand self-start">{col.tag}</span>
-                <h3 className="mt-4 text-lg font-semibold leading-snug tracking-[-0.015em]">
-                  {col.title}
-                </h3>
-                <ol className="mt-5 flex-1 space-y-3">
-                  {col.steps.map((step, i) => (
-                    <li key={step} className="flex gap-3">
-                      <span className="mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-[var(--color-surface-2)] text-[0.6875rem] font-bold text-[var(--color-ink-2)]">
-                        {i + 1}
-                      </span>
-                      <span className="text-[0.875rem] leading-relaxed text-[var(--color-ink-2)]">
-                        {step}
-                      </span>
-                    </li>
-                  ))}
-                </ol>
-                <Link href={col.href} className="btn btn-outline mt-6 w-full">
-                  {col.cta}
-                </Link>
+              <div key={col.tag} className="group card relative overflow-hidden bg-[var(--color-canvas)] p-7 transition-all duration-300 hover:shadow-lg hover:border-[var(--color-brand)]">
+                <div className="absolute inset-0 bg-gradient-to-br from-[var(--color-brand)] to-transparent opacity-0 group-hover:opacity-5 transition-opacity" />
+                
+                <div className="relative z-10">
+                  <div className="flex items-center gap-3 mb-4">
+                    <span className="text-3xl">{col.icon}</span>
+                    <span className="badge badge-brand font-semibold">{col.tag}</span>
+                  </div>
+                  
+                  <h3 className="text-xl font-bold leading-snug tracking-tight mb-5 text-[var(--color-ink)]">
+                    {col.title}
+                  </h3>
+                  
+                  <ol className="space-y-3 mb-7">
+                    {col.steps.map((step, i) => (
+                      <li key={step} className="flex gap-3">
+                        <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-[var(--color-brand)] text-xs font-bold text-white">
+                          {i + 1}
+                        </span>
+                        <span className="text-sm leading-relaxed text-[var(--color-ink-2)]">
+                          {step}
+                        </span>
+                      </li>
+                    ))}
+                  </ol>
+                  
+                  <Link href={col.href} className="btn btn-primary w-full font-semibold">
+                    {col.cta}
+                  </Link>
+                </div>
               </div>
             ))}
           </div>
         </div>
       </Section>
 
-      {/* ------------------------------------------------------- commission */}
-      <Section className="border-t border-[var(--color-line)]">
+      {/* ================================================ PRICING */}
+      <Section className="border-b border-[var(--color-line)] bg-[var(--color-surface)]">
         <div className="shell">
           <div className="card overflow-hidden lg:grid lg:grid-cols-2">
-            <div className="p-8 lg:p-12">
-              <p className="eyebrow mb-3">Pricing</p>
-              <h2 className="display text-3xl">
-                {settings.commission_bps / 100}% commission. Nothing else
-                required.
-              </h2>
-              <p className="mt-4 text-[0.9375rem] leading-relaxed text-[var(--color-ink-2)]">
-                Listing is free. The platform earns a commission only when a
-                transaction completes. Featured placement, boosts and
-                subscriptions are optional extras — never a condition of
-                selling.
-              </p>
-              <Link href="/pricing" className="btn btn-primary mt-6">
-                See full pricing
-              </Link>
+            <div className="relative overflow-hidden bg-gradient-to-br from-[var(--color-brand)] to-[var(--color-accent)] p-10 text-white lg:p-14">
+              <div className="absolute -right-20 -top-20 h-40 w-40 rounded-full bg-white opacity-10" />
+              <div className="relative z-10">
+                <p className="text-sm font-semibold tracking-wider text-white/70 uppercase">Transparent Pricing</p>
+                <h2 className="display mt-4 text-4xl font-bold leading-tight lg:text-5xl">
+                  {settings.commission_bps / 100}%
+                </h2>
+                <p className="mt-4 text-base leading-relaxed text-white/90">
+                  Platform commission on completed transactions. Listing creation is free. Featured placement and analytics tools are optional add-ons.
+                </p>
+                <Link href="/pricing" className="btn btn-lg bg-white text-[var(--color-brand)] font-semibold mt-8 hover:bg-white/90">
+                  View Full Pricing
+                </Link>
+              </div>
             </div>
 
-            <div className="border-t border-[var(--color-line)] bg-[var(--color-surface-2)] p-8 lg:border-l lg:border-t-0 lg:p-12">
-              <p className="eyebrow mb-4">Worked example</p>
-              <dl className="space-y-3.5">
-                <div className="flex items-baseline justify-between">
-                  <dt className="text-[0.875rem] text-[var(--color-ink-2)]">
-                    Business price
+            <div className="bg-[var(--color-canvas)] p-10 lg:p-14">
+              <p className="text-sm font-semibold tracking-wider text-[var(--color-brand)] uppercase">Example Calculation</p>
+              <dl className="mt-8 space-y-5">
+                <div className="flex items-baseline justify-between gap-4 group cursor-help">
+                  <dt className="text-base text-[var(--color-ink-2)]">
+                    Business Listed at
                   </dt>
-                  <dd className="display text-xl">{formatMoney(5_000_000)}</dd>
+                  <dd className="display text-2xl font-bold text-[var(--color-ink)]">
+                    {formatMoney(5_000_000)}
+                  </dd>
                 </div>
-                <div className="flex items-baseline justify-between">
-                  <dt className="text-[0.875rem] text-[var(--color-ink-2)]">
-                    Platform fee ({settings.commission_bps / 100}%)
+                <div className="flex items-baseline justify-between gap-4">
+                  <dt className="text-base text-[var(--color-ink-2)]">
+                    Platform Fee ({settings.commission_bps / 100}%)
                   </dt>
-                  <dd className="text-lg font-semibold text-[var(--color-danger)]">
+                  <dd className="display text-2xl font-bold text-[var(--color-danger)]">
                     −{formatMoney(500_000)}
                   </dd>
                 </div>
-                <div className="hairline pt-3.5">
-                  <div className="flex items-baseline justify-between">
-                    <dt className="text-[0.875rem] font-medium">
-                      Seller receives
+                <div className="border-t-2 border-[var(--color-line)] pt-5">
+                  <div className="flex items-baseline justify-between gap-4">
+                    <dt className="text-base font-semibold text-[var(--color-ink)]">
+                      Seller Receives
                     </dt>
-                    <dd className="display text-2xl text-[var(--color-accent)]">
+                    <dd className="display text-3xl font-bold text-[var(--color-accent)]">
                       {formatMoney(4_500_000)}
                     </dd>
                   </div>
                 </div>
               </dl>
-              <div className="mt-6">
-                <Notice tone="neutral">
-                  The MVP records transactions and shows the split before you
-                  commit, but moves no money. Payments and escrow arrive once a
-                  regulated marketplace payment provider is integrated.
-                </Notice>
-              </div>
+              
+              <Notice tone="neutral" className="mt-8">
+                The platform records transactions and displays splits before confirmation. Real payments integrate with regulated payment providers.
+              </Notice>
             </div>
           </div>
         </div>
       </Section>
 
-      {/* -------------------------------------------------------------- cta */}
-      <section className="border-t border-[var(--color-line)] bg-[var(--color-ink)] text-white">
-        <div className="shell py-16 text-center lg:py-20">
-          <h2 className="display mx-auto max-w-2xl text-3xl lg:text-4xl">
-            Start with “I want to start a business.” Finish with a business.
+      {/* ================================================ FINAL CTA */}
+      <section className="relative overflow-hidden bg-gradient-to-r from-[var(--color-ink)] via-[var(--color-brand)] to-[var(--color-accent)] text-white">
+        <div className="absolute inset-0 overflow-hidden">
+          <div className="absolute -right-40 -top-40 h-80 w-80 rounded-full bg-white opacity-5" />
+          <div className="absolute -left-40 -bottom-40 h-80 w-80 rounded-full bg-white opacity-5" />
+        </div>
+
+        <div className="shell relative z-10 py-20 text-center lg:py-28">
+          <p className="text-sm font-semibold tracking-wider text-white/70 uppercase">Ready to Begin?</p>
+          <h2 className="display mx-auto max-w-3xl mt-4 text-4xl font-bold leading-tight lg:text-5xl">
+            From "I want to start" to a thriving business
           </h2>
-          <p className="mx-auto mt-4 max-w-xl text-[0.9375rem] leading-relaxed text-white/70">
-            Idea → storefront → partner → specialist → technology → patent →
-            website → SaaS → marketing → business.
+          <p className="mx-auto mt-6 max-w-2xl text-lg leading-relaxed text-white/80">
+            Join thousands of entrepreneurs buying, building, and scaling successful businesses on Buildora.
           </p>
-          <div className="mt-8 flex flex-wrap justify-center gap-3">
+          <div className="mt-10 flex flex-wrap justify-center gap-4">
             <Link
               href="/business-profiles/new"
-              className="btn btn-lg bg-white text-[var(--color-ink)] hover:bg-white/90"
+              className="btn btn-lg bg-white text-[var(--color-ink)] font-semibold hover:bg-white/90 shadow-lg"
             >
-              Start a Business
+              Start Your Journey
             </Link>
             <Link
               href="/marketplace"
-              className="btn btn-lg border-white/25 bg-transparent text-white hover:bg-white/10"
+              className="btn btn-lg border-white/30 bg-transparent text-white font-semibold hover:bg-white/10 transition-colors"
             >
-              Explore the marketplace
+              Explore Opportunities
             </Link>
           </div>
         </div>
