@@ -36,9 +36,7 @@ export function Dialog({
         // Clicking the backdrop (the dialog element itself) dismisses.
         if (e.target === ref.current) onClose();
       }}
-      // `m-auto` restores the native centering that Tailwind's margin reset
-      // removes; without it a top-layer dialog pins to the top-left corner.
-      className="m-auto w-[min(34rem,calc(100vw-2rem))] rounded-[14px] border border-[var(--color-line)] bg-[var(--color-surface)] p-0 text-[var(--color-ink)] backdrop:bg-black/45 backdrop:backdrop-blur-sm"
+      className="m-auto w-[min(34rem,calc(100vw-2rem))] rounded-[14px] border border-[var(--color-line)] bg-[var(--color-surface)] p-0 text-[var(--color-ink)] backdrop:bg-black/45"
     >
       <div className="flex items-start justify-between gap-4 border-b border-[var(--color-line)] px-6 py-5">
         <div>
@@ -52,7 +50,7 @@ export function Dialog({
         <button
           type="button"
           onClick={onClose}
-          className="-mr-2 -mt-1 rounded-lg px-2 py-1 text-lg leading-none text-[var(--color-ink-3)] hover:bg-[var(--color-surface-2)]"
+          className="-mr-2 -mt-1 rounded-lg px-2 py-1 text-lg leading-none text-[var(--color-ink-3)] hover:bg-[var(--color-surface-2)] transition-colors"
           aria-label="Close"
         >
           ×
@@ -74,7 +72,18 @@ export function SubmitButton({
 }) {
   return (
     <button type="submit" className={className} disabled={pending}>
-      {pending ? "Working…" : children}
+      {pending ? (
+        <span className="flex items-center justify-center gap-2">
+          <span className="modern-spinner">
+            <span></span>
+            <span></span>
+            <span></span>
+          </span>
+          <span>Processing...</span>
+        </span>
+      ) : (
+        children
+      )}
     </button>
   );
 }
@@ -88,7 +97,7 @@ export function FormMessage({
   return (
     <p
       role="status"
-      className={`rounded-lg border px-3 py-2.5 text-[0.8125rem] ${
+      className={`rounded-lg border px-3 py-2.5 text-[0.8125rem] animate-slide-up ${
         state.ok
           ? "border-[#bfe3d9] bg-[var(--color-accent-tint)] text-[#0a6b57]"
           : "border-[#f4c9c6] bg-[var(--color-danger-tint)] text-[var(--color-danger)]"
