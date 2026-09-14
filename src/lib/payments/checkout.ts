@@ -6,44 +6,21 @@ import { getServerSupabase } from "../supabase/server";
 import { isDemoMode } from "../supabase/config";
 import type { Listing, PaymentKind, Profile } from "../types";
 
-/**
- * Building a Stripe Checkout session, and recording that we did.
- *
- * Two shapes of payment exist here and they are not the same transaction:
- *
- *   Platform revenue — Featured, Boost, verification, Premium. The money is
- *   the platform's. An ordinary charge.
- *
- *   A sale between members — the buyer pays, the seller is paid directly by
- *   Stripe, and the platform keeps its commission as an application fee. This
- *   needs the seller to have completed Stripe onboarding, because the money
- *   never belongs to the platform on the way past.
- *
- * The amount is always computed here from the listing and the platform
- * settings. Nothing that arrives in a form decides what anybody is charged.
- */
+/** ISO country codes where Stripe Express connected accounts are available. */
+export const STRIPE_CONNECT_COUNTRIES = [
+  "AE","AG","AL","AM","AR","AT","AU","BA","BE","BG","BH","BJ","BN","BO","BS","BW","CA","CH","CI","CL","CO","CR","CY","CZ","DE","DK","DO","EC","EE","EG","ES","ET","FI","FR","GB","GH","GM","GR","GT","GY","HK","HU","IE","IL","IS","IT","JM","JO","JP","KE","KH","KR","KW","LC","LK","LT","LU","LV","MA","MC","MD","MG","MK","MN","MO","MT","MU","MX","NA","NG","NL","NO","NZ","OM","PA","PE","PH","PK","PL","PT","PY","QA","RO","RS","RW","SA","SE","SG","SI","SK","SN","SV","TH","TN","TR","TT","TW","TZ","US","UY","UZ","VN","ZA",
+] as const;
 
 export type CheckoutRequest = {
   kind: PaymentKind;
   userId: string;
-  /** Shown on the Stripe page. The buyer must recognise what they are paying for. */
   label: string;
   description?: string;
   amountCents: number;
   currency: string;
   listingId?: string;
-  /**
-   * How many days the purchase buys, for placements. Carried on the Stripe
-   * session so the webhook grants the length that was actually paid for,
-   * rather than re-reading a setting that may have changed since.
-   */
   days?: number;
-  /** Where to send the customer once Stripe is done with them. */
   returnPath: string;
-  /**
-   * Set only for a sale between members: the seller's connected account and
-   * the platform's cut of the payment.
-   */
   transfer?: { destination: string; applicationFeeCents: number };
 };
 
@@ -51,29 +28,23 @@ export type CheckoutResult =
   | { ok: true; url: string }
   | { ok: false; message: string };
 
-export async function createCheckout(
-  req: CheckoutRequest,
-): Promise<CheckoutResult> {
-  if (!paymentsEnabled())
-    return { ok: false, message: "Payments are not switched on for this site." };
+export async function createCheckout(req: CheckoutRequest): Promise<CheckoutResult> {
+  if (!paymentsEnabled()) return { ok: false, message: "Payments are not switched on for this site." };
 
   const base = siteUrl();
   const params: Stripe.Checkout.SessionCreateParams = {
     mode: "payment",
-    line_items: [
-      {
-        quantity: 1,
-        price_data: {
-          currency: req.currency.toLowerCase(),
-          unit_amount: req.amountCents,
-          product_data: {
-            name: req.label,
-            ...(req.description ? { description: req.description } : {}),
-          },
+    line_items: [{
+      quantity: 1,
+      price_data: {
+        currency: req.currency.toLowerCase(),
+        unit_amount: req.amountCents,
+        product_data: {
+          name: req.label,
+          ...(req.description ? { description: req.description } : {}),
         },
       },
-    ],
-    // Read back by the webhook, which is the only thing that grants anything.
+    }],
     metadata: {
       kind: req.kind,
       user_id: req.userId,
@@ -85,9 +56,6 @@ export async function createCheckout(
   };
 
   if (req.transfer) {
-    // A destination charge: Stripe settles to the seller and takes the
-    // platform's commission out on the way, so the platform never holds
-    // money that is not its own.
     params.payment_intent_data = {
       application_fee_amount: req.transfer.applicationFeeCents,
       transfer_data: { destination: req.transfer.destination },
@@ -98,19 +66,12 @@ export async function createCheckout(
   try {
     session = await stripe().checkout.sessions.create(params);
   } catch (error) {
-    // Stripe's message can name the account, so it goes to the log, not the page.
     console.error("[stripe] could not create a checkout session:", error);
-    return {
-      ok: false,
-      message: "The payment page could not be opened. Please try again shortly.",
-    };
+    return { ok: false, message: "The payment page could not be opened. Please try again shortly." };
   }
 
-  if (!session.url)
-    return { ok: false, message: "Stripe did not return a payment page." };
+  if (!session.url) return { ok: false, message: "Stripe did not return a payment page." };
 
-  // Recorded before the customer leaves, so an abandoned checkout is visible
-  // as a pending row rather than as nothing at all.
   if (!isDemoMode) {
     const supabase = await getServerSupabase();
     await supabase?.from("payments").insert({
@@ -128,23 +89,21 @@ export async function createCheckout(
   return { ok: true, url: session.url };
 }
 
-/* ------------------------------------------------------------- payouts */
-
-/**
- * The seller's Stripe account, created on first use.
- *
- * Express accounts are used deliberately: Stripe collects the identity and
- * bank details and carries the compliance obligations that come with them,
- * which is not something this platform should be holding.
- */
 export async function ensureConnectedAccount(
   profile: Profile,
   email: string | null,
+  country: string,
 ): Promise<string> {
   if (profile.stripe_account_id) return profile.stripe_account_id;
 
+  const normalizedCountry = country.trim().toUpperCase();
+  if (!STRIPE_CONNECT_COUNTRIES.includes(normalizedCountry as (typeof STRIPE_CONNECT_COUNTRIES)[number])) {
+    throw new Error("Unsupported Stripe Connect country");
+  }
+
   const account = await stripe().accounts.create({
     type: "express",
+    country: normalizedCountry,
     ...(email ? { email } : {}),
     business_profile: { name: profile.full_name },
     capabilities: { transfers: { requested: true } },
@@ -153,16 +112,12 @@ export async function ensureConnectedAccount(
 
   if (!isDemoMode) {
     const supabase = await getServerSupabase();
-    await supabase
-      ?.from("profiles")
-      .update({ stripe_account_id: account.id })
-      .eq("id", profile.id);
+    await supabase?.from("profiles").update({ stripe_account_id: account.id }).eq("id", profile.id);
   }
 
   return account.id;
 }
 
-/** A one-time link into Stripe's onboarding, or back into it if it stalled. */
 export async function onboardingLink(accountId: string): Promise<string> {
   const base = siteUrl();
   const link = await stripe().accountLinks.create({
@@ -174,14 +129,13 @@ export async function onboardingLink(accountId: string): Promise<string> {
   return link.url;
 }
 
-/** Stripe's own answer to "may this account be paid?", refreshed on demand. */
 export async function refreshPayoutStatus(profile: Profile): Promise<boolean> {
   if (!profile.stripe_account_id || !paymentsEnabled()) return false;
 
   let enabled = false;
   try {
     const account = await stripe().accounts.retrieve(profile.stripe_account_id);
-    enabled = Boolean(account.charges_enabled);
+    enabled = Boolean(account.payouts_enabled && account.capabilities?.transfers === "active");
   } catch (error) {
     console.error("[stripe] could not read the connected account:", error);
     return profile.stripe_charges_enabled;
@@ -189,20 +143,17 @@ export async function refreshPayoutStatus(profile: Profile): Promise<boolean> {
 
   if (enabled !== profile.stripe_charges_enabled && !isDemoMode) {
     const supabase = await getServerSupabase();
-    await supabase
-      ?.from("profiles")
-      .update({ stripe_charges_enabled: enabled })
-      .eq("id", profile.id);
+    await supabase?.from("profiles").update({ stripe_charges_enabled: enabled }).eq("id", profile.id);
   }
 
   return enabled;
 }
 
-/** Why a listing cannot be bought with a card yet, or null when it can. */
 export function payoutBlocker(seller: Profile): string | null {
   if (!paymentsEnabled()) return "Card payments are not switched on for this site.";
-  if (!seller.stripe_account_id || !seller.stripe_charges_enabled)
-    return "The seller has not finished setting up payouts, so this listing cannot be paid for by card yet. Message them to agree how to complete the sale.";
+  if (!seller.stripe_account_id || !seller.stripe_charges_enabled) {
+    return "The seller has not finished setting up payouts, so this listing cannot be paid for by card yet.";
+  }
   return null;
 }
 
