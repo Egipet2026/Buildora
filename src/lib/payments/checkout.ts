@@ -4,12 +4,8 @@ import type Stripe from "stripe";
 import { paymentsEnabled, siteUrl, stripe } from "./stripe";
 import { getServerSupabase } from "../supabase/server";
 import { isDemoMode } from "../supabase/config";
+import { STRIPE_CONNECT_COUNTRIES } from "./connect-countries";
 import type { Listing, PaymentKind, Profile } from "../types";
-
-/** ISO country codes where Stripe Express connected accounts are available. */
-export const STRIPE_CONNECT_COUNTRIES = [
-  "AE","AG","AL","AM","AR","AT","AU","BA","BE","BG","BH","BJ","BN","BO","BS","BW","CA","CH","CI","CL","CO","CR","CY","CZ","DE","DK","DO","EC","EE","EG","ES","ET","FI","FR","GB","GH","GM","GR","GT","GY","HK","HU","IE","IL","IS","IT","JM","JO","JP","KE","KH","KR","KW","LC","LK","LT","LU","LV","MA","MC","MD","MG","MK","MN","MO","MT","MU","MX","NA","NG","NL","NO","NZ","OM","PA","PE","PH","PK","PL","PT","PY","QA","RO","RS","RW","SA","SE","SG","SI","SK","SN","SV","TH","TN","TR","TT","TW","TZ","US","UY","UZ","VN","ZA",
-] as const;
 
 export type CheckoutRequest = {
   kind: PaymentKind;
@@ -89,11 +85,7 @@ export async function createCheckout(req: CheckoutRequest): Promise<CheckoutResu
   return { ok: true, url: session.url };
 }
 
-export async function ensureConnectedAccount(
-  profile: Profile,
-  email: string | null,
-  country: string,
-): Promise<string> {
+export async function ensureConnectedAccount(profile: Profile, email: string | null, country: string): Promise<string> {
   if (profile.stripe_account_id) return profile.stripe_account_id;
 
   const normalizedCountry = country.trim().toUpperCase();
@@ -151,10 +143,9 @@ export async function refreshPayoutStatus(profile: Profile): Promise<boolean> {
 
 export function payoutBlocker(seller: Profile): string | null {
   if (!paymentsEnabled()) return "Card payments are not switched on for this site.";
-  if (!seller.stripe_account_id || !seller.stripe_charges_enabled) {
-    return "The seller has not finished setting up payouts, so this listing cannot be paid for by card yet.";
-  }
+  if (!seller.stripe_account_id || !seller.stripe_charges_enabled) return "The seller has not finished setting up payouts, so this listing cannot be paid for by card yet.";
   return null;
 }
 
+export { STRIPE_CONNECT_COUNTRIES } from "./connect-countries";
 export type { Listing };
