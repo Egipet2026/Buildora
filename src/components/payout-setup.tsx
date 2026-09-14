@@ -2,7 +2,7 @@
 
 import { useActionState } from "react";
 import { startPayoutSetupAction } from "@/lib/payments/actions";
-import { STRIPE_CONNECT_COUNTRIES } from "@/lib/payments/checkout";
+import { STRIPE_CONNECT_COUNTRIES } from "@/lib/payments/connect-countries";
 import { AUTH_IDLE } from "@/lib/auth/state";
 import { Notice } from "./ui";
 
