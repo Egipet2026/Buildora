@@ -44,7 +44,7 @@ export const CHECKLISTS: ChecklistTemplate[] = [
   {
     slug: "online-store",
     name: "Starting an online store",
-    icon: "🛒",
+    icon: "/icons/cart.svg",
     blurb: "Physical products sold through your own shop.",
     steps: [
       { title: "Choose the business model", detail: "Own stock, print on demand, or dropship — each changes your cash flow.", stage: "validate" },
@@ -64,7 +64,7 @@ export const CHECKLISTS: ChecklistTemplate[] = [
   {
     slug: "saas",
     name: "Starting a SaaS",
-    icon: "💻",
+    icon: "/icons/computer.svg",
     blurb: "Software sold by subscription.",
     steps: [
       { title: "Interview 10 people with the problem — do not pitch", stage: "validate" },
@@ -82,7 +82,7 @@ export const CHECKLISTS: ChecklistTemplate[] = [
   {
     slug: "services",
     name: "Starting a service business",
-    icon: "🧑‍💼",
+    icon: "/icons/services.svg",
     blurb: "Selling your own or your team's expertise.",
     steps: [
       { title: "Name the specific outcome you sell, not the hours", stage: "validate" },
@@ -99,7 +99,7 @@ export const CHECKLISTS: ChecklistTemplate[] = [
   {
     slug: "local",
     name: "Starting a local business",
-    icon: "🏪",
+    icon: "/icons/store.svg",
     blurb: "Premises, staff and customers who walk in.",
     steps: [
       { title: "Count the actual foot traffic at the times you would trade", stage: "validate" },
