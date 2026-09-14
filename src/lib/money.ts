@@ -1,8 +1,11 @@
 import type { PlatformSettings } from "./types";
 
+/** Buildora's marketplace commission: 10% of every seller transaction. */
+export const BUILDORA_COMMISSION_BPS = 1000;
+
 /** Fallback settings used before the admin-editable row is loaded. */
 export const DEFAULT_SETTINGS: PlatformSettings = {
-  commission_bps: 1000, // 10%
+  commission_bps: BUILDORA_COMMISSION_BPS,
   featured_price_cents: 900, // €9
   featured_days: 7,
   boost_tiers: [
@@ -32,7 +35,7 @@ export interface FeeBreakdown {
  */
 export function calculateFees(
   amountCents: number,
-  feeBps: number = DEFAULT_SETTINGS.commission_bps,
+  feeBps: number = BUILDORA_COMMISSION_BPS,
 ): FeeBreakdown {
   const amount = Math.max(0, Math.round(amountCents));
   const fee = Math.round((amount * feeBps) / 10_000);
@@ -89,13 +92,6 @@ export function formatNumber(n: number): string {
   return n.toLocaleString("en-IE");
 }
 
-/**
- * "3 days ago" — relative dates read better than timestamps in feeds.
- *
- * Anything under a minute collapses to "just now" rather than counting
- * seconds. Second-level output would differ between the server render and
- * the client hydration a moment later, which React reports as a mismatch.
- */
 export function timeAgo(iso: string): string {
   const then = new Date(iso).getTime();
   if (Number.isNaN(then)) return "";
@@ -110,7 +106,6 @@ export function timeAgo(iso: string): string {
     [31557600, "month"],
   ];
   const rtf = new Intl.RelativeTimeFormat("en", { numeric: "auto" });
-  // Divisor for the current unit — seconds per minute, for the first row.
   let previous = 60;
   for (const [limit, unit] of units) {
     if (seconds < limit) return rtf.format(-Math.floor(seconds / previous), unit);
@@ -129,11 +124,6 @@ export function formatDate(iso: string): string {
   });
 }
 
-/**
- * Profit multiple — the headline valuation heuristic in business brokerage.
- * Returns null when annual profit is missing or non-positive so the UI can
- * hide the stat rather than print a misleading number.
- */
 export function profitMultiple(
   priceCents: number,
   annualProfitCents?: number,
